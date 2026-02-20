@@ -139,50 +139,55 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
   }
 
   const handleImageUpload = async (field: ImageField, file: File) => {
+    setUploadingField(field)
     setUploadError(null)
 
-    if (!file.type.startsWith("image/")) {
-      setUploadError("รองรับเฉพาะไฟล์รูปภาพเท่านั้น")
-      return
-    }
-
-    setUploadingField(field)
+    const formData = new FormData()
+    formData.append("file", file)
 
     try {
-      const payload = new FormData()
-      payload.append("file", file)
-
-      const response = await fetch("/api/uploads", {
+      const res = await fetch("/api/uploads", {
         method: "POST",
-        body: payload,
+        body: formData,
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result?.error || "อัปโหลดรูปไม่สำเร็จ")
+      if (!res.ok) {
+        throw new Error("Upload failed")
       }
 
-      updateImageField(field, result.url)
+      const data = await res.json()
+      updateImageField(field, data.url)
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "อัปโหลดรูปไม่สำเร็จ")
+      console.error("Upload error:", error)
+      setUploadError("เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ กรุณาลองใหม่อีกครั้ง")
     } finally {
       setUploadingField(null)
       setDragOverField(null)
     }
   }
 
-  const handleImageInputChange = (field: ImageField, event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, field: ImageField) => {
+    e.preventDefault()
+    setDragOverField(field)
+  }
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setDragOverField(null)
+  }
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>, field: ImageField) => {
+    e.preventDefault()
+    setDragOverField(null)
+    
+    const file = e.dataTransfer.files?.[0]
     if (file) {
       void handleImageUpload(field, file)
     }
-    event.target.value = ""
   }
 
-  const handleImageDrop = (field: ImageField, event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
+  const handleImageInputChange = (field: ImageField, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
     if (file) {
       void handleImageUpload(field, file)
     }
@@ -192,68 +197,68 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">จัดการผลงาน</h1>
-          <p className="text-slate-400">เพิ่ม แก้ไข หรือลบผลงาน Portfolio</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">ผลงานทั้งหมด</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">จัดการผลงาน Portfolio ที่แสดงบนหน้าเว็บไซต์</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-lime-500 hover:bg-lime-600 text-slate-950" onClick={handleAddNew}>
-              <Plus className="w-4 h-4 mr-2" />
-              เพิ่มผลงาน
+            <Button onClick={() => {
+              setEditingProject(null)
+              setFormData(initialFormState)
+            }} className="bg-lime-500 hover:bg-lime-600 text-slate-950 font-bold shadow-lg shadow-lime-500/20 transition-all hover:shadow-lime-500/40 hover:-translate-y-0.5 rounded-xl">
+              <Plus className="w-5 h-5 mr-2" />
+              เพิ่มผลงานใหม่
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border-slate-200 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50">
             <DialogHeader>
-              <DialogTitle>{editingProject ? "แก้ไขผลงาน" : "เพิ่มผลงานใหม่"}</DialogTitle>
+              <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">{editingProject ? "แก้ไขผลงาน" : "เพิ่มผลงานใหม่"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <form onSubmit={handleSubmit} className="space-y-6 mt-4">
               <div className="space-y-2">
-                <Label>ชื่อโปรเจค</Label>
+                <Label className="text-slate-700 dark:text-slate-300">ชื่อผลงาน</Label>
                 <Input
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>หมวดหมู่</Label>
+                <Label className="text-slate-700 dark:text-slate-300">หมวดหมู่</Label>
                 <Input
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="เช่น E-Commerce, Corporate, etc."
+                  placeholder="เช่น E-commerce, Corporate, Blog"
                   required
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>รายละเอียด</Label>
+                <Label className="text-slate-700 dark:text-slate-300">รายละเอียด</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>รูป Desktop</Label>
+                <Label className="text-slate-700 dark:text-slate-300">รูปภาพ Desktop</Label>
                 <div
-                  onDragOver={(event) => {
-                    event.preventDefault()
-                    setDragOverField("desktopImage")
-                  }}
-                  onDragLeave={() => setDragOverField(null)}
-                  onDrop={(event) => handleImageDrop("desktopImage", event)}
-                  className={`rounded-md border border-dashed p-4 transition-colors ${
+                  onDragOver={(e) => handleDragOver(e, "desktopImage")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, "desktopImage")}
+                  className={`rounded-xl border-2 border-dashed p-6 transition-all duration-300 ${
                     dragOverField === "desktopImage"
-                      ? "border-lime-400 bg-lime-400/10"
-                      : "border-slate-700 bg-slate-800"
+                      ? "border-lime-500 bg-lime-500/10"
+                      : "border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm text-slate-300">ลากรูปมาวาง หรือคลิกเลือกไฟล์</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">ลากรูปมาวาง หรือคลิกเลือกไฟล์ (แนะนำอัตราส่วน 16:9)</div>
                     <label htmlFor="desktop-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-2 rounded-md bg-slate-700 px-3 py-2 text-xs font-medium text-white hover:bg-slate-600">
+                      <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
                         {uploadingField === "desktopImage" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
@@ -271,39 +276,38 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                     />
                   </div>
                   {formData.desktopImage && (
-                    <img
-                      src={formData.desktopImage}
-                      alt="Desktop preview"
-                      className="mt-3 h-24 w-full rounded-md object-cover"
-                    />
+                    <div className="mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm">
+                      <img
+                        src={formData.desktopImage}
+                        alt="Desktop preview"
+                        className="h-40 w-full object-cover"
+                      />
+                    </div>
                   )}
                 </div>
                 <Input
                   value={formData.desktopImage}
                   onChange={(e) => updateImageField("desktopImage", e.target.value)}
                   placeholder="/uploads/projects/... หรือ https://..."
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white mt-2 focus-visible:ring-lime-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>รูป Mobile</Label>
+                <Label className="text-slate-700 dark:text-slate-300">รูปภาพ Mobile</Label>
                 <div
-                  onDragOver={(event) => {
-                    event.preventDefault()
-                    setDragOverField("mobileImage")
-                  }}
-                  onDragLeave={() => setDragOverField(null)}
-                  onDrop={(event) => handleImageDrop("mobileImage", event)}
-                  className={`rounded-md border border-dashed p-4 transition-colors ${
+                  onDragOver={(e) => handleDragOver(e, "mobileImage")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, "mobileImage")}
+                  className={`rounded-xl border-2 border-dashed p-6 transition-all duration-300 ${
                     dragOverField === "mobileImage"
-                      ? "border-lime-400 bg-lime-400/10"
-                      : "border-slate-700 bg-slate-800"
+                      ? "border-lime-500 bg-lime-500/10"
+                      : "border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm text-slate-300">ลากรูปมาวาง หรือคลิกเลือกไฟล์</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">ลากรูปมาวาง หรือคลิกเลือกไฟล์ (แนะนำอัตราส่วน 9:16)</div>
                     <label htmlFor="mobile-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-2 rounded-md bg-slate-700 px-3 py-2 text-xs font-medium text-white hover:bg-slate-600">
+                      <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
                         {uploadingField === "mobileImage" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
@@ -321,43 +325,45 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                     />
                   </div>
                   {formData.mobileImage && (
-                    <img
-                      src={formData.mobileImage}
-                      alt="Mobile preview"
-                      className="mt-3 h-24 w-full rounded-md object-cover"
-                    />
+                    <div className="mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm w-32 mx-auto">
+                      <img
+                        src={formData.mobileImage}
+                        alt="Mobile preview"
+                        className="h-48 w-full object-cover"
+                      />
+                    </div>
                   )}
                 </div>
                 <Input
                   value={formData.mobileImage}
                   onChange={(e) => updateImageField("mobileImage", e.target.value)}
                   placeholder="/uploads/projects/... หรือ https://..."
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white mt-2 focus-visible:ring-lime-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>ลิงก์เว็บไซต์</Label>
+                <Label className="text-slate-700 dark:text-slate-300">ลิงก์เว็บไซต์</Label>
                 <Input
                   value={formData.websiteUrl}
                   onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
                   placeholder="https://..."
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-white/5">
                 <input
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4"
+                  className="w-5 h-5 rounded border-slate-300 text-lime-500 focus:ring-lime-500"
                 />
-                <Label htmlFor="isActive" className="cursor-pointer">แสดงผลงานนี้</Label>
+                <Label htmlFor="isActive" className="cursor-pointer text-slate-700 dark:text-slate-300 font-medium">แสดงผลงานนี้บนหน้าเว็บไซต์</Label>
               </div>
-              {uploadError && <p className="text-sm text-red-400">{uploadError}</p>}
+              {uploadError && <p className="text-sm text-rose-500 dark:text-rose-400 font-medium p-3 bg-rose-50 dark:bg-rose-500/10 rounded-lg">{uploadError}</p>}
               <Button
                 type="submit"
-                className="w-full bg-lime-500 hover:bg-lime-600 text-slate-950"
+                className="w-full bg-lime-500 hover:bg-lime-600 text-slate-950 font-bold h-12 rounded-xl"
                 disabled={uploadingField !== null}
               >
                 {editingProject ? "บันทึกการเปลี่ยนแปลง" : "สร้างผลงาน"}
@@ -367,14 +373,14 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
         </Dialog>
       </div>
 
-      <div className="bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-xl">
         <Table>
           <TableHeader>
-            <TableRow className="border-white/5 hover:bg-transparent bg-slate-950/50">
-              <TableHead className="text-slate-400 font-medium py-4 pl-6">ชื่อโปรเจค</TableHead>
-              <TableHead className="text-slate-400 font-medium py-4">หมวดหมู่</TableHead>
-              <TableHead className="text-slate-400 font-medium py-4">สถานะ</TableHead>
-              <TableHead className="text-slate-400 font-medium py-4 text-right pr-6">จัดการ</TableHead>
+            <TableRow className="border-slate-200 dark:border-white/5 hover:bg-transparent bg-slate-50/50 dark:bg-slate-950/50">
+              <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4 pl-6">ชื่อโปรเจค</TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">หมวดหมู่</TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">สถานะ</TableHead>
+              <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4 text-right pr-6">จัดการ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -386,14 +392,14 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
               </TableRow>
             ) : (
               projects.map((project) => (
-                <TableRow key={project.id} className="border-white/5 hover:bg-white/5 transition-colors group">
-                  <TableCell className="font-medium text-white pl-6 py-4">{project.title}</TableCell>
-                  <TableCell className="text-slate-400 py-4">{project.category}</TableCell>
+                <TableRow key={project.id} className="border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                  <TableCell className="font-semibold text-slate-900 dark:text-white pl-6 py-4">{project.title}</TableCell>
+                  <TableCell className="text-slate-600 dark:text-slate-400 py-4 font-medium">{project.category}</TableCell>
                   <TableCell className="py-4">
                     {project.isActive ? (
-                      <Badge className="bg-lime-500/10 text-lime-400 border-lime-500/20 font-medium px-2.5 py-0.5 rounded-full">แสดงผล</Badge>
+                      <Badge className="bg-lime-100 dark:bg-lime-500/10 text-lime-700 dark:text-lime-400 border-lime-200 dark:border-lime-500/20 font-medium px-3 py-1 rounded-full">แสดงผล</Badge>
                     ) : (
-                      <Badge className="bg-slate-500/10 text-slate-400 border-slate-500/20 font-medium px-2.5 py-0.5 rounded-full">ซ่อน</Badge>
+                      <Badge className="bg-slate-100 dark:bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-500/20 font-medium px-3 py-1 rounded-full">ซ่อน</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right pr-6 py-4">
@@ -402,7 +408,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="text-slate-400 hover:text-white hover:bg-white/10 rounded-xl w-9 h-9"
+                          className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl w-9 h-9"
                           onClick={() => window.open(project.websiteUrl ?? "", "_blank")}
                         >
                           <Eye className="w-4 h-4" />
@@ -411,7 +417,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-400 hover:text-lime-400 hover:bg-lime-400/10 rounded-xl w-9 h-9"
+                        className="text-slate-500 dark:text-slate-400 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-lime-50 dark:hover:bg-lime-400/10 rounded-xl w-9 h-9"
                         onClick={() => handleEdit(project)}
                       >
                         <Pencil className="w-4 h-4" />
@@ -419,7 +425,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-xl w-9 h-9"
+                        className="text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-400/10 rounded-xl w-9 h-9"
                         onClick={() => handleDelete(project.id)}
                       >
                         <Trash2 className="w-4 h-4" />

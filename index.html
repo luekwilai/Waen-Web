@@ -1,0 +1,1015 @@
+<html lang="th" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WAENWEB - รับทำเว็บไซต์ WordPress มืออาชีพ ออกแบบ Responsive รองรับ SEO ครบวงจร">
+    <title>WAENWEB - Premium WordPress Development</title>
+    
+    <!-- Performance: Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://code.iconify.design">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" as="style">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconify Script - async loading -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      body {
+          font-family: 'Inter', 'Kanit', sans-serif;
+          background-color: #020617; /* slate-950 */
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+          width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+          background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+          background: #334155;
+          border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+          background: #475569;
+      }
+
+      /* Entrance Animation Classes */
+      .reveal-element {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+          will-change: opacity, transform;
+      }
+
+      .reveal-element.is-visible {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      /* Stagger delays */
+      .delay-100 { transition-delay: 100ms; }
+      .delay-200 { transition-delay: 200ms; }
+      .delay-300 { transition-delay: 300ms; }
+      .delay-400 { transition-delay: 400ms; }
+      .delay-500 { transition-delay: 500ms; }
+
+      /* Device Mockup Styles */
+      .device-mockup {
+        position: relative;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+      }
+      
+      .device-mockup:hover {
+        transform: translateY(-8px);
+      }
+      
+      .browser-frame {
+        background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+        box-shadow: 
+          0 25px 50px -12px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      
+      .browser-header {
+        background: linear-gradient(90deg, #334155 0%, #1e293b 100%);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+      
+      .browser-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      
+      .browser-dot.red { background: #ef4444; }
+      .browser-dot.yellow { background: #eab308; }
+      .browser-dot.green { background: #22c55e; }
+      
+      .browser-address {
+        flex: 1;
+        margin-left: 12px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 11px;
+        color: #64748b;
+        font-family: monospace;
+      }
+      
+      .phone-mockup {
+        position: absolute;
+        bottom: -20px;
+        right: -20px;
+        width: 140px;
+        z-index: 10;
+        filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+      }
+      
+      .phone-frame {
+        background: #0f172a;
+        border-radius: 24px;
+        padding: 8px;
+        box-shadow: 
+          0 0 0 2px #334155,
+          0 25px 50px -12px rgba(0,0,0,0.8);
+      }
+      
+      .phone-notch {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 20px;
+        background: #0f172a;
+        border-radius: 0 0 12px 12px;
+        z-index: 5;
+      }
+      
+      .phone-screen {
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 9/19;
+        background: #1e293b;
+      }
+      
+      .phone-screen img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .portfolio-card {
+        position: relative;
+      }
+      
+      /* Lazy loading blur effect */
+      .lazy-image {
+        opacity: 0;
+        transition: opacity 0.5s ease-in;
+      }
+      
+      .lazy-image.loaded {
+        opacity: 1;
+      }
+      
+      /* Responsive images */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body class="text-slate-300 antialiased selection:bg-lime-400 selection:text-slate-950 relative">
+    <!-- Background (component) -->
+    <div class="aura-background-component fixed top-0 w-full h-screen -z-10" data-alpha-mask="80" style="mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)">
+      <div data-us-project="N9XzvQXu7fA5SY2ewADJ" style="width:1440px; height: 900px"></div>
+      <script type="text/javascript">
+        !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.30/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
+      </script>
+    </div>
+
+    <!-- Background Gradients -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+      <div class="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-blue-900/20 rounded-full blur-3xl opacity-40 mix-blend-screen"></div>
+      <div class="absolute top-[10%] right-[20%] w-[400px] h-[400px] bg-lime-500/10 rounded-full blur-3xl opacity-30 mix-blend-screen"></div>
+    </div>
+
+    <!-- Navigation (Redesigned) -->
+    <nav class="fixed w-full z-50 top-0 border-b border-white/5 bg-slate-950/70 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/50">
+      <div class="flex h-20 max-w-7xl mx-auto px-6 items-center justify-between">
+        <!-- Brand -->
+        <a href="#" class="flex items-center gap-3 group cursor-pointer reveal-element">
+          <div class="w-10 h-10 bg-gradient-to-tr from-lime-400 to-lime-500 rounded-lg flex items-center justify-center text-slate-950 shadow-lg shadow-lime-500/20 group-hover:shadow-lime-500/30 transition-all duration-300">
+            <iconify-icon icon="solar:code-square-linear" width="24" height="24" stroke-width="1.5"></iconify-icon>
+          </div>
+          <span class="text-lg font-semibold tracking-tight text-white group-hover:text-lime-400 transition-colors">
+            WAENWEB
+          </span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-1 p-1 rounded-full border border-white/5 bg-white/5 backdrop-blur-md reveal-element delay-100">
+          <a href="#services" class="text-sm font-medium text-slate-400 hover:text-white px-5 py-2 rounded-full hover:bg-white/5 transition-all duration-200">
+            บริการ
+          </a>
+          <a href="#packages" class="text-sm font-medium text-slate-400 hover:text-white px-5 py-2 rounded-full hover:bg-white/5 transition-all duration-200">
+            ราคา
+          </a>
+          <a href="#portfolio" class="text-sm font-medium text-slate-400 hover:text-white px-5 py-2 rounded-full hover:bg-white/5 transition-all duration-200">
+            ผลงาน
+          </a>
+          <a href="#why-us" class="text-sm font-medium text-slate-400 hover:text-white px-5 py-2 rounded-full hover:bg-white/5 transition-all duration-200">
+            เกี่ยวกับเรา
+          </a>
+        </div>
+
+        <!-- CTA & Mobile Toggle -->
+        <div class="flex items-center gap-4 reveal-element delay-200">
+          <a href="#contact" class="hidden md:inline-flex items-center justify-center group bg-white text-slate-950 hover:bg-lime-400 transition-all duration-300 text-sm font-semibold rounded-full py-2.5 px-6 shadow-sm hover:shadow-[0_0_20px_rgba(163,230,53,0.3)]">
+            <span>ติดต่อเรา</span>
+            <iconify-icon icon="solar:arrow-right-linear" class="ml-2 transition-transform group-hover:translate-x-0.5" width="18"></iconify-icon>
+          </a>
+
+          <!-- Mobile Menu Trigger -->
+          <button id="mobile-menu-btn" class="md:hidden text-white hover:text-lime-400 transition-colors p-2 rounded-lg hover:bg-white/5">
+            <iconify-icon icon="solar:hamburger-menu-linear" width="28"></iconify-icon>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-slate-950/98 backdrop-blur-xl transform translate-x-full transition-transform duration-300 ease-out md:hidden flex flex-col">
+      <div class="flex items-center justify-between p-6 h-20 border-b border-white/5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-lime-400 rounded-lg flex items-center justify-center text-slate-950 shadow-sm">
+            <iconify-icon icon="solar:code-square-linear" width="24"></iconify-icon>
+          </div>
+          <span class="text-lg font-semibold tracking-tight text-white">
+            WAENWEB
+          </span>
+        </div>
+        <button id="close-menu-btn" class="text-slate-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+          <iconify-icon icon="solar:close-circle-linear" width="32"></iconify-icon>
+        </button>
+      </div>
+      <div class="flex flex-col p-6 gap-2">
+        <a href="#services" class="text-xl font-medium text-slate-300 hover:text-lime-400 hover:bg-white/5 py-4 px-4 rounded-xl transition-all mobile-link flex items-center justify-between">
+          บริการของเรา
+          <iconify-icon icon="solar:arrow-right-linear" class="opacity-50"></iconify-icon>
+        </a>
+        <a href="#packages" class="text-xl font-medium text-slate-300 hover:text-lime-400 hover:bg-white/5 py-4 px-4 rounded-xl transition-all mobile-link flex items-center justify-between">
+          แพ็กเกจราคา
+          <iconify-icon icon="solar:arrow-right-linear" class="opacity-50"></iconify-icon>
+        </a>
+        <a href="#portfolio" class="text-xl font-medium text-slate-300 hover:text-lime-400 hover:bg-white/5 py-4 px-4 rounded-xl transition-all mobile-link flex items-center justify-between">
+          ผลงาน
+           <iconify-icon icon="solar:arrow-right-linear" class="opacity-50"></iconify-icon>
+        </a>
+        <a href="#why-us" class="text-xl font-medium text-slate-300 hover:text-lime-400 hover:bg-white/5 py-4 px-4 rounded-xl transition-all mobile-link flex items-center justify-between">
+          เกี่ยวกับเรา
+           <iconify-icon icon="solar:arrow-right-linear" class="opacity-50"></iconify-icon>
+        </a>
+
+        <div class="h-px bg-white/5 my-6"></div>
+
+        <a href="#contact" class="flex items-center justify-center w-full py-4 bg-lime-400 text-slate-950 font-semibold rounded-xl hover:bg-lime-300 transition-colors mobile-link shadow-lg shadow-lime-400/20">
+          ติดต่อเรา
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="flex flex-col overflow-hidden text-center pt-40 pr-6 pb-32 pl-6 relative items-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 reveal-element hover:border-lime-500/30 transition-colors">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
+        </span>
+        <span class="text-xs font-medium text-slate-300 uppercase tracking-wide">
+          รับทำเว็บไซต์ด้วย WordPress
+        </span>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-semibold text-white tracking-tight mb-8 max-w-4xl leading-[1.1] reveal-element delay-100">
+        WAENWEB
+        <br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime-300 via-lime-400 to-emerald-500">
+          รับทำเว็บไซต์มืออาชีพ
+        </span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-slate-400 max-w-2xl mb-12 font-light reveal-element delay-200">
+        สร้างเว็บไซต์ที่ตอบโจทย์ธุรกิจของคุณ ด้วยทีมงานมืออาชีพ
+        และเทคโนโลยีที่ทันสมัย รองรับทุกการแสดงผล
+        เพื่อธุรกิจที่เติบโตอย่างมั่นคง
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 sm:w-auto w-full reveal-element delay-300">
+        <a href="#packages" class="inline-flex items-center justify-center hover:bg-lime-300 transition-all text-base font-semibold text-slate-950 bg-lime-400 rounded-full pt-3.5 pr-8 pb-3.5 pl-8 shadow-[0_0_30px_-5px_rgba(163,230,53,0.4)] hover:shadow-[0_0_40px_-5px_rgba(163,230,53,0.6)] hover:-translate-y-0.5 duration-300">
+          ดูแพ็กเกจ
+          <iconify-icon icon="solar:arrow-right-linear" class="ml-2" width="20"></iconify-icon>
+        </a>
+        <a href="#portfolio" class="inline-flex items-center justify-center hover:bg-white/10 transition-all text-base font-medium text-white border border-white/10 bg-white/5 backdrop-blur-sm rounded-full pt-3.5 pr-8 pb-3.5 pl-8 hover:-translate-y-0.5 duration-300">
+          ดูผลงาน
+        </a>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 bg-slate-900/30 border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal-element">
+          <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-4">
+            บริการของเรา
+          </h2>
+          <p class="text-lg text-slate-400 font-light">
+            เราให้บริการครอบคลุม ทั้งการออกแบบ พัฒนา และดูแลเว็บไซต์
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Service 1 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-100">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:smartphone-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">
+              Responsive Design
+            </h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              ออกแบบเว็บไซต์ให้รองรับการแสดงผลทุกอุปกรณ์ ทั้ง PC, Tablet และ
+              Mobile อย่างสมบูรณ์แบบ
+            </p>
+          </div>
+
+          <!-- Service 2 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-200">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:magnifer-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">
+              SEO Optimization
+            </h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              ปรับแต่งโครงสร้างเว็บไซต์ให้รองรับหลักการ SEO
+              เพื่อเพิ่มโอกาสติดอันดับการค้นหาบน Google
+            </p>
+          </div>
+
+          <!-- Service 3 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-300">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:cart-large-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">E-Commerce</h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              ระบบร้านค้าออนไลน์ครบวงจร จัดการสินค้า ออเดอร์ และการชำระเงิน
+              ได้อย่างง่ายดาย
+            </p>
+          </div>
+
+          <!-- Service 4 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-100">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:shield-check-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">PDPA Compliance</h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              ติดตั้งระบบ Cookie Consent และ Privacy Policy รองรับกฎหมาย PDPA
+              อย่างถูกต้อง
+            </p>
+          </div>
+
+          <!-- Service 5 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-200">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:headset-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">ดูแลหลังการขาย</h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              บริการดูแลรักษาเว็บไซต์ อัพเดทระบบ และแก้ไขปัญหาทางเทคนิค ฟรี 3
+              เดือน
+            </p>
+          </div>
+
+          <!-- Service 6 -->
+          <div class="group p-8 rounded-2xl bg-slate-950 border border-white/10 hover:border-lime-400/30 transition-all duration-300 shadow-sm hover:shadow-lime-500/10 reveal-element delay-300">
+            <div class="w-12 h-12 bg-lime-400/10 rounded-lg flex items-center justify-center text-lime-400 mb-6 group-hover:scale-110 transition-transform">
+              <iconify-icon icon="solar:clock-circle-linear" width="28"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-3">ส่งงานตรงเวลา</h3>
+            <p class="text-base text-slate-400 font-light leading-relaxed">
+              มีการวางแผนงานที่ชัดเจน และการันตีส่งมอบงานตามกำหนดเวลาที่ตกลงไว้
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="packages" class="py-24 relative">
+      <!-- Subtle gradient backdrop -->
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 opacity-50 z-[-1]"></div>
+
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal-element">
+          <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-4">
+            เลือกแพ็คเกจที่เหมาะสมกับธุรกิจของคุณ
+          </h2>
+          <p class="text-lg text-slate-400 font-light">
+            ราคาที่โปร่งใส คุ้มค่า จ่ายครั้งเดียวจบ ไม่มีค่าใช้จ่ายแฝง
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <!-- Startup Plan -->
+          <div class="rounded-2xl border border-white/10 bg-slate-950/50 p-8 hover:border-white/20 transition-colors shadow-sm reveal-element delay-100">
+            <h3 class="text-xl font-medium text-white">Startup</h3>
+            <p class="mt-4 flex items-baseline text-slate-200">
+              <span class="text-4xl font-semibold tracking-tight">฿16,000</span>
+            </p>
+            <p class="mt-4 text-base text-slate-400 font-light">
+              เหมาะสำหรับเว็บไซต์เริ่มต้น เน้นข้อมูลองค์กร
+            </p>
+            <ul class="mt-8 space-y-4 text-base text-slate-300 font-light">
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                จำนวนไม่เกิน 3 หน้า
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                รองรับ Responsive
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                ดูแลฟรี 3 เดือน
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                แก้ไขได้ 1 จุดใหญ่
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                รองรับ PDPA
+              </li>
+            </ul>
+            <div class="mt-8 pt-6 border-t border-white/5">
+              <span class="inline-block px-3 py-1 rounded bg-slate-800 text-xs text-slate-300 mb-6">
+                ระยะเวลา 15 วัน
+              </span>
+              <a href="#contact" class="block w-full py-3 px-4 rounded-lg border border-white/20 text-center text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm">
+                เลือกแพ็คเกจนี้
+              </a>
+            </div>
+          </div>
+
+          <!-- Business Plan (Highlighted) -->
+          <div class="relative rounded-2xl border border-lime-500/50 bg-slate-900/80 p-8 shadow-sm transform lg:-translate-y-4 reveal-element delay-200">
+            <div class="absolute top-0 right-0 -mt-3 mr-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-lime-400 text-slate-950 shadow-sm">
+                Popular
+              </span>
+            </div>
+            <h3 class="text-xl font-medium text-white">Business</h3>
+            <p class="mt-4 flex items-baseline text-slate-200">
+              <span class="text-4xl font-semibold tracking-tight">฿25,900</span>
+            </p>
+            <p class="mt-4 text-base text-slate-400 font-light">
+              เหมาะสำหรับเว็บไซต์บริษัท เพิ่มความน่าเชื่อถือ
+            </p>
+            <ul class="mt-8 space-y-4 text-base text-slate-300 font-light">
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                จำนวนไม่เกิน 5 หน้า
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                รองรับ Responsive
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                วางโครงสร้าง SEO พื้นฐาน
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                ดูแลฟรี 3 เดือน
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                แก้ไขได้ 3 จุดใหญ่
+              </li>
+            </ul>
+            <div class="mt-8 pt-6 border-t border-white/5">
+              <span class="inline-block px-3 py-1 rounded bg-slate-800 text-xs text-slate-300 mb-6">
+                ระยะเวลา 20 วัน
+              </span>
+              <a href="#contact" class="block w-full py-3 px-4 rounded-lg bg-lime-400 text-center text-sm font-medium text-slate-950 hover:bg-lime-300 transition-colors shadow-sm">
+                เลือกแพ็คเกจนี้
+              </a>
+            </div>
+          </div>
+
+          <!-- E-Commerce Plan -->
+          <div class="rounded-2xl border border-white/10 bg-slate-950/50 p-8 hover:border-white/20 transition-colors shadow-sm reveal-element delay-300">
+            <h3 class="text-xl font-medium text-white">E-Commerce</h3>
+            <p class="mt-4 flex items-baseline text-slate-200">
+              <span class="text-4xl font-semibold tracking-tight">฿35,900</span>
+            </p>
+            <p class="mt-4 text-base text-slate-400 font-light">
+              ระบบร้านค้าออนไลน์ ขายสินค้าได้ทันที
+            </p>
+            <ul class="mt-8 space-y-4 text-base text-slate-300 font-light">
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                จำนวนไม่เกิน 5 หน้าหลัก
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                รองรับ Responsive
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                ระบบตระกร้าสินค้า (10 SKU)
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                วางโครงสร้าง SEO
+              </li>
+              <li class="flex gap-3">
+                <iconify-icon icon="solar:check-circle-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                แก้ไขได้ 5 จุดใหญ่
+              </li>
+            </ul>
+            <div class="mt-8 pt-6 border-t border-white/5">
+              <span class="inline-block px-3 py-1 rounded bg-slate-800 text-xs text-slate-300 mb-6">
+                ระยะเวลา 45 วัน
+              </span>
+              <a href="#contact" class="block w-full py-3 px-4 rounded-lg border border-white/20 text-center text-sm font-medium text-white hover:bg-white/5 transition-colors shadow-sm">
+                เลือกแพ็คเกจนี้
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio Section - PC + Mobile Paired Mockups -->
+    <section id="portfolio" class="py-24 bg-slate-900/30 border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal-element">
+          <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-4">
+            ผลงานของเรา
+          </h2>
+          <p class="text-lg text-slate-400 font-light">
+            ตัวอย่างเว็บไซต์ที่ออกแบบรองรับทุกอุปกรณ์ - Desktop และ Mobile
+          </p>
+        </div>
+
+        <!-- Portfolio Grid - 2 columns showing PC+Mobile pairs -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Project 1: A-FACTORY -->
+          <div class="portfolio-card reveal-element delay-100">
+            <div class="device-mockup group">
+              <!-- Desktop Mockup -->
+              <div class="browser-frame">
+                <div class="browser-header">
+                  <div class="browser-dot red"></div>
+                  <div class="browser-dot yellow"></div>
+                  <div class="browser-dot green"></div>
+                  <div class="browser-address">a-factoryonline.com</div>
+                </div>
+                <div class="aspect-[16/10] bg-slate-800 overflow-hidden">
+                  <img 
+                    src="images/a-factory.jpg" 
+                    alt="A-FACTORY Dental Equipment E-commerce"
+                    class="w-full h-full object-cover lazy-image opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onload="this.classList.add('loaded')"
+                    onerror="this.src='https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?q=80&w=1200&auto=format&fit=crop'"
+                  >
+                </div>
+              </div>
+              
+              <!-- Mobile Mockup Overlay -->
+              <div class="phone-mockup group-hover:scale-105 group-hover:-translate-y-2 transition-transform duration-500">
+                <div class="phone-frame relative">
+                  <div class="phone-notch"></div>
+                  <div class="phone-screen">
+                    <img 
+                      src="images/a-factory_mobile.jpg" 
+                      alt="A-FACTORY Mobile View"
+                      class="lazy-image"
+                      loading="lazy"
+                      onload="this.classList.add('loaded')"
+                      onerror="this.src='https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=400&auto=format&fit=crop'"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-medium text-white">A-FACTORY</h3>
+                <p class="text-slate-400 text-sm mt-1">E-Commerce / Dental Equipment / WooCommerce</p>
+              </div>
+              <a href="https://a-factoryonline.com" target="_blank" class="text-lime-400 hover:text-lime-300 transition-colors">
+                <iconify-icon icon="solar:arrow-right-up-linear" width="24"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 2: Flying Turtle Coffee -->
+          <div class="portfolio-card reveal-element delay-200">
+            <div class="device-mockup group">
+              <div class="browser-frame">
+                <div class="browser-header">
+                  <div class="browser-dot red"></div>
+                  <div class="browser-dot yellow"></div>
+                  <div class="browser-dot green"></div>
+                  <div class="browser-address">flyingturtle.co.th</div>
+                </div>
+                <div class="aspect-[16/10] bg-slate-800 overflow-hidden">
+                  <img 
+                    src="images/flying-turtle.jpg" 
+                    alt="Flying Turtle Coffee Robotic Barista"
+                    class="w-full h-full object-cover lazy-image opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onload="this.classList.add('loaded')"
+                    onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop'"
+                  >
+                </div>
+              </div>
+              <div class="phone-mockup group-hover:scale-105 group-hover:-translate-y-2 transition-transform duration-500">
+                <div class="phone-frame relative">
+                  <div class="phone-notch"></div>
+                  <div class="phone-screen">
+                    <img 
+                      src="images/flying-turtle_mobile.jpg" 
+                      alt="Flying Turtle Mobile View"
+                      class="lazy-image"
+                      loading="lazy"
+                      onload="this.classList.add('loaded')"
+                      onerror="this.src='https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=400&auto=format&fit=crop'"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-medium text-white">Flying Turtle Coffee</h3>
+                <p class="text-slate-400 text-sm mt-1">Corporate / Robotic Barista / Brand Website</p>
+              </div>
+              <a href="#" class="text-lime-400 hover:text-lime-300 transition-colors">
+                <iconify-icon icon="solar:arrow-right-up-linear" width="24"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 3: Grasshopper Collective -->
+          <div class="portfolio-card reveal-element delay-100">
+            <div class="device-mockup group">
+              <div class="browser-frame">
+                <div class="browser-header">
+                  <div class="browser-dot red"></div>
+                  <div class="browser-dot yellow"></div>
+                  <div class="browser-dot green"></div>
+                  <div class="browser-address">grasshopper420collective.com</div>
+                </div>
+                <div class="aspect-[16/10] bg-slate-800 overflow-hidden">
+                  <img 
+                    src="images/grasshopper.jpg" 
+                    alt="Grasshopper Collective Cannabis Shop"
+                    class="w-full h-full object-cover lazy-image opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onload="this.classList.add('loaded')"
+                    onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop'"
+                  >
+                </div>
+              </div>
+              <div class="phone-mockup group-hover:scale-105 group-hover:-translate-y-2 transition-transform duration-500">
+                <div class="phone-frame relative">
+                  <div class="phone-notch"></div>
+                  <div class="phone-screen">
+                    <img 
+                      src="images/grasshopper_mobile.jpg" 
+                      alt="Grasshopper Mobile View"
+                      class="lazy-image"
+                      loading="lazy"
+                      onload="this.classList.add('loaded')"
+                      onerror="this.src='https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=400&auto=format&fit=crop'"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-medium text-white">Grasshopper Collective</h3>
+                <p class="text-slate-400 text-sm mt-1">E-Commerce / Cannabis Shop / Landing Page</p>
+              </div>
+              <a href="#" class="text-lime-400 hover:text-lime-300 transition-colors">
+                <iconify-icon icon="solar:arrow-right-up-linear" width="24"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 4: More Projects Coming -->
+          <div class="portfolio-card reveal-element delay-200">
+            <div class="device-mockup group cursor-pointer" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+              <div class="browser-frame border-2 border-dashed border-lime-400/30 bg-slate-900/50">
+                <div class="aspect-[16/10] flex flex-col items-center justify-center text-center p-8">
+                  <div class="w-16 h-16 rounded-full bg-lime-400/10 flex items-center justify-center mb-4">
+                    <iconify-icon icon="solar:plus-circle-linear" class="text-lime-400" width="32"></iconify-icon>
+                  </div>
+                  <h3 class="text-xl font-medium text-white mb-2">โปรเจคของคุณ?</h3>
+                  <p class="text-slate-400 text-sm">ติดต่อเราเพื่อสร้างเว็บไซต์ที่โดดเด่น</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 text-center">
+              <a href="#contact" class="inline-flex items-center text-lime-400 hover:text-lime-300 transition-colors">
+                เริ่มโปรเจคกับเรา
+                <iconify-icon icon="solar:arrow-right-linear" class="ml-2" width="20"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section id="why-us" class="py-24">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal-element">
+          <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-4">
+            ทำไมต้องเลือก Waen Web
+          </h2>
+          <p class="text-lg text-slate-400 font-light">
+            เลือกแพ็คเกจที่เหมาะสมกับธุรกิจของคุณ
+            เรามุ่งมั่นพัฒนาเว็บไซต์ที่มีคุณภาพและตอบโจทย์ความต้องการของลูกค้า
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+          <div class="flex flex-col items-center reveal-element delay-100">
+            <div class="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center text-lime-400 mb-6 shadow-sm">
+              <iconify-icon icon="solar:user-check-linear" width="32"></iconify-icon>
+            </div>
+            <h4 class="text-lg font-medium text-white mb-2">
+              มากด้วยประสบการณ์
+            </h4>
+            <p class="text-base text-slate-400 font-light">
+              ทีมงานมืออาชีพที่มีประสบการณ์ในการทำเว็บไซต์มากมาย
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center reveal-element delay-200">
+            <div class="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center text-lime-400 mb-6 shadow-sm">
+              <iconify-icon icon="solar:clock-circle-linear" width="32"></iconify-icon>
+            </div>
+            <h4 class="text-lg font-medium text-white mb-2">ส่งงานตรงเวลา</h4>
+            <p class="text-base text-slate-400 font-light">
+              เรารับประกันการส่งมอบงานตามตารางกำหนดเวลาที่ตกลงกัน
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center reveal-element delay-300">
+            <div class="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center text-lime-400 mb-6 shadow-sm">
+              <iconify-icon icon="solar:chat-line-linear" width="32"></iconify-icon>
+            </div>
+            <h4 class="text-lg font-medium text-white mb-2">ดูแลหลังการขาย</h4>
+            <p class="text-base text-slate-400 font-light">
+              ให้คำปรึกษาและดูแลเว็บไซต์ฟรี 3 เดือน หลังส่งมอบงาน
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center reveal-element delay-400">
+            <div class="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center text-lime-400 mb-6 shadow-sm">
+              <iconify-icon icon="solar:globe-linear" width="32"></iconify-icon>
+            </div>
+            <h4 class="text-lg font-medium text-white mb-2">
+              รองรับมาตรฐานสากล
+            </h4>
+            <p class="text-base text-slate-400 font-light">
+              รองรับกฎหมาย PDPA และมาตรฐานการพัฒนาเว็บไซต์สมัยใหม่
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-slate-900/30 border-t border-white/5">
+      <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-12 reveal-element">
+          <h2 class="text-3xl md:text-4xl font-semibold text-white tracking-tight mb-4">
+            พร้อมเริ่มโปรเจคของคุณ?
+          </h2>
+          <p class="text-lg text-slate-400 font-light">
+            ส่งข้อมูลให้เรา และเราจะติดต่อกลับเพื่อเริ่มต้นโปรเจคของคุณ
+          </p>
+        </div>
+
+        <div class="bg-black border border-white/10 rounded-3xl p-8 md:p-10 shadow-sm reveal-element delay-100">
+          <form action="#" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label for="name" class="text-sm font-medium text-slate-300">
+                  ชื่อ *
+                </label>
+                <input type="text" id="name" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm" placeholder="ชื่อของคุณ">
+              </div>
+              <div class="space-y-2">
+                <label for="lastname" class="text-sm font-medium text-slate-300">
+                  นามสกุล *
+                </label>
+                <input type="text" id="lastname" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm" placeholder="นามสกุลของคุณ">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label for="phone" class="text-sm font-medium text-slate-300">
+                  เบอร์โทร *
+                </label>
+                <input type="tel" id="phone" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm" placeholder="081-234-5678">
+              </div>
+              <div class="space-y-2">
+                <label for="email" class="text-sm font-medium text-slate-300">
+                  Email
+                </label>
+                <input type="email" id="email" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm" placeholder="you@example.com">
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="package" class="text-sm font-medium text-slate-300">
+                Package ที่สนใจ *
+              </label>
+              <div class="relative">
+                <select id="package" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm">
+                  <option>เลือก package</option>
+                  <option>Startup (฿16,000)</option>
+                  <option>Business (฿25,900)</option>
+                  <option>E-Commerce (฿35,900)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
+                  <iconify-icon icon="solar:alt-arrow-down-linear" width="20"></iconify-icon>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="message" class="text-sm font-medium text-slate-300">
+                รายละเอียดเพิ่มเติม *
+              </label>
+              <textarea id="message" rows="4" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all shadow-sm" placeholder="บอกรายละเอียดเกี่ยวกับเว็บไซต์ที่คุณต้องการ..."></textarea>
+            </div>
+
+            <button type="button" class="inline-flex items-center justify-center px-8 py-3 text-sm font-semibold text-slate-950 bg-lime-400 rounded-full hover:bg-lime-300 transition-all shadow-[0_0_20px_rgba(163,230,53,0.3)] hover:shadow-[0_0_30px_rgba(163,230,53,0.5)] w-full md:w-auto">
+              ส่งข้อมูล
+              <iconify-icon icon="solar:plain-linear" class="ml-2" width="20"></iconify-icon>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer (Redesigned) -->
+    <footer class="relative bg-slate-950 pt-20 pb-10 border-t border-white/5 overflow-hidden">
+      <!-- Decorative Footer Text -->
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 text-[15vw] leading-none font-bold text-white/[0.02] pointer-events-none select-none whitespace-nowrap">
+        WAENWEB
+      </div>
+      
+      <!-- Gradient blob -->
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-lime-500/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+          
+          <!-- Brand Column -->
+          <div class="lg:col-span-4 space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-lime-400 rounded-lg flex items-center justify-center text-slate-950 shadow-sm">
+                <iconify-icon icon="solar:code-square-linear" width="24"></iconify-icon>
+              </div>
+              <span class="text-xl font-semibold tracking-tight text-white">WAENWEB</span>
+            </div>
+            <p class="text-slate-400 font-light leading-relaxed max-w-sm">
+              เรามุ่งมั่นสร้างสรรค์เว็บไซต์ที่มีคุณภาพ ด้วยเทคโนโลยีที่ทันสมัย 
+              เพื่อช่วยขับเคลื่อนธุรกิจของคุณให้เติบโตในยุคดิจิทัล
+            </p>
+            <div class="flex gap-4">
+              <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                <iconify-icon icon="solar:facebook-linear" width="20"></iconify-icon>
+              </a>
+              <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                 <iconify-icon icon="brandico:instagram-text" width="20"></iconify-icon>
+              </a>
+               <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                 <iconify-icon icon="brandico:twitter-bird" width="20"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+          <!-- Links Column -->
+          <div class="lg:col-span-2 lg:col-start-6 space-y-6">
+            <h4 class="text-white font-medium">เมนูหลัก</h4>
+            <ul class="space-y-3">
+              <li><a href="#" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">หน้าแรก</a></li>
+              <li><a href="#services" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">บริการ</a></li>
+              <li><a href="#packages" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">แพ็กเกจ</a></li>
+              <li><a href="#portfolio" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">ผลงาน</a></li>
+            </ul>
+          </div>
+
+          <!-- Services Column -->
+          <div class="lg:col-span-3 space-y-6">
+            <h4 class="text-white font-medium">บริการ</h4>
+            <ul class="space-y-3">
+              <li><a href="#" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">WordPress Development</a></li>
+              <li><a href="#" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">E-Commerce Solution</a></li>
+              <li><a href="#" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">SEO Optimization</a></li>
+              <li><a href="#" class="text-slate-400 hover:text-lime-400 transition-colors text-sm">Website Maintenance</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact Column -->
+          <div class="lg:col-span-3 space-y-6">
+             <h4 class="text-white font-medium">ติดต่อเรา</h4>
+             <ul class="space-y-4">
+                <li class="flex gap-3 text-slate-400 text-sm">
+                   <iconify-icon icon="solar:map-point-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                   <span>123 อาคารทรู ดิจิทัล พาร์ค, ถ.สุขุมวิท, พระโขนง, กรุงเทพฯ 10260</span>
+                </li>
+                 <li class="flex gap-3 text-slate-400 text-sm">
+                   <iconify-icon icon="solar:phone-calling-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                   <span>081-234-5678</span>
+                </li>
+                 <li class="flex gap-3 text-slate-400 text-sm">
+                   <iconify-icon icon="solar:letter-linear" class="text-lime-400 flex-shrink-0" width="20"></iconify-icon>
+                   <span>contact@waenweb.com</span>
+                </li>
+             </ul>
+          </div>
+
+        </div>
+
+        <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-sm text-slate-500 font-light">
+            © 2024 Waen Web Studio. All rights reserved.
+          </p>
+          <div class="flex gap-6 text-sm text-slate-500">
+             <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+             <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Interaction "Brickbuilder" Entrance Script
+      const observerOptions = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+              }
+          });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal-element').forEach(el => {
+          observer.observe(el);
+      });
+
+      // Mobile Menu Logic
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const closeMenuBtn = document.getElementById('close-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+      const body = document.body;
+
+      function toggleMenu() {
+          const isClosed = mobileMenu.classList.contains('translate-x-full');
+          if (isClosed) {
+              mobileMenu.classList.remove('translate-x-full');
+              body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+          } else {
+              mobileMenu.classList.add('translate-x-full');
+              body.style.overflow = 'auto'; // Restore scrolling
+          }
+      }
+
+      mobileMenuBtn.addEventListener('click', toggleMenu);
+      closeMenuBtn.addEventListener('click', toggleMenu);
+
+      // Close menu when clicking a link
+      mobileLinks.forEach(link => {
+          link.addEventListener('click', toggleMenu);
+      });
+    </script>
+  </body></html>

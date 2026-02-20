@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String    // Hashed password
+  role          Role      @default(ADMIN)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  title         String
+  category      String    // e.g., "E-Commerce", "Corporate", etc.
+  description   String?
+  desktopImage  String?   // URL to desktop screenshot
+  mobileImage   String?   // URL to mobile screenshot
+  websiteUrl    String?
+  sortOrder     Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("projects")
+}
+
+model Package {
+  id            String    @id @default(cuid())
+  name          String
+  nameEn        String?   // English name
+  price         Int
+  description   String?
+  features      String?   // JSON array of features
+  duration      String?   // e.g., "7-14 วัน"
+  isPopular     Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  sortOrder     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("packages")
+}
+
+model Inquiry {
+  id            String    @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  company       String?
+  packageId     String?   // Reference to interested package
+  message       String
+  status        InquiryStatus @default(NEW)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("inquiries")
+}
+
+enum Role {
+  ADMIN
+}
+
+enum InquiryStatus {
+  NEW
+  READ
+  RESPONDED
+  ARCHIVED
+}

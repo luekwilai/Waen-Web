@@ -1,0 +1,10 @@
+[
+  {
+    "id": "1771235638085",
+    "email": "admin@waenweb.com",
+    "name": "Admin",
+    "password": "$2b$10$lFi61IWgyjXA9IDR5Wz8uOMPEyPe8/fcFA2rwqoCHPHlW4J/o3wsS",
+    "role": "ADMIN",
+    "createdAt": "2026-02-16T09:53:58.085Z"
+  }
+]

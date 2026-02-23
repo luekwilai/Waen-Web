@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { SpotlightCard } from "@/components/spotlight-card"
 import { CheckCircle, Clock, ArrowRight, Zap } from "lucide-react"
+import { useEffect, useState } from "react"
 
 type Package = {
   id: string
@@ -59,7 +60,7 @@ export function PackagesSection() {
       {packages.map((pkg) => (
         pkg.isPopular ? (
           /* ===== POPULAR CARD — full dark with lime accent ===== */
-          <div
+          <SpotlightCard
             key={pkg.id}
             className="relative rounded-3xl bg-slate-900 dark:bg-slate-950 border border-lime-500/30 shadow-2xl shadow-lime-500/10 flex flex-col h-full lg:order-none"
           >
@@ -120,14 +121,18 @@ export function PackagesSection() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </SpotlightCard>
         ) : (
           /* ===== REGULAR CARD ===== */
-          <div
+          <SpotlightCard
             key={pkg.id}
-            className="relative rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/8 shadow-sm hover:shadow-xl dark:hover:shadow-black/30 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full group"
+            className={`relative z-10 bg-white dark:bg-slate-900 rounded-3xl p-8 xl:p-10 border transition-all duration-300 ${
+              pkg.isPopular
+                ? "border-lime-500 shadow-2xl shadow-lime-500/10 dark:shadow-lime-500/5"
+                : "border-slate-200 dark:border-white/10 hover:border-lime-500/50 hover:shadow-xl dark:hover:shadow-lime-500/5"
+            }`}
           >
-            <div className="p-8 flex flex-col flex-grow">
+            <div className="flex flex-col h-full">
               {/* Name */}
               <div className="mb-6">
                 <p className="text-lime-600 dark:text-lime-400 text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-2">{pkg.nameEn ?? "Package"}</p>
@@ -170,9 +175,10 @@ export function PackagesSection() {
                 เลือกแพ็คเกจนี้
               </button>
             </div>
-          </div>
+          </SpotlightCard>
         )
       ))}
     </div>
   )
 }
+

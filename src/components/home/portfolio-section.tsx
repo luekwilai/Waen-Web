@@ -1,6 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, FolderOpen } from "lucide-react"
+import { SpotlightCard } from "@/components/spotlight-card"
+import { ExternalLink, Github, Loader2, MonitorSmartphone } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { prisma } from "@/lib/prisma"
 
@@ -21,7 +23,7 @@ export async function PortfolioSection() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {projects.map((project) => (
-        <Card key={project.id} className="bg-white/60 dark:bg-slate-950 border-slate-200 dark:border-white/10 overflow-hidden group shadow-lg shadow-slate-200/50 dark:shadow-none transition-all hover:shadow-xl hover:border-lime-500/30 dark:hover:border-lime-400/30">
+        <SpotlightCard key={project.id} className="overflow-hidden bg-white/60 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-white/10 hover:border-lime-500/50 hover:shadow-xl dark:hover:shadow-lime-500/5 transition-all duration-300 group">
           <div className="relative aspect-[16/10] bg-slate-100/50 dark:bg-slate-900/50 p-4 md:p-6 overflow-hidden flex items-end justify-center">
             
             {/* Desktop Mockup */}
@@ -88,7 +90,7 @@ export async function PortfolioSection() {
               </Link>
             )}
           </CardContent>
-        </Card>
+        </SpotlightCard>
       ))}
     </div>
   )

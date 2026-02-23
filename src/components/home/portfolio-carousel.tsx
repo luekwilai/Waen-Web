@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, FolderOpen, Monitor, Smartphone } from "lucide-react"
+import { ArrowUpRight, ChevronLeft, ChevronRight, FolderOpen, Monitor, Smartphone } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 type Project = {
@@ -40,7 +40,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
 
   // Autoplay
   useEffect(() => {
-    autoplayRef.current = setTimeout(() => go(current + 1, 1), 5000)
+    autoplayRef.current = setTimeout(() => go(current + 1, 1), 6000)
     return () => { if (autoplayRef.current) clearTimeout(autoplayRef.current) }
   }, [current, go])
 
@@ -57,14 +57,6 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
     if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
   }
 
-  const project = projects[current]
-
-  const variants = {
-    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? "-100%" : "100%", opacity: 0 }),
-  }
-
   if (total === 0) {
     return (
       <div className="text-center text-slate-500 py-12">
@@ -74,211 +66,225 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
     )
   }
 
+  const project = projects[current]
+
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? "20%" : "-20%",
+      opacity: 0,
+      scale: 0.95,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? "-20%" : "20%",
+      opacity: 0,
+      scale: 0.95,
+    }),
+  }
+
   return (
-    <div className="w-full">
-      {/* Main Carousel */}
-      <div
-        className="relative w-full overflow-hidden rounded-3xl cursor-grab active:cursor-grabbing select-none"
+    <div className="w-full relative max-w-6xl mx-auto">
+      
+      {/* Navigation & Controls Overlay - Hidden on Mobile, Visible on Desktop */}
+      <div className="hidden md:flex absolute top-1/2 -left-6 -translate-y-1/2 z-30">
+        <button
+          onClick={prev}
+          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all hover:scale-110"
+          aria-label="Previous"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+      </div>
+      <div className="hidden md:flex absolute top-1/2 -right-6 -translate-y-1/2 z-30">
+        <button
+          onClick={next}
+          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all hover:scale-110"
+          aria-label="Next"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Main Carousel Area */}
+      <div 
+        className="relative w-full overflow-hidden rounded-[2rem] cursor-grab active:cursor-grabbing select-none bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 shadow-2xl dark:shadow-none"
         onMouseDown={onDragStart}
         onMouseUp={onDragEnd}
         onMouseLeave={() => setIsDragging(false)}
         onTouchStart={onDragStart}
         onTouchEnd={onDragEnd}
       >
-        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={project.id}
             custom={direction}
-            variants={variants}
+            variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ type: "spring", stiffness: 300, damping: 35 }}
-            className="w-full"
+            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+            className="w-full min-h-[500px] md:min-h-[600px] flex flex-col lg:flex-row relative"
           >
-            {/* Card */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-xl dark:shadow-none">
-              {/* Left — Mockup Preview */}
-              <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-6 md:p-10 flex items-center justify-center min-h-[280px] md:min-h-[420px] overflow-hidden">
-                {/* Glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-lime-400/10 via-transparent to-emerald-400/5 pointer-events-none" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-lime-400/10 rounded-full blur-[80px] pointer-events-none" />
+            {/* Background Glow specific to slide */}
+            <div className="absolute inset-0 bg-gradient-to-br from-lime-400/5 via-transparent to-transparent pointer-events-none" />
 
-                {/* Desktop Mockup */}
-                <div className="relative w-full max-w-[480px] group">
-                  <div className="relative bg-white dark:bg-slate-950 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                    {/* Browser bar */}
-                    <div className="h-8 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                      </div>
-                      <div className="flex-1 mx-3 h-4 bg-slate-200 dark:bg-slate-700 rounded-full text-[9px] text-slate-400 flex items-center px-2 truncate">
-                        {project.websiteUrl ?? "https://example.com"}
-                      </div>
-                    </div>
-                    {/* Screenshot */}
-                    <div className="relative aspect-[16/9] overflow-hidden bg-slate-50 dark:bg-slate-950">
-                      {project.desktopImage ? (
-                        <Image
-                          src={project.desktopImage}
-                          alt={project.title}
-                          fill
-                          className="object-cover object-top"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-700">
-                          <Monitor className="w-16 h-16" />
-                        </div>
-                      )}
-                    </div>
+            {/* Left Content (Text) */}
+            <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center relative z-10 lg:max-w-[45%]">
+              <div className="mb-auto">
+                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-lime-600 dark:text-lime-400 mb-6">
+                  <span className="w-2 h-2 rounded-full bg-lime-500 animate-pulse" />
+                  {project.category}
+                </span>
+
+                <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
+                  {project.title}
+                </h3>
+
+                {project.description && (
+                  <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed mb-8 font-light">
+                    {project.description}
+                  </p>
+                )}
+
+                {/* Device Support Icons */}
+                <div className="flex items-center gap-4 mb-10 opacity-70">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+                    <Monitor className="w-5 h-5" />
+                    <span>Desktop</span>
                   </div>
-
-                  {/* Mobile Mockup overlay */}
                   {project.mobileImage && (
-                    <div className="absolute -bottom-4 -right-2 md:-right-6 w-[22%] aspect-[9/19] bg-slate-950 rounded-[14px] shadow-2xl border-[3px] border-slate-700 overflow-hidden z-10">
-                      <div className="absolute top-0 inset-x-0 h-3 bg-slate-800 rounded-b-lg w-1/2 mx-auto z-20" />
-                      <div className="relative w-full h-full overflow-hidden">
-                        <Image
-                          src={project.mobileImage}
-                          alt={`${project.title} mobile`}
-                          fill
-                          className="object-cover object-top"
-                          sizes="15vw"
-                          unoptimized
-                        />
+                    <>
+                      <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+                        <Smartphone className="w-5 h-5" />
+                        <span>Mobile</span>
                       </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Button */}
+              {project.websiteUrl && (
+                <div className="mt-auto pt-6 border-t border-slate-200 dark:border-white/10">
+                  <Link
+                    href={project.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-3 text-slate-900 dark:text-white font-bold hover:text-lime-600 dark:hover:text-lime-400 transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span>Visit Live Website</span>
+                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-lime-400 group-hover:text-slate-950 transition-colors">
+                      <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Right Content (Images) */}
+            <div className="flex-1 relative min-h-[300px] lg:min-h-full overflow-hidden bg-slate-200/50 dark:bg-slate-950/50 flex items-end justify-center lg:justify-end pt-12 px-8 lg:px-0">
+               {/* Decorative background shape */}
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-t from-lime-400/20 to-transparent blur-3xl rounded-full opacity-50 pointer-events-none" />
+
+              {/* Desktop Image Container */}
+              <div className="relative w-full max-w-[500px] lg:max-w-none lg:w-[120%] lg:-translate-x-[10%] rounded-t-2xl shadow-2xl border-t border-x border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden group">
+                
+                {/* Minimal Browser Chrome */}
+                <div className="h-6 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 gap-1.5">
+                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
+                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
+                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
+                </div>
+
+                <div className="relative aspect-[16/10] bg-slate-100 dark:bg-slate-950 overflow-hidden">
+                  {project.desktopImage ? (
+                    <Image
+                      src={project.desktopImage}
+                      alt={project.title}
+                      fill
+                      className="object-cover object-top transition-transform duration-[15000ms] ease-linear group-hover:object-bottom"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                      priority
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Monitor className="w-12 h-12 text-slate-300 dark:text-slate-800" />
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Right — Info */}
-              <div className="flex flex-col justify-between p-8 md:p-10">
-                <div>
-                  {/* Category badge */}
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-lime-600 dark:text-lime-400 bg-lime-50 dark:bg-lime-400/10 border border-lime-200 dark:border-lime-400/20 px-3 py-1 rounded-full mb-5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-lime-500 dark:bg-lime-400" />
-                    {project.category}
-                  </span>
-
-                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4 leading-tight">
-                    {project.title}
-                  </h3>
-
-                  {project.description && (
-                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
-                      {project.description}
-                    </p>
-                  )}
-
-                  {/* Device icons */}
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
-                      <Monitor className="w-4 h-4" />
-                      <span>Desktop</span>
-                    </div>
-                    {project.mobileImage && (
-                      <>
-                        <span className="text-slate-200 dark:text-slate-700">•</span>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
-                          <Smartphone className="w-4 h-4" />
-                          <span>Mobile</span>
-                        </div>
-                      </>
-                    )}
+              {/* Mobile Image Container - Floating over desktop */}
+              {project.mobileImage && (
+                <div className="absolute bottom-4 left-4 lg:left-[-10%] lg:bottom-12 w-[28%] max-w-[140px] aspect-[9/19] rounded-[1.5rem] md:rounded-[2rem] border-[4px] md:border-[6px] border-slate-900 dark:border-black bg-slate-900 shadow-2xl overflow-hidden z-20 hover:-translate-y-2 transition-transform duration-500">
+                  <div className="absolute top-0 inset-x-0 h-4 bg-slate-900 rounded-b-xl w-[40%] mx-auto z-30" />
+                  <div className="relative w-full h-full bg-slate-950 overflow-hidden group">
+                    <Image
+                      src={project.mobileImage}
+                      alt={`${project.title} mobile`}
+                      fill
+                      className="object-cover object-top transition-transform duration-[15000ms] ease-linear group-hover:object-bottom"
+                      sizes="20vw"
+                      unoptimized
+                    />
                   </div>
                 </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  {project.websiteUrl && (
-                    <Link
-                      href={project.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold text-sm px-6 py-3 rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-lime-500/30"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      เข้าชมเว็บไซต์
-                    </Link>
-                  )}
-                </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Prev / Next Buttons */}
-        <button
-          onClick={prev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-white/10 shadow-lg flex items-center justify-center text-slate-700 dark:text-white hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all"
-          aria-label="Previous"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-white/10 shadow-lg flex items-center justify-center text-slate-700 dark:text-white hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all"
-          aria-label="Next"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
       </div>
 
-      {/* Dots + Counter */}
-      <div className="flex items-center justify-center gap-4 mt-8">
-        <span className="text-xs text-slate-400 dark:text-slate-500 font-mono tabular-nums">
-          {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </span>
-        <div className="flex items-center gap-2">
+      {/* Pagination & Mobile Controls */}
+      <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+        
+        {/* Mobile Nav */}
+        <div className="flex items-center gap-4 md:hidden">
+          <button onClick={prev} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white">
+            {String(current + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(total).padStart(2, "0")}
+          </span>
+          <button onClick={next} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400">
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Desktop Counter */}
+        <div className="hidden md:block text-sm font-bold font-mono text-slate-900 dark:text-white">
+            {String(current + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(total).padStart(2, "0")}
+        </div>
+
+        {/* Custom Progress Dots */}
+        <div className="flex items-center gap-2 bg-white dark:bg-slate-900 py-2 px-4 rounded-full border border-slate-200 dark:border-white/5 shadow-sm">
           {projects.map((_, i) => (
             <button
               key={i}
               onClick={() => go(i, i > current ? 1 : -1)}
-              className={`transition-all duration-300 rounded-full ${
-                i === current
-                  ? "w-8 h-2 bg-lime-500 dark:bg-lime-400"
-                  : "w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500"
-              }`}
+              className="relative py-2 px-1 group"
               aria-label={`Go to slide ${i + 1}`}
-            />
+            >
+              <div 
+                className={`transition-all duration-500 rounded-full ${
+                  i === current
+                    ? "w-8 h-2 bg-lime-500"
+                    : "w-2 h-2 bg-slate-200 dark:bg-slate-700 group-hover:bg-slate-400 dark:group-hover:bg-slate-500"
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Thumbnail Strip */}
-      <div className="flex gap-3 mt-6 overflow-x-auto pb-2 scrollbar-hide">
-        {projects.map((p, i) => (
-          <button
-            key={p.id}
-            onClick={() => go(i, i > current ? 1 : -1)}
-            className={`flex-shrink-0 relative w-20 h-14 md:w-28 md:h-18 rounded-xl overflow-hidden border-2 transition-all duration-300 ${
-              i === current
-                ? "border-lime-500 dark:border-lime-400 shadow-lg shadow-lime-500/20 scale-105"
-                : "border-transparent opacity-50 hover:opacity-80"
-            }`}
-          >
-            {p.desktopImage ? (
-              <Image
-                src={p.desktopImage}
-                alt={p.title}
-                fill
-                className="object-cover object-top"
-                sizes="112px"
-                unoptimized
-              />
-            ) : (
-              <div className="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                <FolderOpen className="w-5 h-5 text-slate-400" />
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
     </div>
   )
 }
+

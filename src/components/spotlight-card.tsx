@@ -43,7 +43,7 @@ export function SpotlightCard({ children, className = "" }: { children: React.Re
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden rounded-3xl border border-white/8 bg-slate-900/40 p-8 shadow-2xl transition-all duration-300 hover:border-white/20 hover:bg-slate-900/60 hover:-translate-y-1 ${className}`}
+      className={`relative overflow-hidden transition-all duration-300 ${className}`}
     >
       <div
         className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
@@ -52,7 +52,7 @@ export function SpotlightCard({ children, className = "" }: { children: React.Re
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(163,230,53,0.1), transparent 40%)`,
         }}
       />
-      <div className="relative z-10">{children}</div>
+      {children}
     </div>
   )
 }

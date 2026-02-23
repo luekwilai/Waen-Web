@@ -62,7 +62,7 @@ export function PackagesSection() {
           /* ===== POPULAR CARD — full dark with lime accent ===== */
           <SpotlightCard
             key={pkg.id}
-            className="relative rounded-3xl bg-slate-900 dark:bg-slate-950 border border-lime-500/30 shadow-2xl shadow-lime-500/10 flex flex-col h-full lg:order-none"
+            className="flex-1 relative rounded-3xl bg-slate-900 dark:bg-slate-950 border border-lime-500/30 shadow-2xl shadow-lime-500/10 flex flex-col h-full lg:order-none"
           >
             {/* Top glow line */}
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent rounded-t-3xl" />
@@ -126,7 +126,7 @@ export function PackagesSection() {
           /* ===== REGULAR CARD ===== */
           <SpotlightCard
             key={pkg.id}
-            className={`relative z-10 bg-white dark:bg-slate-900 rounded-3xl p-8 xl:p-10 border transition-all duration-300 ${
+            className={`flex-1 relative z-10 bg-white dark:bg-slate-900 rounded-3xl p-8 xl:p-10 border transition-all duration-300 flex flex-col ${
               pkg.isPopular
                 ? "border-lime-500 shadow-2xl shadow-lime-500/10 dark:shadow-lime-500/5"
                 : "border-slate-200 dark:border-white/10 hover:border-lime-500/50 hover:shadow-xl dark:hover:shadow-lime-500/5"

@@ -22,6 +22,8 @@ import {
   MessageSquare,
 } from "lucide-react"
 
+export const revalidate = 0
+
 export default function HomePage() {
   return (
     <div className="min-h-screen font-sans">

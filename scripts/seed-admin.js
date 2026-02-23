@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs")
-require("dotenv").config()
+require("dotenv").config({ path: ".env.local" })
 const { PrismaClient } = require("@prisma/client")
 const { PrismaNeon } = require("@prisma/adapter-neon")
 

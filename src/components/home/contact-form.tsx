@@ -162,7 +162,7 @@ export function ContactForm() {
                 )}
               </span>
             </Button>
-            <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-4 font-medium">
+            <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-4 mb-0 font-medium">
               * ข้อมูลของคุณจะถูกเก็บเป็นความลับและไม่ถูกนำไปเผยแพร่
             </p>
           </div>

@@ -1,180 +1,243 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageSquare, PenTool, Code, Rocket } from "lucide-react"
+import { MessageSquare, PenTool, Code2, Rocket, CheckCircle } from "lucide-react"
 
 const steps = [
   {
+    num: "01",
     title: "พูดคุยและวางแผน",
-    description: "รับฟังความต้องการ วิเคราะห์กลุ่มเป้าหมาย และวางโครงสร้างเว็บไซต์",
+    description: "เราเริ่มต้นด้วยการรับฟังความต้องการของคุณอย่างละเอียด วิเคราะห์กลุ่มเป้าหมาย และวางโครงสร้างเว็บไซต์ร่วมกัน",
     icon: MessageSquare,
-    color: "from-blue-400 to-indigo-500",
-    shadow: "shadow-blue-500/20"
+    tags: ["รับฟังความต้องการ", "วิเคราะห์ธุรกิจ", "วางโครงสร้าง"],
+    duration: "1–2 วัน",
+    gradient: "from-blue-500 to-indigo-600",
+    glow: "shadow-blue-500/20",
+    light: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
   {
+    num: "02",
     title: "ออกแบบ UI/UX",
-    description: "สร้าง Prototype เพื่อให้เห็นภาพรวมและรูปแบบการใช้งานจริง",
+    description: "สร้าง Mockup และ Prototype ให้เห็นภาพรวมก่อนการพัฒนา รับรีวิวและแก้ไขได้จนกว่าจะพอใจ",
     icon: PenTool,
-    color: "from-indigo-400 to-purple-500",
-    shadow: "shadow-indigo-500/20"
+    tags: ["Wireframe", "Mockup Design", "ปรับแก้ได้ไม่จำกัด"],
+    duration: "2–4 วัน",
+    gradient: "from-violet-500 to-purple-600",
+    glow: "shadow-violet-500/20",
+    light: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
   },
   {
+    num: "03",
     title: "พัฒนาเว็บไซต์",
-    description: "เขียนโค้ดด้วยเทคโนโลยีล่าสุด พร้อมระบบจัดการหลังบ้าน",
-    icon: Code,
-    color: "from-purple-400 to-pink-500",
-    shadow: "shadow-purple-500/20"
+    description: "ลงมือพัฒนาด้วย WordPress และเทคโนโลยีที่ทันสมัย พร้อมระบบจัดการหลังบ้านที่ใช้งานง่าย",
+    icon: Code2,
+    tags: ["WordPress CMS", "Responsive", "SEO Ready"],
+    duration: "5–10 วัน",
+    gradient: "from-lime-500 to-emerald-600",
+    glow: "shadow-lime-500/20",
+    light: "bg-lime-500/10 text-lime-700 dark:text-lime-400",
   },
   {
+    num: "04",
     title: "ส่งมอบและดูแล",
-    description: "ทดสอบระบบ นำขึ้นใช้งานจริง พร้อมบริการดูแลหลังการขาย",
+    description: "ทดสอบระบบครบถ้วน นำขึ้น Hosting จริง สอนการใช้งาน และให้บริการดูแลต่อเนื่องฟรี 3 เดือน",
     icon: Rocket,
-    color: "from-pink-400 to-rose-500",
-    shadow: "shadow-pink-500/20"
+    tags: ["ทดสอบระบบ", "ดูแลฟรี 3 เดือน", "สอนการใช้งาน"],
+    duration: "1–2 วัน",
+    gradient: "from-amber-500 to-orange-600",
+    glow: "shadow-amber-500/20",
+    light: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
   },
 ]
 
 export function ProcessSection() {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!containerRef.current) return
-      
-      const rect = containerRef.current.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-      
-      // Calculate how far the container is from the vertical center of the screen
-      const centerLine = windowHeight / 2
-      const progress = (centerLine - rect.top) / rect.height
-
-      // Map progress (0 to 1) to step index (0 to 3)
-      let index = Math.floor(progress * steps.length * 1.2)
-      if (index < 0) index = 0
-      if (index > steps.length - 1) index = steps.length - 1
-        
-      setActiveIndex(index)
+      const windowMid = window.innerHeight * 0.6
+      let best = -1
+      itemRefs.current.forEach((el, i) => {
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        if (rect.top < windowMid) best = i
+      })
+      setActiveIndex(best)
     }
-
     window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll() // Init
+    handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
-    <div ref={containerRef} className="relative max-w-6xl mx-auto py-20">
-      {/* Desktop SVG Line */}
-      <div className="hidden md:block absolute top-[100px] left-[12%] right-[12%] h-2 pointer-events-none z-0">
-        <svg width="100%" height="100%" className="overflow-visible">
-          {/* Base dashed line */}
-          <line
-            x1="0" y1="50%" x2="100%" y2="50%"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeDasharray="8 8"
-            className="text-slate-200 dark:text-white/10 transition-colors duration-500"
-          />
-          {/* Animated glowing line */}
-          <line
-            x1="0" y1="50%" x2="100%" y2="50%"
-            stroke="currentColor"
-            strokeWidth="4"
-            strokeDasharray="8 8"
-            className="text-lime-500 dark:text-lime-400 transition-all duration-700 ease-out drop-shadow-[0_0_8px_rgba(132,204,22,0.6)]"
-            style={{ 
-              clipPath: `inset(0 ${100 - (activeIndex / (steps.length - 1)) * 100}% 0 0)`
-            }}
-          />
-        </svg>
+    <div ref={containerRef} className="relative max-w-5xl mx-auto">
+      {/* Vertical spine line */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px hidden md:block pointer-events-none">
+        <div className="h-full bg-gradient-to-b from-transparent via-slate-200 dark:via-white/10 to-transparent" />
       </div>
 
-      {/* Mobile SVG Line */}
-      <div className="md:hidden absolute top-[10%] bottom-[10%] left-10 w-2 pointer-events-none z-0">
-        <svg height="100%" width="100%" className="overflow-visible">
-          <line
-            x1="50%" y1="0" x2="50%" y2="100%"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeDasharray="8 8"
-            className="text-slate-200 dark:text-white/10 transition-colors duration-500"
-          />
-          <line
-            x1="50%" y1="0" x2="50%" y2="100%"
-            stroke="currentColor"
-            strokeWidth="4"
-            strokeDasharray="8 8"
-            className="text-lime-500 dark:text-lime-400 transition-all duration-700 ease-out drop-shadow-[0_0_8px_rgba(132,204,22,0.6)]"
-            style={{ 
-              clipPath: `inset(0 0 ${100 - (activeIndex / (steps.length - 1)) * 100}% 0)`
-            }}
-          />
-        </svg>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
+      <div className="space-y-16 md:space-y-24">
         {steps.map((step, index) => {
+          const isLeft = index % 2 === 0
           const isActive = index <= activeIndex
           const isCurrent = index === activeIndex
           const Icon = step.icon
-          
+
           return (
-            <div 
-              key={step.title}
-              className={`relative flex flex-row md:flex-col items-center md:text-center gap-6 md:gap-8 transition-all duration-700 ease-out group ${
-                isActive ? "opacity-100 translate-y-0" : "opacity-30 md:translate-y-8 translate-x-4 md:translate-x-0"
+            <div
+              key={step.num}
+              ref={(el) => { itemRefs.current[index] = el }}
+              className={`relative grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-6 md:gap-8 transition-all duration-700 ${
+                isActive ? "opacity-100" : "opacity-40"
               }`}
             >
-              {/* Icon Container */}
-              <div className="relative shrink-0">
-                {/* Ping animation for current step */}
-                {isCurrent && (
-                  <div className="absolute inset-0 rounded-2xl bg-lime-500 dark:bg-lime-400 animate-ping opacity-25" />
-                )}
-                
-                {/* Active glow */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-tr ${step.color} blur-xl transition-opacity duration-500 ${
-                  isActive ? "opacity-30 dark:opacity-40" : "opacity-0"
-                }`} />
-                
-                {/* Main Icon Box */}
-                <div className={`relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center border transition-all duration-500 bg-white dark:bg-slate-900 ${
-                  isActive 
-                    ? `border-lime-500 dark:border-lime-400 shadow-xl ${step.shadow} scale-110` 
-                    : "border-slate-200 dark:border-white/10 shadow-sm scale-100"
-                }`}>
-                  <Icon className={`w-8 h-8 md:w-10 md:h-10 transition-colors duration-500 ${
-                    isActive ? "text-lime-600 dark:text-lime-400" : "text-slate-400 dark:text-slate-500"
-                  }`} />
-                  
-                  {/* Step Number Badge */}
-                  <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-500 ${
-                    isActive 
-                      ? "bg-lime-500 dark:bg-lime-400 border-white dark:border-slate-950 text-white dark:text-slate-950" 
-                      : "bg-slate-100 dark:bg-slate-800 border-white dark:border-slate-950 text-slate-500 dark:text-slate-400"
-                  }`}>
-                    {index + 1}
+              {/* Left Column (Col 1) */}
+              <div className="flex justify-end text-right">
+                {isLeft ? (
+                  <div className="w-full max-w-md">
+                    <StepCard step={step} isActive={isActive} align="right" />
                   </div>
+                ) : (
+                  <div className="hidden md:flex w-full max-w-md justify-end">
+                    <DurationBadge duration={step.duration} light={step.light} isActive={isActive} />
+                  </div>
+                )}
+              </div>
+
+              {/* Center Column (Col 2) */}
+              <div className="flex md:flex-col items-center justify-start md:justify-center gap-4 md:gap-0">
+                {/* Step number above node (desktop) */}
+                <div className="hidden md:flex flex-col items-center mb-4">
+                  <span className={`text-xs font-black uppercase tracking-[0.2em] transition-colors duration-500 ${isActive ? "text-slate-400 dark:text-slate-500" : "text-slate-300 dark:text-slate-700"}`}>
+                    STEP
+                  </span>
+                  <span className={`text-4xl font-black leading-none transition-colors duration-500 ${isActive ? "text-slate-900 dark:text-white" : "text-slate-200 dark:text-slate-800"}`}>
+                    {step.num}
+                  </span>
+                </div>
+
+                {/* Icon node */}
+                <div className="relative shrink-0">
+                  {isCurrent && (
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-tr ${step.gradient} blur-xl opacity-40 animate-pulse`} />
+                  )}
+                  <div className={`relative w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center border-2 transition-all duration-500 ${
+                    isActive
+                      ? `bg-white dark:bg-slate-900 border-transparent shadow-xl ${step.glow}`
+                      : "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/8"
+                  }`}>
+                    {isActive && (
+                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-tr ${step.gradient} opacity-10`} />
+                    )}
+                    <Icon className={`w-7 h-7 md:w-8 md:h-8 relative z-10 transition-colors duration-500 ${isActive ? step.light.split(" ")[1] + " " + step.light.split(" ")[2] : "text-slate-400 dark:text-slate-600"}`} />
+                  </div>
+                  {isActive && index < steps.length - 1 && (
+                    <div className="hidden md:flex absolute -bottom-16 left-1/2 -translate-x-1/2 h-12 w-px bg-gradient-to-b from-lime-400/60 to-transparent" />
+                  )}
+                </div>
+
+                {/* Mobile: step num */}
+                <div className="md:hidden">
+                  <span className="text-xs font-black uppercase tracking-widest text-slate-400">Step {step.num}</span>
+                  <div className="font-black text-2xl text-slate-900 dark:text-white leading-tight">{step.title}</div>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="flex-1 md:px-2">
-                <h3 className={`text-xl md:text-2xl font-bold mb-3 transition-colors duration-500 ${
-                  isActive ? "text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400"
-                }`}>
-                  {step.title}
-                </h3>
-                <p className={`text-sm md:text-base leading-relaxed transition-colors duration-500 ${
-                  isActive ? "text-slate-600 dark:text-slate-300" : "text-slate-400 dark:text-slate-500"
-                }`}>
-                  {step.description}
-                </p>
+              {/* Right Column (Col 3) */}
+              <div className="hidden md:flex justify-start text-left">
+                {!isLeft ? (
+                  <div className="w-full max-w-md">
+                    <StepCard step={step} isActive={isActive} align="left" />
+                  </div>
+                ) : (
+                  <div className="hidden md:flex w-full max-w-md justify-start">
+                    <DurationBadge duration={step.duration} light={step.light} isActive={isActive} />
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile card (shown below icon row) */}
+              <div className="md:hidden col-span-1">
+                <MobileStepCard step={step} isActive={isActive} />
               </div>
             </div>
           )
         })}
       </div>
+
+      {/* Final checkmark */}
+      <div className={`hidden md:flex flex-col items-center mt-16 gap-3 transition-all duration-700 ${activeIndex >= steps.length - 1 ? "opacity-100" : "opacity-30"}`}>
+        <div className="w-14 h-14 rounded-full bg-lime-400 flex items-center justify-center shadow-xl shadow-lime-500/30">
+          <CheckCircle className="w-7 h-7 text-slate-950" />
+        </div>
+        <span className="text-sm font-bold text-slate-900 dark:text-white">เว็บไซต์ของคุณพร้อมใช้งาน!</span>
+        <span className="text-xs text-slate-500">ภายใน 7–14 วันทำการ</span>
+      </div>
+    </div>
+  )
+}
+
+function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: boolean, align: "left" | "right" }) {
+  return (
+    <div className={`hidden md:block rounded-2xl border p-6 transition-all duration-500 ${
+      isActive
+        ? "bg-white dark:bg-slate-900/80 border-slate-200 dark:border-white/10 shadow-xl"
+        : "bg-slate-50/50 dark:bg-slate-900/20 border-slate-200/50 dark:border-white/5"
+    } ${align === "right" ? "text-right" : "text-left"}`}>
+      <h3 className={`text-xl font-black mb-2 transition-colors duration-500 ${isActive ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-600"}`}>
+        {step.title}
+      </h3>
+      <p className={`text-sm leading-relaxed mb-4 transition-colors duration-500 ${isActive ? "text-slate-500 dark:text-slate-400" : "text-slate-300 dark:text-slate-700"}`}>
+        {step.description}
+      </p>
+      <div className={`flex flex-wrap gap-2 ${align === "right" ? "justify-end" : "justify-start"}`}>
+        {step.tags.map((tag) => (
+          <span
+            key={tag}
+            className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-all duration-500 ${
+              isActive ? step.light : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600"
+            }`}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MobileStepCard({ step, isActive }: { step: typeof steps[0]; isActive: boolean }) {
+  return (
+    <div className={`rounded-2xl border p-5 transition-all duration-500 ${
+      isActive
+        ? "bg-white dark:bg-slate-900/80 border-slate-200 dark:border-white/10 shadow-lg"
+        : "bg-slate-50/50 dark:bg-slate-900/20 border-slate-200/50 dark:border-white/5"
+    }`}>
+      <p className={`text-sm leading-relaxed mb-3 transition-colors duration-500 ${isActive ? "text-slate-500 dark:text-slate-400" : "text-slate-300 dark:text-slate-600"}`}>
+        {step.description}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {step.tags.map((tag) => (
+          <span key={tag} className={`text-xs font-semibold px-2.5 py-1 rounded-full ${isActive ? step.light : "bg-slate-100 dark:bg-slate-800 text-slate-400"}`}>
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DurationBadge({ duration, light, isActive }: { duration: string; light: string; isActive: boolean }) {
+  return (
+    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold transition-all duration-500 ${
+      isActive
+        ? `${light} border-current/20`
+        : "bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 border-slate-200 dark:border-white/5"
+    }`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+      ใช้เวลา {duration}
     </div>
   )
 }

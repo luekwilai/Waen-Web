@@ -274,17 +274,23 @@ export default function HomePage() {
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
+      <section id="portfolio" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <ScrollReveal className="text-center mb-16">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">ผลงาน</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ผลงานที่ผ่านมา</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 font-light">ตัวอย่างเว็บไซต์ที่ออกแบบรองรับทุกอุปกรณ์</p>
-          </ScrollReveal>
-          <ScrollReveal delay={150}>
-            <PortfolioSection />
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500 animate-pulse" />
+              ผลงาน
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500 animate-pulse" />
+            </span>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+              ผลงาน<span className="text-lime-500 dark:text-lime-400">ที่ผ่านมา</span>
+            </h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400 font-light max-w-lg mx-auto">ตัวอย่างเว็บไซต์ที่ออกแบบรองรับทุกอุปกรณ์</p>
           </ScrollReveal>
         </div>
+        <ScrollReveal delay={150}>
+          <PortfolioSection />
+        </ScrollReveal>
       </section>
 
       {/* Packages Section */}

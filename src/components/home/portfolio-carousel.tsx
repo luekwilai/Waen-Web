@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, ChevronLeft, ChevronRight, FolderOpen, Monitor, Smartphone } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, FolderOpen, MonitorSmartphone } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 type Project = {
@@ -19,45 +19,109 @@ type Project = {
 }
 
 export function PortfolioCarousel({ projects }: { projects: Project[] }) {
-  const [current, setCurrent] = useState(0)
+  const [cardsPerView, setCardsPerView] = useState(1)
+  const [page, setPage] = useState(0)
   const [direction, setDirection] = useState(1)
+  const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
-  const dragStart = useRef(0)
-  const autoplayRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dragStartX = useRef<number | null>(null)
 
   const total = projects.length
+  const hasProjects = total > 0
 
-  const go = useCallback(
-    (idx: number, dir: number) => {
-      setDirection(dir)
-      setCurrent((idx + total) % total)
-    },
-    [total]
-  )
-
-  const prev = () => go(current - 1, -1)
-  const next = () => go(current + 1, 1)
-
-  // Autoplay
   useEffect(() => {
-    autoplayRef.current = setTimeout(() => go(current + 1, 1), 6000)
-    return () => { if (autoplayRef.current) clearTimeout(autoplayRef.current) }
-  }, [current, go])
+    const calculateCardsPerView = () => {
+      if (window.innerWidth >= 1280) return 3
+      if (window.innerWidth >= 768) return 2
+      return 1
+    }
 
-  // Touch / drag
-  const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const apply = () => setCardsPerView(calculateCardsPerView())
+    apply()
+    window.addEventListener("resize", apply)
+    return () => window.removeEventListener("resize", apply)
+  }, [])
+
+  const pageCount = total <= cardsPerView ? 1 : total
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, Math.max(0, pageCount - 1)))
+  }, [pageCount])
+
+  const pages = useMemo(() => {
+    if (!hasProjects) return [] as Project[][]
+
+    if (total <= cardsPerView) return [projects]
+
+    return Array.from({ length: pageCount }, (_, pageIndex) => {
+      const start = pageIndex
+      return Array.from({ length: cardsPerView }, (_, slot) => {
+        return projects[(start + slot) % total]
+      })
+    })
+  }, [cardsPerView, hasProjects, pageCount, projects, total])
+
+  const prev = useCallback(() => {
+    setDirection(-1)
+    setPage((prevPage) => (prevPage - 1 + pageCount) % pageCount)
+  }, [pageCount])
+
+  const next = useCallback(() => {
+    setDirection(1)
+    setPage((prevPage) => (prevPage + 1) % pageCount)
+  }, [pageCount])
+
+  const goTo = useCallback((idx: number, cur: number) => {
+    setDirection(idx > cur ? 1 : -1)
+    setPage((idx + pageCount) % pageCount)
+  }, [pageCount])
+
+  useEffect(() => {
+    if (pageCount <= 1 || isPaused || isDragging) return
+    const id = setInterval(() => { setDirection(1); setPage((p) => (p + 1) % pageCount) }, 5000)
+    return () => clearInterval(id)
+  }, [isDragging, isPaused, pageCount])
+
+  // Preload adjacent page images
+  useEffect(() => {
+    if (!hasProjects || typeof window === "undefined") return
+
+    const preload = (src: string | null) => {
+      if (!src) return
+      const img = new window.Image()
+      img.src = src
+    }
+
+    const nextPage = pages[(page + 1) % pageCount] ?? []
+    const prevPage = pages[(page - 1 + pageCount) % pageCount] ?? []
+    ;[...nextPage, ...prevPage].forEach((project) => {
+      preload(project.desktopImage)
+      preload(project.mobileImage)
+    })
+  }, [hasProjects, page, pageCount, pages])
+
+  const onPointerStart = (clientX: number) => {
     setIsDragging(true)
-    dragStart.current = "touches" in e ? e.touches[0].clientX : e.clientX
-  }
-  const onDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return
-    setIsDragging(false)
-    const end = "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX
-    const diff = dragStart.current - end
-    if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
+    setIsPaused(true)
+    dragStartX.current = clientX
   }
 
-  if (total === 0) {
+  const onPointerEnd = (clientX: number) => {
+    if (!isDragging) return
+
+    const startX = dragStartX.current
+    dragStartX.current = null
+    setIsDragging(false)
+    setIsPaused(false)
+
+    if (startX === null) return
+    const delta = startX - clientX
+    if (Math.abs(delta) < 50) return
+    if (delta > 0) next()
+    else prev()
+  }
+
+  if (!hasProjects) {
     return (
       <div className="text-center text-slate-500 py-12">
         <FolderOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
@@ -66,225 +130,231 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
     )
   }
 
-  const project = projects[current]
-
   const slideVariants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? "20%" : "-20%",
-      opacity: 0,
-      scale: 0.95,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? "-20%" : "20%",
-      opacity: 0,
-      scale: 0.95,
+    enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? "-40%" : "40%", opacity: 0, scale: 0.97 }),
+  }
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: (i: number) => ({
+      opacity: 1, y: 0, scale: 1,
+      transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" as const },
     }),
   }
 
   return (
-    <div className="w-full relative max-w-6xl mx-auto">
-      
-      {/* Navigation & Controls Overlay - Hidden on Mobile, Visible on Desktop */}
-      <div className="hidden md:flex absolute top-1/2 -left-6 -translate-y-1/2 z-30">
-        <button
-          onClick={prev}
-          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all hover:scale-110"
-          aria-label="Previous"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-      </div>
-      <div className="hidden md:flex absolute top-1/2 -right-6 -translate-y-1/2 z-30">
-        <button
-          onClick={next}
-          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all hover:scale-110"
-          aria-label="Next"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
+    <div className="w-full relative">
+      {/* Ambient glow */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[120%] pointer-events-none overflow-hidden">
+        <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-[40vw] h-[40vw] bg-lime-400/10 dark:bg-lime-400/8 rounded-full blur-[100px]" />
+        <div className="absolute right-1/4 top-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-emerald-400/8 dark:bg-emerald-400/6 rounded-full blur-[80px]" />
       </div>
 
-      {/* Main Carousel Area */}
-      <div 
-        className="relative w-full overflow-hidden rounded-[2rem] cursor-grab active:cursor-grabbing select-none bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 shadow-2xl dark:shadow-none"
-        onMouseDown={onDragStart}
-        onMouseUp={onDragEnd}
-        onMouseLeave={() => setIsDragging(false)}
-        onTouchStart={onDragStart}
-        onTouchEnd={onDragEnd}
+      {/* Nav arrows */}
+      <div className="hidden md:flex absolute top-[42%] left-4 -translate-y-1/2 z-20">
+        <motion.button
+          onClick={prev}
+          disabled={pageCount <= 1}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.92 }}
+          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 hover:shadow-lime-400/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Previous"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </motion.button>
+      </div>
+      <div className="hidden md:flex absolute top-[42%] right-4 -translate-y-1/2 z-20">
+        <motion.button
+          onClick={next}
+          disabled={pageCount <= 1}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.92 }}
+          className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 hover:shadow-lime-400/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Next"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
+      </div>
+
+      {/* Slide track */}
+      <div
+        className="relative overflow-hidden select-none px-4 sm:px-6 lg:px-10"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => { setIsPaused(false); setIsDragging(false); dragStartX.current = null }}
+        onMouseDown={(e) => onPointerStart(e.clientX)}
+        onMouseUp={(e) => onPointerEnd(e.clientX)}
+        onTouchStart={(e) => onPointerStart(e.touches[0].clientX)}
+        onTouchEnd={(e) => onPointerEnd(e.changedTouches[0].clientX)}
       >
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
-            key={project.id}
+            key={page}
             custom={direction}
             variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-            className="w-full min-h-[500px] md:min-h-[600px] flex flex-col lg:flex-row relative"
+            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            className="w-full"
           >
-            {/* Background Glow specific to slide */}
-            <div className="absolute inset-0 bg-gradient-to-br from-lime-400/5 via-transparent to-transparent pointer-events-none" />
-
-            {/* Left Content (Text) */}
-            <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center relative z-10 lg:max-w-[45%]">
-              <div className="mb-auto">
-                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-lime-600 dark:text-lime-400 mb-6">
-                  <span className="w-2 h-2 rounded-full bg-lime-500 animate-pulse" />
-                  {project.category}
-                </span>
-
-                <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
-                  {project.title}
-                </h3>
-
-                {project.description && (
-                  <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed mb-8 font-light">
-                    {project.description}
-                  </p>
-                )}
-
-                {/* Device Support Icons */}
-                <div className="flex items-center gap-4 mb-10 opacity-70">
-                  <div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
-                    <Monitor className="w-5 h-5" />
-                    <span>Desktop</span>
-                  </div>
-                  {project.mobileImage && (
-                    <>
-                      <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                      <div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
-                        <Smartphone className="w-5 h-5" />
-                        <span>Mobile</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Button */}
-              {project.websiteUrl && (
-                <div className="mt-auto pt-6 border-t border-slate-200 dark:border-white/10">
-                  <Link
-                    href={project.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-3 text-slate-900 dark:text-white font-bold hover:text-lime-600 dark:hover:text-lime-400 transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 py-4">
+              {(pages[page] ?? []).map((project, slot) => {
+                const isPriority = slot < cardsPerView
+                return (
+                  <motion.div
+                    key={`${project.id}-${page}-${slot}`}
+                    custom={slot}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="group relative h-full"
                   >
-                    <span>Visit Live Website</span>
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-lime-400 group-hover:text-slate-950 transition-colors">
-                      <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    {/* Hover glow ring */}
+                    <div className="absolute -inset-px rounded-[26px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-lime-400/30 via-emerald-400/15 to-transparent blur-sm pointer-events-none z-0" />
+
+                    <div className="relative z-10 h-full flex flex-col overflow-hidden rounded-[22px] border border-slate-200/80 dark:border-white/8 bg-white dark:bg-slate-900/80 shadow-lg group-hover:shadow-2xl group-hover:shadow-lime-500/10 group-hover:-translate-y-2 transition-all duration-500">
+                      {/* Screenshot */}
+                      <div className="relative aspect-[16/9] bg-slate-100 dark:bg-slate-950 overflow-hidden flex-shrink-0">
+                        {/* Browser bar */}
+                        <div className="absolute inset-x-0 top-0 h-7 bg-slate-100/98 dark:bg-slate-950/98 border-b border-slate-200 dark:border-slate-800 z-10 flex items-center px-3 gap-2">
+                          <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                          </div>
+                          {project.websiteUrl && (
+                            <div className="flex-1 h-4 bg-slate-200 dark:bg-slate-800 rounded-full text-[9px] text-slate-400 flex items-center px-2 overflow-hidden">
+                              <span className="truncate">{project.websiteUrl}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {project.desktopImage ? (
+                          <Image
+                            src={project.desktopImage}
+                            alt={project.title}
+                            fill
+                            className="object-cover object-top pt-7 transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
+                            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                            priority={isPriority}
+                            loading={isPriority ? "eager" : "lazy"}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-700">
+                            <FolderOpen className="w-10 h-10" />
+                          </div>
+                        )}
+
+                        {/* Bottom gradient */}
+                        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent pointer-events-none z-10" />
+
+                        {/* Mobile mockup */}
+                        {project.mobileImage && (
+                          <motion.div
+                            initial={{ y: 16, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: slot * 0.1 + 0.35, duration: 0.45 }}
+                            className="absolute bottom-3 right-3 w-[22%] aspect-[9/19] rounded-[14px] border-[3px] border-slate-900 bg-slate-900 overflow-hidden shadow-2xl z-20"
+                          >
+                            <div className="absolute top-0 inset-x-0 h-2.5 bg-slate-900 rounded-b-md w-1/2 mx-auto z-10" />
+                            <Image
+                              src={project.mobileImage}
+                              alt={`${project.title} mobile`}
+                              fill
+                              className="object-cover object-top transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
+                              sizes="(max-width: 767px) 22vw, (max-width: 1279px) 11vw, 8vw"
+                              loading={isPriority ? "eager" : "lazy"}
+                            />
+                          </motion.div>
+                        )}
+                      </div>
+
+                      {/* Card body */}
+                      <div className="p-5 md:p-6 flex-1 flex flex-col">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-lime-600 dark:text-lime-400">
+                            <span className="w-1.5 h-1.5 rounded-full bg-lime-500 animate-pulse" />
+                            <MonitorSmartphone className="w-3.5 h-3.5" />
+                            {project.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg md:text-xl font-black text-slate-900 dark:text-white mb-2 line-clamp-2 tracking-tight">
+                          {project.title}
+                        </h3>
+
+                        {project.description && (
+                          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 mb-5">
+                            {project.description}
+                          </p>
+                        )}
+
+                        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-white/6">
+                          {project.websiteUrl ? (
+                            <Link
+                              href={project.websiteUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group/link inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white hover:text-lime-600 dark:hover:text-lime-400 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              เข้าชมเว็บไซต์
+                              <span className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/8 flex items-center justify-center group-hover/link:bg-lime-400 group-hover/link:text-slate-950 transition-colors">
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </span>
+                            </Link>
+                          ) : (
+                            <span className="text-sm text-slate-400">ไม่มีลิงก์เว็บไซต์</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Right Content (Images) */}
-            <div className="flex-1 relative min-h-[300px] lg:min-h-full overflow-hidden bg-slate-200/50 dark:bg-slate-950/50 flex items-end justify-center lg:justify-end pt-12 px-8 lg:px-0">
-               {/* Decorative background shape */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-t from-lime-400/20 to-transparent blur-3xl rounded-full opacity-50 pointer-events-none" />
-
-              {/* Desktop Image Container */}
-              <div className="relative w-full max-w-[500px] lg:max-w-none lg:w-[120%] lg:-translate-x-[10%] rounded-t-2xl shadow-2xl border-t border-x border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden group">
-                
-                {/* Minimal Browser Chrome */}
-                <div className="h-6 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 gap-1.5">
-                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
-                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
-                   <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700" />
-                </div>
-
-                <div className="relative aspect-[16/10] bg-slate-100 dark:bg-slate-950 overflow-hidden">
-                  {project.desktopImage ? (
-                    <Image
-                      src={project.desktopImage}
-                      alt={project.title}
-                      fill
-                      className="object-cover object-top transition-transform duration-[15000ms] ease-linear group-hover:object-bottom"
-                      sizes="(max-width: 1024px) 100vw, 60vw"
-                      priority
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Monitor className="w-12 h-12 text-slate-300 dark:text-slate-800" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Mobile Image Container - Floating over desktop */}
-              {project.mobileImage && (
-                <div className="absolute bottom-4 left-4 lg:left-[-10%] lg:bottom-12 w-[28%] max-w-[140px] aspect-[9/19] rounded-[1.5rem] md:rounded-[2rem] border-[4px] md:border-[6px] border-slate-900 dark:border-black bg-slate-900 shadow-2xl overflow-hidden z-20 hover:-translate-y-2 transition-transform duration-500">
-                  <div className="absolute top-0 inset-x-0 h-4 bg-slate-900 rounded-b-xl w-[40%] mx-auto z-30" />
-                  <div className="relative w-full h-full bg-slate-950 overflow-hidden group">
-                    <Image
-                      src={project.mobileImage}
-                      alt={`${project.title} mobile`}
-                      fill
-                      className="object-cover object-top transition-transform duration-[15000ms] ease-linear group-hover:object-bottom"
-                      sizes="20vw"
-                      unoptimized
-                    />
-                  </div>
-                </div>
-              )}
+                  </motion.div>
+                )
+              })}
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Pagination & Mobile Controls */}
-      <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
-        
-        {/* Mobile Nav */}
+      {/* Controls */}
+      <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
         <div className="flex items-center gap-4 md:hidden">
-          <button onClick={prev} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400">
+          <button onClick={prev} disabled={pageCount <= 1} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all disabled:opacity-40">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white">
-            {String(current + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(total).padStart(2, "0")}
+          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white tabular-nums">
+            {String(page + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
           </span>
-          <button onClick={next} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400">
+          <button onClick={next} disabled={pageCount <= 1} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all disabled:opacity-40">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Desktop Counter */}
-        <div className="hidden md:block text-sm font-bold font-mono text-slate-900 dark:text-white">
-            {String(current + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(total).padStart(2, "0")}
+        <div className="hidden md:block text-sm font-bold font-mono text-slate-900 dark:text-white tabular-nums">
+          {String(page + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
         </div>
 
-        {/* Custom Progress Dots */}
-        <div className="flex items-center gap-2 bg-white dark:bg-slate-900 py-2 px-4 rounded-full border border-slate-200 dark:border-white/5 shadow-sm">
-          {projects.map((_, i) => (
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-900 py-2 px-4 rounded-full border border-slate-200 dark:border-white/5 shadow-sm">
+          {Array.from({ length: pageCount }).map((_, i) => (
             <button
               key={i}
-              onClick={() => go(i, i > current ? 1 : -1)}
+              onClick={() => goTo(i, page)}
+              disabled={pageCount <= 1}
               className="relative py-2 px-1 group"
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={`Go to page ${i + 1}`}
             >
-              <div 
-                className={`transition-all duration-500 rounded-full ${
-                  i === current
-                    ? "w-8 h-2 bg-lime-500"
-                    : "w-2 h-2 bg-slate-200 dark:bg-slate-700 group-hover:bg-slate-400 dark:group-hover:bg-slate-500"
-                }`}
-              />
+              <div className={`transition-all duration-500 rounded-full ${
+                i === page
+                  ? "w-8 h-2 bg-lime-500"
+                  : "w-2 h-2 bg-slate-200 dark:bg-slate-700 group-hover:bg-slate-400 dark:group-hover:bg-slate-500"
+              }`} />
             </button>
           ))}
         </div>
       </div>
-
     </div>
   )
 }
-

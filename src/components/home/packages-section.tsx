@@ -56,7 +56,7 @@ export function PackagesSection() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch pt-8">
       {packages.map((pkg) => (
         pkg.isPopular ? (
           /* ===== POPULAR CARD — full dark with lime accent ===== */

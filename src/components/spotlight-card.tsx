@@ -43,13 +43,14 @@ export function SpotlightCard({ children, className = "" }: { children: React.Re
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden transition-all duration-300 ${className}`}
+      className={`relative transition-all duration-300 ${className}`}
     >
       <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 rounded-inherit overflow-hidden"
         style={{
           opacity,
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(163,230,53,0.1), transparent 40%)`,
+          borderRadius: "inherit",
         }}
       />
       {children}

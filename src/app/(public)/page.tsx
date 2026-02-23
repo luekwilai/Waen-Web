@@ -244,7 +244,7 @@ export default function HomePage() {
               { icon: <Clock className="w-6 h-6" />, title: "ส่งงานตรงเวลา", desc: "มีการวางแผนงานที่ชัดเจน และการันตีส่งมอบงานตามกำหนดเวลาที่ตกลงไว้", delay: 500 },
             ].map((s) => (
               <ScrollReveal key={s.title} delay={s.delay}>
-                <SpotlightCard className="bg-white/60 dark:bg-slate-900/40 border-slate-200 dark:border-white/8 hover:bg-white/90 dark:hover:bg-slate-900/60">
+                <SpotlightCard className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/8 hover:bg-slate-50 dark:hover:bg-slate-900/60 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
                   <div className="w-12 h-12 bg-lime-400/20 dark:bg-lime-400/10 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-6 group-hover:bg-lime-400/30 dark:group-hover:bg-lime-400/20 transition-colors">
                     {s.icon}
                   </div>

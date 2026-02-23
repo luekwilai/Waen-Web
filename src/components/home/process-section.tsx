@@ -182,10 +182,10 @@ export function ProcessSection() {
 
 function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: boolean, align: "left" | "right" }) {
   return (
-    <SpotlightCard className={`hidden md:block rounded-2xl border p-6 transition-all duration-500 ${
+    <SpotlightCard className={`hidden md:block rounded-2xl border p-6 transition-all duration-500 shadow-sm ${
       isActive
         ? "bg-white dark:bg-slate-900/80 border-slate-200 dark:border-white/10 shadow-xl"
-        : "bg-slate-50/50 dark:bg-slate-900/20 border-slate-200/50 dark:border-white/5"
+        : "bg-white dark:bg-slate-900/20 border-slate-200/50 dark:border-white/5"
     } ${align === "right" ? "text-right" : "text-left"}`}>
       <h3 className={`text-xl font-black mb-2 transition-colors duration-500 ${isActive ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-600"}`}>
         {step.title}
@@ -211,7 +211,7 @@ function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: 
 
 function MobileStepCard({ step, isActive }: { step: typeof steps[0]; isActive: boolean }) {
   return (
-    <SpotlightCard className="h-full bg-white/60 dark:bg-slate-900/40 border-slate-200 dark:border-white/10 p-8 sm:p-10 flex flex-col items-center text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-xl dark:hover:shadow-lime-500/5 hover:-translate-y-2 transition-all duration-300">
+    <SpotlightCard className="h-full bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/10 p-8 sm:p-10 flex flex-col items-center text-center shadow-sm dark:shadow-none hover:shadow-xl dark:hover:shadow-lime-500/5 hover:-translate-y-2 transition-all duration-300">
       <p className={`text-sm leading-relaxed mb-3 transition-colors duration-500 ${isActive ? "text-slate-500 dark:text-slate-400" : "text-slate-300 dark:text-slate-600"}`}>
         {step.description}
       </p>

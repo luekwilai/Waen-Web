@@ -23,7 +23,7 @@ export async function PortfolioSection() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {projects.map((project) => (
-        <SpotlightCard key={project.id} className="overflow-hidden bg-white/60 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-white/10 hover:border-lime-500/50 hover:shadow-xl dark:hover:shadow-lime-500/5 transition-all duration-300 group">
+        <SpotlightCard key={project.id} className="overflow-hidden bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-white/10 hover:border-lime-500/50 hover:shadow-xl dark:hover:shadow-lime-500/5 transition-all duration-300 group shadow-sm">
           <div className="relative aspect-[16/10] bg-slate-100/50 dark:bg-slate-900/50 p-4 md:p-6 overflow-hidden flex items-end justify-center">
             
             {/* Desktop Mockup */}

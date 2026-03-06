@@ -50,6 +50,42 @@ export async function GET() {
   }
 }
 
+// PATCH reorder packages
+export async function PATCH(request: Request) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
+  try {
+    const data = (await request.json()) as { packageIds?: string[] }
+
+    if (!Array.isArray(data.packageIds) || data.packageIds.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid package order payload" },
+        { status: 400 }
+      )
+    }
+
+    await prisma.$transaction(
+      data.packageIds.map((id, index) =>
+        prisma.package.update({
+          where: { id },
+          data: { sortOrder: index + 1 },
+        })
+      )
+    )
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Failed to reorder packages:", error)
+    return NextResponse.json(
+      { error: "Failed to reorder packages" },
+      { status: 500 }
+    )
+  }
+}
+
 // POST create new package
 export async function POST(request: Request) {
   const adminCheck = await requireAdminApiSession()

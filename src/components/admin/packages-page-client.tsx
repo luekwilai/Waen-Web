@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type DragEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Pencil, Trash2, Star } from "lucide-react"
+import { Plus, Pencil, Trash2, Star, GripVertical } from "lucide-react"
 
 export interface AdminPackage {
   id: string
@@ -62,6 +62,9 @@ export function PackagesPageClient({ initialPackages }: { initialPackages: Admin
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingPackage, setEditingPackage] = useState<AdminPackage | null>(null)
   const [formData, setFormData] = useState<PackageFormState>(initialFormState)
+  const [draggedPackageId, setDraggedPackageId] = useState<string | null>(null)
+  const [dropTargetPackageId, setDropTargetPackageId] = useState<string | null>(null)
+  const [isReordering, setIsReordering] = useState(false)
 
   const fetchPackages = async () => {
     try {
@@ -132,10 +135,76 @@ export function PackagesPageClient({ initialPackages }: { initialPackages: Admin
     }
   }
 
-  const handleAddNew = () => {
-    setEditingPackage(null)
-    setFormData(initialFormState)
-    setDialogOpen(true)
+  const reorderPackages = (items: AdminPackage[], activeId: string, overId: string) => {
+    const fromIndex = items.findIndex((item) => item.id === activeId)
+    const toIndex = items.findIndex((item) => item.id === overId)
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) {
+      return items
+    }
+
+    const nextItems = [...items]
+    const [movedItem] = nextItems.splice(fromIndex, 1)
+    nextItems.splice(toIndex, 0, movedItem)
+    return nextItems
+  }
+
+  const handlePackageDragStart = (event: DragEvent<HTMLTableRowElement>, packageId: string) => {
+    event.dataTransfer.effectAllowed = "move"
+    event.dataTransfer.setData("text/plain", packageId)
+    setDraggedPackageId(packageId)
+  }
+
+  const handlePackageDragOver = (event: DragEvent<HTMLTableRowElement>, packageId: string) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = "move"
+    if (dropTargetPackageId !== packageId) {
+      setDropTargetPackageId(packageId)
+    }
+  }
+
+  const handlePackageDragEnd = () => {
+    setDraggedPackageId(null)
+    setDropTargetPackageId(null)
+  }
+
+  const handlePackageDrop = async (event: DragEvent<HTMLTableRowElement>, packageId: string) => {
+    event.preventDefault()
+
+    const activeId = draggedPackageId ?? event.dataTransfer.getData("text/plain")
+    if (!activeId) {
+      handlePackageDragEnd()
+      return
+    }
+
+    const previousPackages = packages
+    const nextPackages = reorderPackages(packages, activeId, packageId)
+
+    if (nextPackages === packages) {
+      handlePackageDragEnd()
+      return
+    }
+
+    setPackages(nextPackages)
+    setIsReordering(true)
+
+    try {
+      const response = await fetch("/api/packages", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ packageIds: nextPackages.map((item) => item.id) }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to reorder packages")
+      }
+    } catch (error) {
+      console.error("Failed to reorder packages:", error)
+      setPackages(previousPackages)
+    } finally {
+      setIsReordering(false)
+      handlePackageDragEnd()
+    }
   }
 
   return (
@@ -143,7 +212,10 @@ export function PackagesPageClient({ initialPackages }: { initialPackages: Admin
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">แพ็คเกจทั้งหมด</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">จัดการแพ็คเกจราคาและรายละเอียดบริการ</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            จัดการแพ็คเกจราคาและรายละเอียดบริการ ลากแถวเพื่อจัดอันดับการแสดงผล
+            {isReordering ? " กำลังบันทึกลำดับ..." : ""}
+          </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -243,6 +315,7 @@ export function PackagesPageClient({ initialPackages }: { initialPackages: Admin
         <Table>
           <TableHeader>
             <TableRow className="border-slate-200 dark:border-white/5 hover:bg-transparent bg-slate-50/50 dark:bg-slate-950/50">
+              <TableHead className="w-16 text-slate-500 dark:text-slate-400 font-semibold py-4 pl-6">ลาก</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4 pl-6">ชื่อแพ็คเกจ</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">ราคา</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">ระยะเวลา</TableHead>
@@ -253,13 +326,32 @@ export function PackagesPageClient({ initialPackages }: { initialPackages: Admin
           <TableBody>
             {packages.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-slate-500 py-12 font-medium">
+                <TableCell colSpan={6} className="text-center text-slate-500 py-12 font-medium">
                   ยังไม่มีแพ็คเกจ
                 </TableCell>
               </TableRow>
             ) : (
               packages.map((pkg) => (
-                <TableRow key={pkg.id} className="border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                <TableRow
+                  key={pkg.id}
+                  draggable={!isReordering}
+                  onDragStart={(event) => handlePackageDragStart(event, pkg.id)}
+                  onDragOver={(event) => handlePackageDragOver(event, pkg.id)}
+                  onDrop={(event) => void handlePackageDrop(event, pkg.id)}
+                  onDragEnd={handlePackageDragEnd}
+                  className={`border-slate-200 dark:border-white/5 transition-colors group ${
+                    draggedPackageId === pkg.id
+                      ? "opacity-40"
+                      : dropTargetPackageId === pkg.id
+                        ? "bg-lime-50 dark:bg-lime-400/10"
+                        : "hover:bg-slate-50 dark:hover:bg-white/5"
+                  } ${isReordering ? "cursor-wait" : "cursor-grab active:cursor-grabbing"}`}
+                >
+                  <TableCell className="pl-6 py-4 text-slate-400 dark:text-slate-500">
+                    <div className="flex items-center justify-center rounded-lg border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-slate-950/60 h-9 w-9">
+                      <GripVertical className="w-4 h-4" />
+                    </div>
+                  </TableCell>
                   <TableCell className="pl-6 py-4">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-slate-900 dark:text-white">{pkg.name}</span>

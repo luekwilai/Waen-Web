@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Pencil, Trash2, Eye, Upload, Loader2 } from "lucide-react"
+import { Plus, Pencil, Trash2, Eye, Upload, Loader2, GripVertical } from "lucide-react"
 
 export interface AdminProject {
   id: string
@@ -64,6 +64,9 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
   const [uploadingField, setUploadingField] = useState<ImageField | null>(null)
   const [dragOverField, setDragOverField] = useState<ImageField | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [draggedProjectId, setDraggedProjectId] = useState<string | null>(null)
+  const [dropTargetProjectId, setDropTargetProjectId] = useState<string | null>(null)
+  const [isReordering, setIsReordering] = useState(false)
 
   const fetchProjects = async () => {
     try {
@@ -127,13 +130,6 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
     }
   }
 
-  const handleAddNew = () => {
-    setEditingProject(null)
-    setFormData(initialFormState)
-    setUploadError(null)
-    setDialogOpen(true)
-  }
-
   const updateImageField = (field: ImageField, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
@@ -193,12 +189,87 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
     }
   }
 
+  const reorderProjects = (items: AdminProject[], activeId: string, overId: string) => {
+    const fromIndex = items.findIndex((item) => item.id === activeId)
+    const toIndex = items.findIndex((item) => item.id === overId)
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) {
+      return items
+    }
+
+    const nextItems = [...items]
+    const [movedItem] = nextItems.splice(fromIndex, 1)
+    nextItems.splice(toIndex, 0, movedItem)
+    return nextItems
+  }
+
+  const handleProjectDragStart = (event: DragEvent<HTMLTableRowElement>, projectId: string) => {
+    event.dataTransfer.effectAllowed = "move"
+    event.dataTransfer.setData("text/plain", projectId)
+    setDraggedProjectId(projectId)
+  }
+
+  const handleProjectDragOver = (event: DragEvent<HTMLTableRowElement>, projectId: string) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = "move"
+    if (dropTargetProjectId !== projectId) {
+      setDropTargetProjectId(projectId)
+    }
+  }
+
+  const handleProjectDragEnd = () => {
+    setDraggedProjectId(null)
+    setDropTargetProjectId(null)
+  }
+
+  const handleProjectDrop = async (event: DragEvent<HTMLTableRowElement>, projectId: string) => {
+    event.preventDefault()
+
+    const activeId = draggedProjectId ?? event.dataTransfer.getData("text/plain")
+    if (!activeId) {
+      handleProjectDragEnd()
+      return
+    }
+
+    const previousProjects = projects
+    const nextProjects = reorderProjects(projects, activeId, projectId)
+
+    if (nextProjects === projects) {
+      handleProjectDragEnd()
+      return
+    }
+
+    setProjects(nextProjects)
+    setIsReordering(true)
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectIds: nextProjects.map((item) => item.id) }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to reorder projects")
+      }
+    } catch (error) {
+      console.error("Failed to reorder projects:", error)
+      setProjects(previousProjects)
+    } finally {
+      setIsReordering(false)
+      handleProjectDragEnd()
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">ผลงานทั้งหมด</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">จัดการผลงาน Portfolio ที่แสดงบนหน้าเว็บไซต์</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            จัดการผลงาน Portfolio ที่แสดงบนหน้าเว็บไซต์ ลากแถวเพื่อจัดอันดับการแสดงผล
+            {isReordering ? " กำลังบันทึกลำดับ..." : ""}
+          </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -377,6 +448,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
         <Table>
           <TableHeader>
             <TableRow className="border-slate-200 dark:border-white/5 hover:bg-transparent bg-slate-50/50 dark:bg-slate-950/50">
+              <TableHead className="w-16 text-slate-500 dark:text-slate-400 font-semibold py-4 pl-6">ลาก</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4 pl-6">ชื่อโปรเจค</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">หมวดหมู่</TableHead>
               <TableHead className="text-slate-500 dark:text-slate-400 font-semibold py-4">สถานะ</TableHead>
@@ -386,13 +458,32 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
           <TableBody>
             {projects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-slate-500 py-12 font-medium">
+                <TableCell colSpan={5} className="text-center text-slate-500 py-12 font-medium">
                   ยังไม่มีผลงาน
                 </TableCell>
               </TableRow>
             ) : (
               projects.map((project) => (
-                <TableRow key={project.id} className="border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                <TableRow
+                  key={project.id}
+                  draggable={!isReordering}
+                  onDragStart={(event) => handleProjectDragStart(event, project.id)}
+                  onDragOver={(event) => handleProjectDragOver(event, project.id)}
+                  onDrop={(event) => void handleProjectDrop(event, project.id)}
+                  onDragEnd={handleProjectDragEnd}
+                  className={`border-slate-200 dark:border-white/5 transition-colors group ${
+                    draggedProjectId === project.id
+                      ? "opacity-40"
+                      : dropTargetProjectId === project.id
+                        ? "bg-lime-50 dark:bg-lime-400/10"
+                        : "hover:bg-slate-50 dark:hover:bg-white/5"
+                  } ${isReordering ? "cursor-wait" : "cursor-grab active:cursor-grabbing"}`}
+                >
+                  <TableCell className="pl-6 py-4 text-slate-400 dark:text-slate-500">
+                    <div className="flex items-center justify-center rounded-lg border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-slate-950/60 h-9 w-9">
+                      <GripVertical className="w-4 h-4" />
+                    </div>
+                  </TableCell>
                   <TableCell className="font-semibold text-slate-900 dark:text-white pl-6 py-4">{project.title}</TableCell>
                   <TableCell className="text-slate-600 dark:text-slate-400 py-4 font-medium">{project.category}</TableCell>
                   <TableCell className="py-4">

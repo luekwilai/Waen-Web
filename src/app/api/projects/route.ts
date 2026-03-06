@@ -23,6 +23,42 @@ export async function GET() {
   }
 }
 
+// PATCH reorder projects
+export async function PATCH(request: Request) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
+  try {
+    const data = (await request.json()) as { projectIds?: string[] }
+
+    if (!Array.isArray(data.projectIds) || data.projectIds.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid project order payload" },
+        { status: 400 }
+      )
+    }
+
+    await prisma.$transaction(
+      data.projectIds.map((id, index) =>
+        prisma.project.update({
+          where: { id },
+          data: { sortOrder: index + 1 },
+        })
+      )
+    )
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Failed to reorder projects:", error)
+    return NextResponse.json(
+      { error: "Failed to reorder projects" },
+      { status: 500 }
+    )
+  }
+}
+
 // POST create new project
 export async function POST(request: Request) {
   const adminCheck = await requireAdminApiSession()

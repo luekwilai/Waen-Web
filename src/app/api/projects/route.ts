@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
 // GET all projects
 export async function GET() {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const projects = await prisma.project.findMany({
       orderBy: { sortOrder: 'asc' }
@@ -19,6 +25,11 @@ export async function GET() {
 
 // POST create new project
 export async function POST(request: Request) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const data = await request.json()
     const project = await prisma.project.create({ data })

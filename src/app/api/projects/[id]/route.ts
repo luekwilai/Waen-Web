@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
 // PUT update project
@@ -6,6 +7,11 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const { id } = await params
     const data = await request.json()
@@ -28,6 +34,11 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const { id } = await params
     await prisma.project.delete({ where: { id } })

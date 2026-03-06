@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { FolderOpen, Mail, Package, Eye } from "lucide-react"
+import { FolderOpen, Mail, Package, Eye, Users } from "lucide-react"
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/get-session"
 import { getDashboardStats } from "@/lib/queries"
@@ -42,6 +42,13 @@ export default async function AdminDashboardPage() {
       icon: Eye,
       color: "text-amber-400",
       bgColor: "bg-amber-400/10"
+    },
+    {
+      title: "ผู้ดูแลระบบ",
+      value: stats.users,
+      icon: Users,
+      color: "text-cyan-400",
+      bgColor: "bg-cyan-400/10"
     }
   ]
 
@@ -52,7 +59,7 @@ export default async function AdminDashboardPage() {
         <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">ภาพรวมระบบจัดการเว็บไซต์ WAENWEB</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
         {statCards.map((card) => (
           <Card key={card.title} className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200 dark:border-white/5 shadow-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors overflow-hidden relative group">
             {/* Hover Glow */}

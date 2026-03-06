@@ -6,32 +6,49 @@ import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
+import { RecaptchaWidget } from "@/components/security/recaptcha-widget"
 import { ThemeToggle } from "@/components/home/theme-toggle"
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [totpToken, setTotpToken] = useState("")
+  const [showTwoFactorField, setShowTwoFactorField] = useState(false)
+  const [recaptchaToken, setRecaptchaToken] = useState("")
+  const [recaptchaResetSignal, setRecaptchaResetSignal] = useState(0)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+
+    if (recaptchaSiteKey && !recaptchaToken) {
+      setError("กรุณายืนยัน reCAPTCHA ก่อนเข้าสู่ระบบ")
+      return
+    }
+
     setLoading(true)
 
     try {
       const result = await signIn("credentials", {
         email,
         password,
+        totpToken,
+        recaptchaToken,
         redirect: false,
       })
 
       if (!result || result.error) {
-        setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง")
+        setError(showTwoFactorField ? "ข้อมูลเข้าสู่ระบบหรือรหัสยืนยันไม่ถูกต้อง" : "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
+        setRecaptchaToken("")
+        setRecaptchaResetSignal((prev) => prev + 1)
         return
       }
 
@@ -89,15 +106,47 @@ export default function AdminLoginPage() {
             </div>
             <div className="space-y-2.5">
               <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 font-medium">รหัสผ่าน (Password)</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-12 px-4 rounded-xl focus-visible:ring-lime-500"
               />
             </div>
+            <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/50 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => setShowTwoFactorField((prev) => !prev)}
+                className="text-sm font-semibold text-slate-700 dark:text-slate-300"
+              >
+                {showTwoFactorField ? "ซ่อนรหัสยืนยัน Google Authenticator" : "บัญชีนี้เปิดใช้ 2FA / Google Authenticator"}
+              </button>
+              {showTwoFactorField ? (
+                <div className="mt-3 space-y-2.5">
+                  <Label htmlFor="totpToken" className="text-slate-700 dark:text-slate-300 font-medium">รหัสยืนยัน 6 หลัก</Label>
+                  <Input
+                    id="totpToken"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={totpToken}
+                    onChange={(e) => setTotpToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="กรอกรหัสจาก Google Authenticator"
+                    className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-12 px-4 rounded-xl focus-visible:ring-lime-500"
+                  />
+                </div>
+              ) : null}
+            </div>
+            {recaptchaSiteKey ? (
+              <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-slate-800/50 px-4 py-4 overflow-hidden">
+                <RecaptchaWidget
+                  siteKey={recaptchaSiteKey}
+                  resetSignal={recaptchaResetSignal}
+                  onChange={setRecaptchaToken}
+                />
+              </div>
+            ) : null}
             <Button
               type="submit"
               className="w-full bg-lime-500 hover:bg-lime-600 text-slate-950 font-bold h-12 rounded-xl mt-2 shadow-lg shadow-lime-500/20 transition-all hover:shadow-lime-500/40 hover:-translate-y-0.5"

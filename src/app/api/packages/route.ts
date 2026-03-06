@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
@@ -25,6 +26,11 @@ const toFeatureString = (features: unknown) => {
 
 // GET all packages
 export async function GET() {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const packages = await prisma.package.findMany({
       orderBy: { sortOrder: 'asc' }
@@ -46,6 +52,11 @@ export async function GET() {
 
 // POST create new package
 export async function POST(request: Request) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const data = await request.json()
     const pkg = await prisma.package.create({

@@ -3,13 +3,14 @@ import { prisma } from "./prisma"
 
 export const getDashboardStats = unstable_cache(
   async () => {
-    const [projects, packages, inquiries, newInquiries] = await Promise.all([
+    const [projects, packages, inquiries, newInquiries, users] = await Promise.all([
       prisma.project.count(),
       prisma.package.count(),
       prisma.inquiry.count(),
       prisma.inquiry.count({ where: { status: "NEW" } }),
+      prisma.user.count(),
     ])
-    return { projects, packages, inquiries, newInquiries }
+    return { projects, packages, inquiries, newInquiries, users }
   },
   ["dashboard-stats"],
   { revalidate: 60, tags: ["dashboard-stats"] }
@@ -35,3 +36,7 @@ export const getAdminInquiries = unstable_cache(
   ["admin-inquiries"],
   { revalidate: 10, tags: ["inquiries"] }
 )
+
+export async function getAdminUsers() {
+  return prisma.user.findMany({ orderBy: { createdAt: "desc" } })
+}

@@ -1,6 +1,6 @@
 import { put } from "@vercel/blob"
 import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { requireAdminApiSession } from "@/lib/admin-access"
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -11,14 +11,12 @@ const ALLOWED_IMAGE_TYPES = new Set([
 ])
 
 export async function POST(request: Request) {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
-    const session = await auth()
-    const role = (session?.user as { role?: string } | undefined)?.role
-
-    if (role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const formData = await request.formData()
     const file = formData.get("file")
 

@@ -17,12 +17,18 @@ const authConfig: NextAuthConfig = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = (user as { id?: string }).id
+        token.email = user.email
+        token.name = user.name
         token.role = (user as { role?: string }).role
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
+        ;(session.user as { id?: string }).id = token.id as string | undefined
+        session.user.email = token.email ?? session.user.email
+        session.user.name = (token.name as string | null | undefined) ?? session.user.name
         ;(session.user as { role?: string }).role = token.role as string | undefined
       }
       return session

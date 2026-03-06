@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
 // GET all inquiries
 export async function GET() {
+  const adminCheck = await requireAdminApiSession()
+  if (adminCheck.response) {
+    return adminCheck.response
+  }
+
   try {
     const inquiries = await prisma.inquiry.findMany({
       orderBy: { createdAt: 'desc' }

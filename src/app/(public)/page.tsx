@@ -61,15 +61,17 @@ export default function HomePage() {
             </div>
 
             {/* Heading */}
-            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8 relative flex flex-wrap items-baseline gap-x-0 gap-y-0 md:gap-y-2">
-              <span className="text-7xl sm:text-[5.5rem] md:text-[6rem] xl:text-[8rem] leading-[0.85] text-slate-900 dark:text-white">
-                WAEN
+            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8 relative">
+              <span className="absolute -inset-x-6 top-1/2 -translate-y-1/2 h-24 md:h-32 bg-gradient-to-r from-lime-300/15 via-emerald-300/10 to-transparent blur-3xl pointer-events-none" />
+              <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-5 whitespace-nowrap text-[clamp(4rem,16vw,8rem)] leading-[0.85]">
+                <span className="text-slate-900 dark:text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.08)]">WAEN</span>
+                <span className="relative inline-flex">
+                  <span className="absolute inset-0 bg-gradient-to-r from-lime-400 via-emerald-400 to-lime-300 blur-[30px] md:blur-[60px] opacity-30 dark:opacity-40 animate-pulse" />
+                  <span className="relative bg-gradient-to-r from-lime-500 via-lime-400 to-emerald-400 bg-clip-text text-transparent">WEB</span>
+                  <span className="absolute -right-2 top-2 hidden md:block w-3 h-3 rounded-full bg-lime-400 shadow-[0_0_20px_rgba(163,230,53,0.9)] animate-ping" />
+                </span>
               </span>
-              <span className="text-7xl sm:text-[5.5rem] md:text-[6rem] xl:text-[8rem] leading-[0.85] relative">
-                <span className="absolute inset-0 bg-gradient-to-r from-lime-400 to-emerald-400 blur-[40px] md:blur-[60px] opacity-30 dark:opacity-40" />
-                <span className="relative text-lime-500 dark:text-lime-400">WEB</span>
-              </span>
-              <span className="w-full text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-500 dark:text-slate-400 mt-3 md:mt-4 tracking-wide">
+              <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-500 dark:text-slate-400 mt-3 md:mt-4 tracking-wide">
                 รับทำเว็บไซต์<span className="text-slate-800 dark:text-slate-200 font-bold">มืออาชีพ</span>
               </span>
             </h1>
@@ -104,22 +106,6 @@ export default function HomePage() {
               >
                 ดูผลงานของเรา
               </Link>
-            </div>
-
-            {/* Social proof */}
-            <div className="animate-fade-up animation-delay-400 flex items-center gap-5">
-              <div className="flex -space-x-3">
-                {["#84cc16","#22c55e","#10b981","#14b8a6","#06b6d4"].map((bg, i) => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-950 shadow-sm" style={{ background: bg }} />
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-0.5 mb-1">
-                  {[1,2,3,4,5].map((s) => <Star key={s} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
-                  <span className="text-sm font-bold text-slate-900 dark:text-white ml-1">5.0</span>
-                </div>
-                <span className="text-sm text-slate-500 dark:text-slate-400">ลูกค้าที่ไว้วางใจ <strong className="text-slate-900 dark:text-white">50+</strong> ราย</span>
-              </div>
             </div>
           </div>
 
@@ -174,28 +160,14 @@ export default function HomePage() {
               </div>
 
               {/* Status bar */}
-              <div className="flex items-center justify-between bg-lime-600 dark:bg-lime-700 px-4 py-1 text-[10px] font-medium text-white">
+              <div className="absolute inset-x-0 bottom-0 h-3 bg-lime-400" />
+              <div className="absolute right-6 bottom-6 text-[10px] font-mono text-lime-300/90 dark:text-lime-300/70 flex items-center gap-4">
                 <span>TypeScript React</span>
                 <span className="flex items-center gap-3">
                   <span>UTF-8</span>
                   <span>Ln 14, Col 45</span>
                 </span>
               </div>
-            </div>
-
-            {/* Floating badges */}
-            <div className="absolute -top-5 -right-5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl z-20" style={{ animation: 'float 3s ease-in-out infinite' }}>
-              <div className="text-3xl font-black text-lime-500 dark:text-lime-400">50+</div>
-              <div className="text-[11px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wider">โปรเจคสำเร็จ</div>
-            </div>
-            <div className="absolute -bottom-5 -left-5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl z-20" style={{ animation: 'float 4s ease-in-out infinite', animationDelay: '1s' }}>
-              <div className="flex items-center gap-1 mb-1">
-                {[1,2,3,4,5].map(s => <Star key={s} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-              </div>
-              <div className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">ความพึงพอใจ 100%</div>
-            </div>
-            <div className="absolute top-1/2 -left-10 -translate-y-1/2 bg-slate-900 dark:bg-slate-800 rounded-xl px-3 py-2 shadow-xl z-20 border border-white/10" style={{ animation: 'float 5s ease-in-out infinite', animationDelay: '0.5s' }}>
-              <div className="text-[10px] font-bold text-lime-400 uppercase tracking-wider">⚡ 7–14 วัน</div>
             </div>
           </div>
         </div>

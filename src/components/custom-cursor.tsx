@@ -1,17 +1,45 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+
+const cursorMediaQuery = "(min-width: 1024px) and (hover: hover) and (pointer: fine)"
+
+function subscribeToCursorCapability(onChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {}
+  }
+
+  const mediaQuery = window.matchMedia(cursorMediaQuery)
+  mediaQuery.addEventListener("change", onChange)
+
+  return () => {
+    mediaQuery.removeEventListener("change", onChange)
+  }
+}
+
+function getCursorCapabilitySnapshot() {
+  if (typeof window === "undefined") {
+    return false
+  }
+
+  return window.matchMedia(cursorMediaQuery).matches
+}
 
 export function CustomCursor() {
   const [isPointer, setIsPointer] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const isDesktopCursorEnabled = useSyncExternalStore(
+    subscribeToCursorCapability,
+    getCursorCapabilitySnapshot,
+    () => false
+  )
+  const isVisibleRef = useRef(false)
+  const isPointerRef = useRef(false)
 
   // Use motion values to track mouse position without triggering React re-renders
   const cursorX = useMotionValue(-100)
   const cursorY = useMotionValue(-100)
-
-  const [mounted, setMounted] = useState(false)
 
   // Create spring physics for the trailing circle
   const springConfig = { damping: 25, stiffness: 400, mass: 0.2 }
@@ -19,34 +47,55 @@ export function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig)
 
   useEffect(() => {
-    setMounted(true)
-    
-    // Hide default cursor
+    if (!isDesktopCursorEnabled) {
+      document.body.style.cursor = "auto"
+      return
+    }
+
     document.body.style.cursor = "none"
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isVisible) setIsVisible(true)
-      
-      // Update motion values directly
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true
+        setIsVisible(true)
+      }
+
       cursorX.set(e.clientX)
       cursorY.set(e.clientY)
 
-      // Check if hovering a clickable element
       const target = e.target as HTMLElement
-      const isClickable = 
+      const isClickable =
         window.getComputedStyle(target).cursor === "pointer" ||
         target.tagName.toLowerCase() === "a" ||
         target.tagName.toLowerCase() === "button" ||
         target.closest("a") !== null ||
         target.closest("button") !== null
 
-      setIsPointer(isClickable)
+      if (isPointerRef.current !== isClickable) {
+        isPointerRef.current = isClickable
+        setIsPointer(isClickable)
+      }
     }
 
-    const handleMouseLeave = () => setIsVisible(false)
-    const handleMouseEnter = () => setIsVisible(true)
+    const handleMouseLeave = () => {
+      if (!isVisibleRef.current) {
+        return
+      }
 
-    window.addEventListener("mousemove", handleMouseMove)
+      isVisibleRef.current = false
+      setIsVisible(false)
+    }
+
+    const handleMouseEnter = () => {
+      if (isVisibleRef.current) {
+        return
+      }
+
+      isVisibleRef.current = true
+      setIsVisible(true)
+    }
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
     window.addEventListener("mouseleave", handleMouseLeave)
     window.addEventListener("mouseenter", handleMouseEnter)
 
@@ -56,10 +105,9 @@ export function CustomCursor() {
       window.removeEventListener("mouseenter", handleMouseEnter)
       document.body.style.cursor = "auto"
     }
-  }, [cursorX, cursorY, isVisible])
+  }, [cursorX, cursorY, isDesktopCursorEnabled])
 
-  // Prevent SSR hydration mismatch
-  if (!mounted) return null
+  if (!isDesktopCursorEnabled) return null
 
   return (
     <>

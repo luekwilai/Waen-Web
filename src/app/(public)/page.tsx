@@ -17,7 +17,6 @@ import {
   Headphones,
   Clock,
   ArrowRight,
-  Star,
   Mail,
   MessageSquare,
 } from "lucide-react"
@@ -92,7 +91,7 @@ export default function HomePage() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="animate-fade-up animation-delay-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-10 md:mb-12 w-full sm:w-auto">
+            <div className="animate-fade-up animation-delay-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-16 sm:mb-14 md:mb-12 w-full sm:w-auto">
               <Link
                 href="#contact"
                 className="group w-full sm:w-auto inline-flex items-center justify-center bg-lime-400 hover:bg-lime-300 text-slate-950 transition-all font-black rounded-full py-4 px-9 shadow-xl shadow-lime-500/30 hover:shadow-lime-500/50 hover:-translate-y-1 text-base gap-2"
@@ -134,7 +133,7 @@ export default function HomePage() {
               {/* Code body */}
               <div className="bg-[#0d1117] px-0 py-5 font-mono text-[12.5px] leading-6 select-none">
                 {[
-                  [1,  <><span className="text-slate-500">// WAENWEB — Professional Web Design</span></>],
+                  [1,  <><span className="text-slate-500">{"// WAENWEB — Professional Web Design"}</span></>],
                   [2,  <></>],
                   [3,  <><span className="text-pink-400">import</span> <span className="text-sky-300">React</span><span className="text-slate-300">,</span> {'{'} <span className="text-sky-300">useState</span> {'}'} <span className="text-pink-400">from</span> <span className="text-amber-300">&apos;react&apos;</span></>],
                   [4,  <><span className="text-pink-400">import</span> {'{'} <span className="text-sky-300">motion</span> {'}'} <span className="text-pink-400">from</span> <span className="text-amber-300">&apos;framer-motion&apos;</span></>],
@@ -154,7 +153,7 @@ export default function HomePage() {
                 ].map(([num, code]) => (
                   <div key={num as number} className="flex items-start px-4 hover:bg-white/[0.02] transition-colors">
                     <span className="text-slate-600 select-none w-7 shrink-0 text-right mr-5 text-[11px] leading-6">{num}</span>
-                    <span className="text-slate-300">{code as React.ReactNode /* jsx element */}</span>
+                    <span className="text-slate-300">{code as React.ReactNode}</span>
                   </div>
                 ))}
               </div>
@@ -173,9 +172,9 @@ export default function HomePage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center gap-2 text-slate-400 dark:text-slate-500">
-          <span className="text-xs uppercase tracking-widest font-medium">Scroll</span>
-          <div className="w-0.5 h-10 bg-gradient-to-b from-lime-400 to-transparent rounded-full" />
+        <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 motion-safe:animate-bounce flex flex-col items-center gap-2.5 sm:gap-2 text-slate-400 dark:text-slate-500 pointer-events-none">
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] sm:tracking-widest font-medium">Scroll</span>
+          <div className="w-0.5 h-8 sm:h-10 bg-gradient-to-b from-lime-400 to-transparent rounded-full" />
         </div>
       </section>
 

@@ -45,17 +45,45 @@ function ServiceIcon({ name }: { name: string }) {
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const settings = await getSiteSettings()
+    const title = settings["seo.title"] || "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB"
+    const description = settings["seo.description"] || "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ"
     return {
-      title: settings["seo.title"] || "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
-      description: settings["seo.description"] || "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+      title,
+      description,
       icons: settings["site.logoUrl"]
         ? { icon: settings["site.logoUrl"], shortcut: settings["site.logoUrl"] }
         : undefined,
+      openGraph: {
+        title,
+        description,
+        url: "https://waenweb.com",
+        siteName: "WAENWEB",
+        locale: "th_TH",
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
     }
   } catch {
     return {
-      title: "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
-      description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+      title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
+      description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
+      openGraph: {
+        title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
+        description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
+        url: "https://waenweb.com",
+        siteName: "WAENWEB",
+        locale: "th_TH",
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
+        description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
+      },
     }
   }
 }
@@ -66,9 +94,9 @@ export default async function HomePage() {
   const logoUrl = settings["site.logoUrl"] || undefined
   const contactEmail = settings["contact.email"] || "thawatsak28@gmail.com"
   const contactLine = settings["contact.line"] || "thawatsak"
-  const heroBadge = settings["hero.badge"] || "รับทำเว็บไซต์ด้วย WordPress"
-  const heroHeading = settings["hero.heading"] || "รับทำเว็บไซต์มืออาชีพ"
-  const heroDescription = settings["hero.description"] || "สร้างเว็บไซต์ที่ตอบโจทย์ธุรกิจของคุณ ด้วยทีมงานมืออาชีพและเทคโนโลยีที่ทันสมัย รองรับทุกการแสดงผล"
+  const heroBadge = settings["hero.badge"] || "รับทำเว็บไซต์ WordPress"
+  const heroHeading = settings["hero.heading"] || "รับทำเว็บไซต์สำหรับธุรกิจ บริษัท และร้านค้าออนไลน์"
+  const heroDescription = settings["hero.description"] || "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO โหลดไว และดูแลหลังส่งมอบ"
   const heroCtaPrimary = settings["hero.ctaPrimary"] || "ติดต่อเรา"
   const heroCtaSecondary = settings["hero.ctaSecondary"] || "ดูผลงานของเรา"
 

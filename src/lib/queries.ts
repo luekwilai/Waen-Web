@@ -40,3 +40,16 @@ export const getAdminInquiries = unstable_cache(
 export async function getAdminUsers() {
   return prisma.user.findMany({ orderBy: { createdAt: "desc" } })
 }
+
+export const getSiteSettings = unstable_cache(
+  async () => {
+    const rows = await prisma.siteSetting.findMany()
+    const settings: Record<string, string> = {}
+    for (const row of rows) {
+      settings[row.key] = row.value
+    }
+    return settings
+  },
+  ["site-settings"],
+  { revalidate: 60, tags: ["site-settings"] }
+)

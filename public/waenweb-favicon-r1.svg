@@ -1,0 +1,45 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A0A0A"/>
+      <stop offset="1" stop-color="#171717"/>
+    </linearGradient>
+    <linearGradient id="bodyLeft" x1="108" y1="90" x2="234" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#080808"/>
+      <stop offset="0.2" stop-color="#1F1F1F"/>
+      <stop offset="0.42" stop-color="#060606"/>
+      <stop offset="0.64" stop-color="#393939"/>
+      <stop offset="1" stop-color="#151515"/>
+    </linearGradient>
+    <linearGradient id="bodyCenter" x1="256" y1="93" x2="256" y2="293" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#202020"/>
+      <stop offset="0.24" stop-color="#070707"/>
+      <stop offset="0.48" stop-color="#313131"/>
+      <stop offset="0.72" stop-color="#090909"/>
+      <stop offset="1" stop-color="#1C1C1C"/>
+    </linearGradient>
+    <linearGradient id="bodyRight" x1="404" y1="90" x2="278" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#080808"/>
+      <stop offset="0.2" stop-color="#1F1F1F"/>
+      <stop offset="0.42" stop-color="#060606"/>
+      <stop offset="0.64" stop-color="#393939"/>
+      <stop offset="1" stop-color="#151515"/>
+    </linearGradient>
+    <linearGradient id="edgeLight" x1="74" y1="84" x2="438" y2="342" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="0.16" stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="0.84" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.82"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <path d="M76 95C107 95 138 118 160 165C175 196 185 240 201 275C218 309 237 329 262 329C283 329 300 312 321 284C337 261 354 232 371 201C396 157 421 95 440 95" stroke="url(#bodyLeft)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M436 95C405 95 374 118 352 165C337 196 327 240 311 275C294 309 275 329 250 329C229 329 212 312 191 284C175 261 158 232 141 201C116 157 91 95 72 95" stroke="url(#bodyRight)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M226 126C226 105 239 89 256 89C273 89 286 106 286 127C286 150 274 173 263 192C253 174 226 151 226 126Z" fill="url(#bodyCenter)"/>
+  <path d="M255.5 89C272.34 89 286 106.11 286 127.22C286 144.79 277.99 161.62 270.28 176.41C264.93 186.67 259.69 196.75 255.82 206.76C251.45 197.29 245.39 188.24 239.29 179.46C229.32 165.12 226 149.81 226 127.22C226 106.1 239.66 89 255.5 89Z" stroke="url(#edgeLight)" stroke-width="6"/>
+  <path d="M236 127C236 113 246 102 257 102C268 102 276 112 276 125C276 138 269 150 257 168C247 150 236 140 236 127Z" fill="#070707"/>
+  <path d="M76 95C107 95 138 118 160 165C175 196 185 240 201 275C218 309 237 329 262 329C283 329 300 312 321 284C337 261 354 232 371 201C396 157 421 95 440 95" stroke="url(#edgeLight)" stroke-width="47.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.76"/>
+  <path d="M436 95C405 95 374 118 352 165C337 196 327 240 311 275C294 309 275 329 250 329C229 329 212 312 191 284C175 261 158 232 141 201C116 157 91 95 72 95" stroke="url(#edgeLight)" stroke-width="47.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.62"/>
+</svg>

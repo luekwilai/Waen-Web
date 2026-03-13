@@ -1,0 +1,60 @@
+<svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bodyLeft" x1="92" y1="20" x2="286" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#090909"/>
+      <stop offset="0.2" stop-color="#1F1F1F"/>
+      <stop offset="0.38" stop-color="#060606"/>
+      <stop offset="0.58" stop-color="#3A3A3A"/>
+      <stop offset="0.78" stop-color="#050505"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="bodyCenter" x1="322" y1="28" x2="322" y2="308" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#202020"/>
+      <stop offset="0.2" stop-color="#060606"/>
+      <stop offset="0.42" stop-color="#343434"/>
+      <stop offset="0.68" stop-color="#0A0A0A"/>
+      <stop offset="1" stop-color="#202020"/>
+    </linearGradient>
+    <linearGradient id="bodyRight" x1="548" y1="20" x2="356" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#090909"/>
+      <stop offset="0.2" stop-color="#1F1F1F"/>
+      <stop offset="0.38" stop-color="#060606"/>
+      <stop offset="0.58" stop-color="#3A3A3A"/>
+      <stop offset="0.78" stop-color="#050505"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="edgeLight" x1="40" y1="18" x2="604" y2="308" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="0.16" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="0.48" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="0.82" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.8"/>
+    </linearGradient>
+    <radialGradient id="glossLeft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(171 171) rotate(29) scale(162 72)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glossCenter" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(320 128) rotate(90) scale(122 54)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glossRight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(470 171) rotate(-29) scale(162 72)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M38 36C75 36 113 63 140 120C158 159 171 214 191 257C211 300 234 322 265 322C291 322 312 301 337 266C357 239 376 206 398 168C428 114 457 36 602 36" stroke="url(#bodyLeft)" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M602 36C565 36 527 63 500 120C482 159 469 214 449 257C429 300 406 322 375 322C349 322 328 301 303 266C283 239 264 206 242 168C212 114 183 36 38 36" stroke="url(#bodyRight)" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M283 75C283 49 301 30 323 30C346 30 363 50 363 77C363 106 347 136 332 161C319 137 283 107 283 75Z" fill="url(#bodyCenter)"/>
+  <path d="M322.5 30C344.32 30 362 49.75 362 74.1C362 94.85 352.24 114.75 342.56 132.84C335.81 145.46 329.1 157.94 323.97 170.91C318.32 158.61 310.56 146.95 302.66 135.59C289.87 117.2 283 99.16 283 74.1C283 49.74 300.68 30 322.5 30Z" stroke="url(#edgeLight)" stroke-width="6.5"/>
+  <path d="M296 75C296 58 308 45 321 45C334 45 344 57 344 73C344 88 336 103 323 125C311 102 296 91 296 75Z" fill="#070707"/>
+
+  <path d="M38 36C75 36 113 63 140 120C158 159 171 214 191 257C211 300 234 322 265 322C291 322 312 301 337 266C357 239 376 206 398 168C428 114 457 36 602 36" stroke="url(#edgeLight)" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" opacity="0.76"/>
+  <path d="M602 36C565 36 527 63 500 120C482 159 469 214 449 257C429 300 406 322 375 322C349 322 328 301 303 266C283 239 264 206 242 168C212 114 183 36 38 36" stroke="url(#edgeLight)" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+  <ellipse cx="177" cy="181" rx="135" ry="52" fill="url(#glossLeft)"/>
+  <ellipse cx="322" cy="126" rx="66" ry="116" fill="url(#glossCenter)"/>
+  <ellipse cx="468" cy="181" rx="135" ry="52" fill="url(#glossRight)"/>
+</svg>

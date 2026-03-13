@@ -1,57 +1,37 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { MessageSquare, PenTool, Code2, Rocket, CheckCircle } from "lucide-react"
 import { SpotlightCard } from "@/components/spotlight-card"
 
-const steps = [
-  {
-    num: "01",
-    title: "พูดคุยและวางแผน",
-    description: "เราเริ่มต้นด้วยการรับฟังความต้องการของคุณอย่างละเอียด วิเคราะห์กลุ่มเป้าหมาย และวางโครงสร้างเว็บไซต์ร่วมกัน",
-    icon: MessageSquare,
-    tags: ["รับฟังความต้องการ", "วิเคราะห์ธุรกิจ", "วางโครงสร้าง"],
-    duration: "1–2 วัน",
-    gradient: "from-blue-500 to-indigo-600",
-    glow: "shadow-blue-500/20",
-    light: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  },
-  {
-    num: "02",
-    title: "ออกแบบ UI/UX",
-    description: "สร้าง Mockup และ Prototype ให้เห็นภาพรวมก่อนการพัฒนา รับรีวิวและแก้ไขได้จนกว่าจะพอใจ",
-    icon: PenTool,
-    tags: ["Wireframe", "Mockup Design", "ปรับแก้ได้ไม่จำกัด"],
-    duration: "2–4 วัน",
-    gradient: "from-violet-500 to-purple-600",
-    glow: "shadow-violet-500/20",
-    light: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
-  },
-  {
-    num: "03",
-    title: "พัฒนาเว็บไซต์",
-    description: "ลงมือพัฒนาด้วย WordPress และเทคโนโลยีที่ทันสมัย พร้อมระบบจัดการหลังบ้านที่ใช้งานง่าย",
-    icon: Code2,
-    tags: ["WordPress CMS", "Responsive", "SEO Ready"],
-    duration: "5–10 วัน",
-    gradient: "from-lime-500 to-emerald-600",
-    glow: "shadow-lime-500/20",
-    light: "bg-lime-500/10 text-lime-700 dark:text-lime-400",
-  },
-  {
-    num: "04",
-    title: "ส่งมอบและดูแล",
-    description: "ทดสอบระบบครบถ้วน นำขึ้น Hosting จริง สอนการใช้งาน และให้บริการดูแลต่อเนื่องฟรี 3 เดือน",
-    icon: Rocket,
-    tags: ["ทดสอบระบบ", "ดูแลฟรี 3 เดือน", "สอนการใช้งาน"],
-    duration: "1–2 วัน",
-    gradient: "from-amber-500 to-orange-600",
-    glow: "shadow-amber-500/20",
-    light: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  },
+export type ProcessStepData = {
+  id: string
+  num: string
+  title: string
+  description: string
+  tags: string[]
+  duration: string
+}
+
+type StepWithStyle = ProcessStepData & {
+  gradient: string
+  glow: string
+  light: string
+  icon: React.ElementType
+}
+
+const STEP_STYLES = [
+  { gradient: "from-blue-500 to-indigo-600", glow: "shadow-blue-500/20", light: "bg-blue-500/10 text-blue-600 dark:text-blue-400", icon: MessageSquare },
+  { gradient: "from-violet-500 to-purple-600", glow: "shadow-violet-500/20", light: "bg-violet-500/10 text-violet-600 dark:text-violet-400", icon: PenTool },
+  { gradient: "from-lime-500 to-emerald-600", glow: "shadow-lime-500/20", light: "bg-lime-500/10 text-lime-700 dark:text-lime-400", icon: Code2 },
+  { gradient: "from-amber-500 to-orange-600", glow: "shadow-amber-500/20", light: "bg-amber-500/10 text-amber-700 dark:text-amber-400", icon: Rocket },
 ]
 
-export function ProcessSection() {
+export function ProcessSection({ steps: rawSteps }: { steps?: ProcessStepData[] }) {
+  const steps = (rawSteps ?? []).map((step, i) => ({
+    ...step,
+    ...STEP_STYLES[i % STEP_STYLES.length],
+  }))
   const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -215,7 +195,7 @@ export function ProcessSection() {
   )
 }
 
-function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: boolean, align: "left" | "right" }) {
+function StepCard({ step, isActive, align }: { step: StepWithStyle; isActive: boolean, align: "left" | "right" }) {
   return (
     <SpotlightCard className={`hidden md:block rounded-2xl border p-6 transition-all duration-500 shadow-sm ${
       isActive
@@ -229,7 +209,7 @@ function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: 
         {step.description}
       </p>
       <div className={`flex flex-wrap gap-2 ${align === "right" ? "justify-end" : "justify-start"}`}>
-        {step.tags.map((tag) => (
+        {step.tags.map((tag: string) => (
           <span
             key={tag}
             className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-all duration-500 ${
@@ -244,14 +224,14 @@ function StepCard({ step, isActive, align }: { step: typeof steps[0]; isActive: 
   )
 }
 
-function MobileStepCard({ step, isActive }: { step: typeof steps[0]; isActive: boolean }) {
+function MobileStepCard({ step, isActive }: { step: StepWithStyle; isActive: boolean }) {
   return (
     <SpotlightCard className="h-full bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/10 p-8 sm:p-10 flex flex-col items-center text-center shadow-sm dark:shadow-none hover:shadow-xl dark:hover:shadow-lime-500/5 hover:-translate-y-2 transition-all duration-300">
       <p className={`text-sm leading-relaxed mb-3 transition-colors duration-500 ${isActive ? "text-slate-500 dark:text-slate-400" : "text-slate-300 dark:text-slate-600"}`}>
         {step.description}
       </p>
       <div className="flex flex-wrap gap-2">
-        {step.tags.map((tag) => (
+        {step.tags.map((tag: string) => (
           <span key={tag} className={`text-xs font-semibold px-2.5 py-1 rounded-full ${isActive ? step.light : "bg-slate-100 dark:bg-slate-800 text-slate-400"}`}>
             {tag}
           </span>

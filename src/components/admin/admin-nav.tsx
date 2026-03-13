@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   Users,
+  Settings,
 } from "lucide-react"
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/admin/packages", label: "แพ็คเกจ", icon: Package },
   { href: "/admin/inquiries", label: "ข้อความ", icon: Mail },
   { href: "/admin/users", label: "ผู้ดูแลระบบ", icon: Users },
+  { href: "/admin/settings", label: "ตั้งค่าเว็บ", icon: Settings },
 ]
 
 function NavLinks() {

@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,7 +12,6 @@ import { Send, CheckCircle2, Sparkles } from "lucide-react"
 type ContactFormData = {
   name: string
   email: string
-  phone: string
   company: string
   message: string
 }
@@ -19,7 +19,6 @@ type ContactFormData = {
 const initialFormData: ContactFormData = {
   name: "",
   email: "",
-  phone: "",
   company: "",
   message: ""
 }
@@ -28,6 +27,7 @@ export function ContactForm() {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [consentAccepted, setConsentAccepted] = useState(false)
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -52,6 +52,7 @@ export function ContactForm() {
       if (res.ok) {
         setSuccess(true)
         setFormData(initialFormData)
+        setConsentAccepted(false)
         setTimeout(() => setSuccess(false), 5000)
       }
     } catch (error) {
@@ -102,28 +103,15 @@ export function ContactForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2.5">
-              <Label htmlFor="phone" className="text-slate-700 dark:text-slate-300 font-medium ml-1">เบอร์โทร</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                className="bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white transition-all h-12 px-4 rounded-xl focus-visible:ring-lime-500 dark:focus-visible:ring-lime-400 focus-visible:bg-white dark:focus-visible:bg-slate-900 shadow-sm"
-                placeholder="08x-xxx-xxxx"
-              />
-            </div>
-            <div className="space-y-2.5">
-              <Label htmlFor="company" className="text-slate-700 dark:text-slate-300 font-medium ml-1">บริษัท (ถ้ามี)</Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
-                className="bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white transition-all h-12 px-4 rounded-xl focus-visible:ring-lime-500 dark:focus-visible:ring-lime-400 focus-visible:bg-white dark:focus-visible:bg-slate-900 shadow-sm"
-                placeholder="ชื่อบริษัทของคุณ"
-              />
-            </div>
+          <div className="space-y-2.5">
+            <Label htmlFor="company" className="text-slate-700 dark:text-slate-300 font-medium ml-1">บริษัท (ถ้ามี)</Label>
+            <Input
+              id="company"
+              value={formData.company}
+              onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
+              className="bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white transition-all h-12 px-4 rounded-xl focus-visible:ring-lime-500 dark:focus-visible:ring-lime-400 focus-visible:bg-white dark:focus-visible:bg-slate-900 shadow-sm"
+              placeholder="ชื่อบริษัทของคุณ"
+            />
           </div>
 
           <div className="space-y-2.5">
@@ -139,10 +127,27 @@ export function ContactForm() {
             />
           </div>
 
-          <div className="pt-2">
+          <div className="space-y-4 pt-2">
+            <label className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/50 px-4 py-3 text-sm text-slate-600 transition-colors dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-300">
+              <input
+                type="checkbox"
+                checked={consentAccepted}
+                onChange={(e) => setConsentAccepted(e.target.checked)}
+                required
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-lime-500 focus:ring-lime-500 dark:border-slate-700 dark:bg-slate-900 dark:focus:ring-lime-400"
+              />
+              <span className="leading-6">
+                ฉันได้อ่านและยินยอมให้ WAENWEB ประมวลผลข้อมูลที่ส่งผ่านฟอร์มนี้ตาม
+                {" "}
+                <Link href="/privacy-policy" className="font-semibold text-lime-600 transition-colors hover:text-lime-700 dark:text-lime-400 dark:hover:text-lime-300">
+                  นโยบายความเป็นส่วนตัว
+                </Link>
+              </span>
+            </label>
+
             <Button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !consentAccepted}
               className="relative w-full h-14 bg-slate-900 hover:bg-slate-800 dark:bg-lime-400 dark:hover:bg-lime-300 text-white dark:text-slate-950 text-base font-semibold rounded-xl overflow-hidden group shadow-xl shadow-slate-900/10 dark:shadow-lime-400/20 transition-all hover:shadow-slate-900/20 dark:hover:shadow-lime-400/40 hover:-translate-y-0.5"
             >
               {/* Shine effect */}
@@ -163,7 +168,7 @@ export function ContactForm() {
               </span>
             </Button>
             <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-4 mb-0 font-medium">
-              * ข้อมูลของคุณจะถูกเก็บเป็นความลับและไม่ถูกนำไปเผยแพร่
+              ข้อมูลที่คุณส่งจะถูกใช้เพื่อติดต่อกลับและประเมินความต้องการเบื้องต้นเท่านั้น
             </p>
           </div>
         </form>

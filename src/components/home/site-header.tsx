@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Code2, ArrowRight, Menu, X, Sparkles } from "lucide-react"
+import { ArrowRight, Menu, X, Sparkles } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggle } from "./theme-toggle"
 
 const navLinks = [
@@ -12,7 +13,7 @@ const navLinks = [
   { href: "#contact", label: "ติดต่อ" },
 ]
 
-export function SiteHeader() {
+export function SiteHeader({ logoUrl }: { logoUrl?: string } = {}) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("")
@@ -60,21 +61,17 @@ export function SiteHeader() {
           <Link href="/" className="flex items-center gap-3 group relative">
             {/* Logo Glow Behind */}
             <div className="absolute inset-0 bg-lime-400/20 dark:bg-lime-400/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            
-            <div className="relative w-11 h-11 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-              <div className="absolute inset-0 rounded-xl bg-lime-400 opacity-20 blur-md group-hover:opacity-40 transition-opacity duration-500" />
-              <div className="relative w-11 h-11 bg-gradient-to-tr from-slate-900 to-slate-800 dark:from-white dark:to-slate-200 rounded-xl flex items-center justify-center text-lime-400 dark:text-lime-600 shadow-xl border border-white/10 dark:border-slate-900/10 z-10 overflow-hidden">
-                {/* Shine effect inside logo */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                <Code2 className="w-5 h-5 relative z-10" />
-              </div>
-            </div>
-            <div className="flex flex-col leading-none relative z-10 -ml-1">
-              <span className="text-xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors duration-300">
-                WAEN<span className="text-lime-500 dark:text-lime-400">WEB</span>
-              </span>
-              <span className="text-[10px] text-slate-500 font-semibold tracking-[0.2em] uppercase mt-0.5">Studio</span>
-            </div>
+
+            <BrandLogo
+              priority
+              iconSize={44}
+              logoUrl={logoUrl}
+              wrapperClassName="relative z-10 flex items-center gap-3"
+              textClassName="flex flex-col leading-none relative z-10 -ml-1"
+              wordmarkClassName="text-xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors duration-300"
+              subtitle="Studio"
+              subtitleClassName="text-[10px] text-slate-500 font-semibold tracking-[0.2em] uppercase mt-0.5"
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -159,13 +156,15 @@ export function SiteHeader() {
           {/* Drawer header */}
           <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 relative z-10 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center text-lime-400 dark:text-lime-600 shadow-lg">
-                <Code2 className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="font-black text-slate-900 dark:text-white text-lg tracking-tight">WAEN<span className="text-lime-500">WEB</span></span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Studio</span>
-              </div>
+              <BrandLogo
+                iconSize={40}
+                logoUrl={logoUrl}
+                wrapperClassName="flex items-center gap-3"
+                textClassName="flex flex-col leading-none"
+                wordmarkClassName="font-black text-slate-900 dark:text-white text-lg tracking-tight"
+                subtitle="Studio"
+                subtitleClassName="text-[10px] text-slate-500 uppercase tracking-widest mt-1"
+              />
             </div>
             <button
               onClick={() => setMobileOpen(false)}

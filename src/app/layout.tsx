@@ -20,6 +20,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
   description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+  icons: {
+    icon: [{ url: "/waenweb-favicon-r1.svg", type: "image/svg+xml" }],
+    shortcut: "/waenweb-favicon-r1.svg",
+    apple: "/waenweb-favicon-r1.svg",
+  },
 };
 
 export default function RootLayout({

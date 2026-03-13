@@ -1,4 +1,5 @@
 import React from "react"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ContactForm } from "@/components/home/contact-form"
 import { PortfolioSection } from "@/components/home/portfolio-section"
@@ -9,6 +10,7 @@ import { ScrollReveal } from "@/components/home/scroll-reveal"
 import { SiteHeader } from "@/components/home/site-header"
 import { SiteFooter } from "@/components/home/site-footer"
 import { SpotlightCard } from "@/components/spotlight-card"
+import { getSiteSettings } from "@/lib/queries"
 import {
   Smartphone,
   Search,
@@ -19,15 +21,70 @@ import {
   ArrowRight,
   Mail,
   MessageSquare,
+  Globe,
+  Code2,
+  Star,
+  Zap,
+  Lock,
+  BarChart2,
+  type LucideIcon,
 } from "lucide-react"
 
 export const revalidate = 0
 
-export default function HomePage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  return {
+    title: settings["seo.title"] || "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
+    description: settings["seo.description"] || "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+    icons: settings["site.logoUrl"]
+      ? { icon: settings["site.logoUrl"], shortcut: settings["site.logoUrl"] }
+      : undefined,
+  }
+}
+
+export default async function HomePage() {
+  const settings = await getSiteSettings()
+
+  const logoUrl = settings["site.logoUrl"] || undefined
+  const contactEmail = settings["contact.email"] || "thawatsak28@gmail.com"
+  const contactLine = settings["contact.line"] || "thawatsak"
+  const heroBadge = settings["hero.badge"] || "รับทำเว็บไซต์ด้วย WordPress"
+  const heroHeading = settings["hero.heading"] || "รับทำเว็บไซต์มืออาชีพ"
+  const heroDescription = settings["hero.description"] || "สร้างเว็บไซต์ที่ตอบโจทย์ธุรกิจของคุณ ด้วยทีมงานมืออาชีพและเทคโนโลยีที่ทันสมัย รองรับทุกการแสดงผล"
+  const heroCtaPrimary = settings["hero.ctaPrimary"] || "ติดต่อเรา"
+  const heroCtaSecondary = settings["hero.ctaSecondary"] || "ดูผลงานของเรา"
+
+  let heroStats: { label: string; value: string }[] = [
+    { label: "โปรเจคที่สำเร็จ", value: "50+" },
+    { label: "ความพึงพอใจ", value: "100%" },
+    { label: "ดูแลฟรี (เดือน)", value: "3" },
+    { label: "Support", value: "24/7" },
+  ]
+  try { if (settings["hero.stats"]) heroStats = JSON.parse(settings["hero.stats"]) } catch { /* use default */ }
+
+  let techPills: string[] = ["WordPress", "React", "TypeScript", "Tailwind CSS", "Next.js"]
+  try { if (settings["hero.techPills"]) techPills = JSON.parse(settings["hero.techPills"]) } catch { /* use default */ }
+
+  let services: { id: string; title: string; desc: string; icon: string }[] = []
+  try { if (settings["services"]) services = JSON.parse(settings["services"]) } catch { /* use default */ }
+
+  let processSteps: import("@/components/home/process-section").ProcessStepData[] = []
+  try { if (settings["process"]) processSteps = JSON.parse(settings["process"]) } catch { /* use default */ }
+
+  const SERVICE_ICONS: Record<string, LucideIcon> = {
+    Smartphone, Search, ShoppingCart, ShieldCheck, Headphones, Clock,
+    Globe, Code2, Star, Zap, Lock, BarChart2,
+  }
+
+  function ServiceIcon({ name }: { name: string }) {
+    const Icon = SERVICE_ICONS[name] ?? Globe
+    return <Icon className="w-6 h-6" />
+  }
   return (
     <div className="min-h-screen font-sans">
       <AnimatedBackground />
-      <SiteHeader />
+      <SiteHeader logoUrl={logoUrl} />
 
       {/* Hero Section */}
       <section className="relative min-h-[100svh] flex items-center px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
@@ -55,7 +112,7 @@ export default function HomePage() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-500" />
               </span>
               <span className="text-xs font-bold text-lime-700 dark:text-lime-300 uppercase tracking-[0.15em]">
-                รับทำเว็บไซต์ด้วย WordPress
+                {heroBadge}
               </span>
             </div>
 
@@ -71,18 +128,17 @@ export default function HomePage() {
                 </span>
               </span>
               <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-500 dark:text-slate-400 mt-3 md:mt-4 tracking-wide">
-                รับทำเว็บไซต์<span className="text-slate-800 dark:text-slate-200 font-bold">มืออาชีพ</span>
+                {heroHeading}
               </span>
             </h1>
 
             <p className="animate-fade-up animation-delay-200 text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
-              สร้างเว็บไซต์ที่ตอบโจทย์ธุรกิจของคุณ ด้วยทีมงานมืออาชีพ
-              และเทคโนโลยีที่ทันสมัย รองรับทุกการแสดงผล
+              {heroDescription}
             </p>
 
             {/* Tech stack pills */}
             <div className="animate-fade-up flex flex-wrap gap-2 mb-10">
-              {["WordPress","React","TypeScript","Tailwind CSS","Next.js"].map((tech) => (
+              {techPills.map((tech) => (
                 <span key={tech} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10">
                   <span className="w-1.5 h-1.5 rounded-full bg-lime-500 dark:bg-lime-400" />
                   {tech}
@@ -96,14 +152,14 @@ export default function HomePage() {
                 href="#contact"
                 className="group w-full sm:w-auto inline-flex items-center justify-center bg-lime-400 hover:bg-lime-300 text-slate-950 transition-all font-black rounded-full py-4 px-9 shadow-xl shadow-lime-500/30 hover:shadow-lime-500/50 hover:-translate-y-1 text-base gap-2"
               >
-                ติดต่อเรา
+                {heroCtaPrimary}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="#portfolio"
                 className="w-full sm:w-auto inline-flex items-center justify-center bg-transparent hover:bg-slate-100 dark:hover:bg-white/5 text-slate-900 dark:text-white transition-all font-semibold rounded-full py-4 px-8 border border-slate-300 dark:border-white/15 hover:-translate-y-1 text-base"
               >
-                ดูผลงานของเรา
+                {heroCtaSecondary}
               </Link>
             </div>
           </div>
@@ -182,12 +238,7 @@ export default function HomePage() {
       <div className="border-y border-slate-200 dark:border-white/5 bg-white/50 dark:bg-white/[0.02] backdrop-blur-md relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 divide-x divide-slate-200 dark:divide-white/5 text-center">
-            {[
-              { label: "โปรเจคที่สำเร็จ", value: "50+" },
-              { label: "ความพึงพอใจ", value: "100%" },
-              { label: "ดูแลฟรี (เดือน)", value: "3" },
-              { label: "Support", value: "24/7" },
-            ].map((stat) => (
+            {heroStats.map((stat) => (
               <div key={stat.label} className="px-2">
                 <div className="text-xl sm:text-2xl font-bold text-lime-600 dark:text-lime-400">{stat.value}</div>
                 <div className="text-[10px] sm:text-xs text-slate-500 mt-1 uppercase tracking-wide">{stat.label}</div>
@@ -208,18 +259,11 @@ export default function HomePage() {
             </p>
           </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { icon: <Smartphone className="w-6 h-6" />, title: "Responsive Design", desc: "ออกแบบเว็บไซต์ให้รองรับการแสดงผลทุกอุปกรณ์ ทั้ง PC, Tablet และ Mobile", delay: 0 },
-              { icon: <Search className="w-6 h-6" />, title: "SEO Optimization", desc: "ปรับแต่งโครงสร้างเว็บไซต์ให้รองรับหลักการ SEO เพื่อเพิ่มโอกาสติดอันดับ Google", delay: 100 },
-              { icon: <ShoppingCart className="w-6 h-6" />, title: "E-Commerce", desc: "ระบบร้านค้าออนไลน์ครบวงจร จัดการสินค้า ออเดอร์ และการชำระเงิน", delay: 200 },
-              { icon: <ShieldCheck className="w-6 h-6" />, title: "PDPA Compliance", desc: "ติดตั้งระบบ Cookie Consent และ Privacy Policy รองรับกฎหมาย PDPA", delay: 300 },
-              { icon: <Headphones className="w-6 h-6" />, title: "ดูแลหลังการขาย", desc: "บริการดูแลรักษาเว็บไซต์ อัพเดทระบบ และแก้ไขปัญหาทางเทคนิค ฟรี 3 เดือน", delay: 400 },
-              { icon: <Clock className="w-6 h-6" />, title: "ส่งงานตรงเวลา", desc: "มีการวางแผนงานที่ชัดเจน และการันตีส่งมอบงานตามกำหนดเวลาที่ตกลงไว้", delay: 500 },
-            ].map((s) => (
-              <ScrollReveal key={s.title} delay={s.delay}>
+            {services.map((s, i) => (
+              <ScrollReveal key={s.id} delay={i * 100}>
                 <SpotlightCard className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/8 hover:bg-slate-50 dark:hover:bg-slate-900/60 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
                   <div className="w-12 h-12 bg-lime-400/20 dark:bg-lime-400/10 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-6 group-hover:bg-lime-400/30 dark:group-hover:bg-lime-400/20 transition-colors">
-                    {s.icon}
+                    <ServiceIcon name={s.icon} />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">{s.title}</h3>
                   <p className="text-slate-600 dark:text-slate-400 font-light leading-relaxed text-sm">{s.desc}</p>
@@ -240,7 +284,7 @@ export default function HomePage() {
               เรารับฟัง วิเคราะห์ และพัฒนา เพื่อส่งมอบผลงานที่ดีที่สุดให้กับคุณ
             </p>
           </ScrollReveal>
-          <ProcessSection />
+          <ProcessSection steps={processSteps} />
         </div>
       </section>
 
@@ -314,7 +358,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <div className="text-sm font-medium text-slate-900 dark:text-white">อีเมล</div>
-                      <a href="mailto:hello@waenweb.com" className="text-slate-500 dark:text-slate-400 text-sm hover:text-lime-600 dark:hover:text-lime-400 transition-colors">hello@waenweb.com</a>
+                      <a href={`mailto:${contactEmail}`} className="text-slate-500 dark:text-slate-400 text-sm hover:text-lime-600 dark:hover:text-lime-400 transition-colors">{contactEmail}</a>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -322,8 +366,8 @@ export default function HomePage() {
                       <MessageSquare className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-900 dark:text-white">Line Official</div>
-                      <a href="#" className="text-slate-500 dark:text-slate-400 text-sm hover:text-lime-600 dark:hover:text-lime-400 transition-colors">@waenweb</a>
+                      <div className="text-sm font-medium text-slate-900 dark:text-white">Line ID</div>
+                      <a href={`https://line.me/ti/p/~${contactLine}`} target="_blank" rel="noreferrer" className="text-slate-500 dark:text-slate-400 text-sm hover:text-lime-600 dark:hover:text-lime-400 transition-colors">{contactLine}</a>
                     </div>
                   </div>
                 </div>
@@ -340,7 +384,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <SiteFooter />
+      <SiteFooter
+        logoUrl={logoUrl}
+        contactEmail={contactEmail}
+        contactLine={contactLine}
+        socialFacebook={settings["social.facebook"]}
+        socialInstagram={settings["social.instagram"]}
+        socialYoutube={settings["social.youtube"]}
+        serviceNames={services.length > 0 ? services.map((s) => s.title) : undefined}
+      />
     </div>
   )
 }

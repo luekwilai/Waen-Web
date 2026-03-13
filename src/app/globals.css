@@ -339,6 +339,23 @@
     transform: translateX(0);
   }
 
+  @media (max-width: 767px) {
+    .reveal {
+      transform: translateY(16px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .reveal-left {
+      transform: translateX(-16px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .reveal-right {
+      transform: translateX(16px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+  }
+
   @keyframes shine {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }

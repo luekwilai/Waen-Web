@@ -20,6 +20,7 @@ const directionClass: Record<Direction, string> = {
 }
 
 const reducedMotionMediaQuery = "(prefers-reduced-motion: reduce)"
+const mobileRevealMediaQuery = "(max-width: 767px), (hover: none) and (pointer: coarse)"
 
 function subscribeToReducedMotion(onChange: () => void) {
   if (typeof window === "undefined") {
@@ -42,6 +43,27 @@ function getReducedMotionSnapshot() {
   return window.matchMedia(reducedMotionMediaQuery).matches
 }
 
+function subscribeToMobileReveal(onChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {}
+  }
+
+  const mediaQuery = window.matchMedia(mobileRevealMediaQuery)
+  mediaQuery.addEventListener("change", onChange)
+
+  return () => {
+    mediaQuery.removeEventListener("change", onChange)
+  }
+}
+
+function getMobileRevealSnapshot() {
+  if (typeof window === "undefined") {
+    return false
+  }
+
+  return window.matchMedia(mobileRevealMediaQuery).matches
+}
+
 export function ScrollReveal({
   children,
   className = "",
@@ -56,6 +78,11 @@ export function ScrollReveal({
     getReducedMotionSnapshot,
     () => false
   )
+  const isMobileReveal = useSyncExternalStore(
+    subscribeToMobileReveal,
+    getMobileRevealSnapshot,
+    () => false
+  )
 
   useEffect(() => {
     const el = ref.current
@@ -66,16 +93,23 @@ export function ScrollReveal({
       return
     }
 
+    const effectiveDelay = isMobileReveal ? 0 : delay
+    const effectiveThreshold = isMobileReveal ? Math.min(threshold, 0.01) : threshold
+    const effectiveRootMargin = isMobileReveal ? "0px 0px 22% 0px" : "0px 0px 8% 0px"
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           timeoutRef.current = window.setTimeout(() => {
             el.classList.add("revealed")
-          }, delay)
+          }, effectiveDelay)
           observer.unobserve(el)
         }
       },
-      { threshold }
+      {
+        threshold: effectiveThreshold,
+        rootMargin: effectiveRootMargin,
+      }
     )
 
     observer.observe(el)
@@ -85,7 +119,7 @@ export function ScrollReveal({
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [delay, prefersReducedMotion, threshold])
+  }, [delay, isMobileReveal, prefersReducedMotion, threshold])
 
   return (
     <div ref={ref} className={`${directionClass[direction]} ${className}`}>

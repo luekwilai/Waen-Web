@@ -92,6 +92,7 @@ export default async function HomePage() {
   const settings = await getSiteSettings()
 
   const logoUrl = settings["site.logoUrl"] || undefined
+  const siteName = settings["site.name"] || undefined
   const contactEmail = settings["contact.email"] || "thawatsak28@gmail.com"
   const contactLine = settings["contact.line"] || "thawatsak"
   const heroBadge = settings["hero.badge"] || "รับทำเว็บไซต์ WordPress"
@@ -120,7 +121,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen font-sans">
       <AnimatedBackground />
-      <SiteHeader logoUrl={logoUrl} />
+      <SiteHeader logoUrl={logoUrl} siteName={siteName} />
 
       {/* Hero Section */}
       <section className="relative min-h-[100svh] flex items-center px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
@@ -436,6 +437,7 @@ export default async function HomePage() {
 
       <SiteFooter
         logoUrl={logoUrl}
+        siteName={siteName}
         contactEmail={contactEmail}
         contactLine={contactLine}
         socialFacebook={settings["social.facebook"]}

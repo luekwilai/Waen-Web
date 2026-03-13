@@ -13,7 +13,7 @@ const navLinks = [
   { href: "#contact", label: "ติดต่อ" },
 ]
 
-export function SiteHeader({ logoUrl }: { logoUrl?: string } = {}) {
+export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?: string } = {}) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("")
@@ -66,6 +66,7 @@ export function SiteHeader({ logoUrl }: { logoUrl?: string } = {}) {
               priority
               iconSize={44}
               logoUrl={logoUrl}
+              siteName={siteName}
               wrapperClassName="relative z-10 flex items-center gap-3"
               textClassName="flex flex-col leading-none relative z-10 -ml-1"
               wordmarkClassName="text-xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors duration-300"
@@ -159,6 +160,7 @@ export function SiteHeader({ logoUrl }: { logoUrl?: string } = {}) {
               <BrandLogo
                 iconSize={40}
                 logoUrl={logoUrl}
+                siteName={siteName}
                 wrapperClassName="flex items-center gap-3"
                 textClassName="flex flex-col leading-none"
                 wordmarkClassName="font-black text-slate-900 dark:text-white text-lg tracking-tight"

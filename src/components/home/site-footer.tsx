@@ -16,6 +16,7 @@ type SiteFooterProps = {
   socialInstagram?: string
   socialYoutube?: string
   logoUrl?: string
+  siteName?: string
   serviceNames?: string[]
 }
 
@@ -26,6 +27,7 @@ export function SiteFooter({
   socialInstagram = "",
   socialYoutube = "",
   logoUrl,
+  siteName,
   serviceNames = ["Responsive Website", "E-Commerce", "SEO Optimization", "PDPA Compliance", "ดูแลหลังการขาย"],
 }: SiteFooterProps = {}) {
   return (
@@ -51,6 +53,7 @@ export function SiteFooter({
               <BrandLogo
                 iconSize={48}
                 logoUrl={logoUrl}
+                siteName={siteName}
                 wrapperClassName="relative z-10 flex items-center gap-3"
                 textClassName="flex flex-col leading-none"
                 wordmarkClassName="text-2xl font-black tracking-tighter text-slate-900 dark:text-white"

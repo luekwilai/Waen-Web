@@ -4,6 +4,7 @@ type BrandLogoProps = {
   iconSize?: number
   logoUrl?: string
   priority?: boolean
+  siteName?: string
   subtitle?: string
   subtitleClassName?: string
   textClassName?: string
@@ -15,6 +16,7 @@ export function BrandLogo({
   iconSize = 44,
   logoUrl = "/waenweb-logo-r1.svg",
   priority = false,
+  siteName = "WAENWEB",
   subtitle,
   subtitleClassName,
   textClassName,
@@ -39,7 +41,7 @@ export function BrandLogo({
       </div>
 
       <div className={textClassName}>
-        <span className={wordmarkClassName}>WAENWEB</span>
+        <span className={wordmarkClassName}>{siteName}</span>
         {subtitle ? <span className={subtitleClassName}>{subtitle}</span> : null}
       </div>
     </div>

@@ -273,11 +273,11 @@ export default async function HomePage() {
       {/* Stats Section */}
       <div className="border-y border-slate-200 dark:border-white/5 bg-white/50 dark:bg-white/[0.02] backdrop-blur-md relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 divide-x divide-slate-200 dark:divide-white/5 text-center">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 md:gap-5 text-center">
             {heroStats.map((stat) => (
-              <div key={stat.label} className="px-2">
-                <div className="text-xl sm:text-2xl font-bold text-lime-600 dark:text-lime-400">{stat.value}</div>
-                <div className="text-[10px] sm:text-xs text-slate-500 mt-1 uppercase tracking-wide">{stat.label}</div>
+              <div key={stat.label} className="rounded-2xl border border-slate-200/80 dark:border-white/8 bg-white/80 dark:bg-slate-900/60 px-4 py-5 shadow-sm">
+                <div className="text-xl sm:text-2xl font-bold text-lime-600 dark:text-lime-400 break-words">{stat.value}</div>
+                <div className="text-[10px] sm:text-xs text-slate-500 mt-1 uppercase tracking-wide leading-relaxed break-words">{stat.label}</div>
               </div>
             ))}
           </div>

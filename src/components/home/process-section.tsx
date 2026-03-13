@@ -189,7 +189,6 @@ export function ProcessSection({ steps: rawSteps }: { steps?: ProcessStepData[] 
           <CheckCircle className="w-7 h-7 text-slate-950" />
         </div>
         <span className="text-sm font-bold text-slate-900 dark:text-white">เว็บไซต์ของคุณพร้อมใช้งาน!</span>
-        <span className="text-xs text-slate-500">ภายใน 7–14 วันทำการ</span>
       </div>
     </div>
   )

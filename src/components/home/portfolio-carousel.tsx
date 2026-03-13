@@ -54,7 +54,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   const total = projects.length
   const hasProjects = total > 0
 
-  const pageCount = total <= cardsPerView ? 1 : total
+  const pageCount = total <= cardsPerView ? 1 : Math.ceil(total / cardsPerView)
   const safePage = Math.min(page, Math.max(0, pageCount - 1))
 
   const pages = useMemo(() => {
@@ -63,10 +63,8 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
     if (total <= cardsPerView) return [projects]
 
     return Array.from({ length: pageCount }, (_, pageIndex) => {
-      const start = pageIndex
-      return Array.from({ length: cardsPerView }, (_, slot) => {
-        return projects[(start + slot) % total]
-      })
+      const start = pageIndex * cardsPerView
+      return projects.slice(start, start + cardsPerView)
     })
   }, [cardsPerView, hasProjects, pageCount, projects, total])
 

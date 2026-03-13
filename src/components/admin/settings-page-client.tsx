@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { MediaPicker } from "@/components/admin/media-picker"
 import Image from "next/image"
 
 type Settings = Record<string, string>
@@ -146,9 +147,17 @@ function GeneralTab({ settings, saving, onSave }: { settings: Settings; saving: 
             </div>
             <div className="space-y-3 flex-1">
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-              <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} className="rounded-xl border-slate-200 dark:border-white/10">
-                <Upload className="w-4 h-4 mr-2" />{uploading ? "กำลังอัปโหลด..." : "อัปโหลดรูปใหม่"}
-              </Button>
+              <div className="flex flex-wrap gap-3">
+                <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} className="rounded-xl border-slate-200 dark:border-white/10">
+                  <Upload className="w-4 h-4 mr-2" />{uploading ? "กำลังอัปโหลด..." : "อัปโหลดรูปใหม่"}
+                </Button>
+                <MediaPicker
+                  selectedUrl={logoUrl}
+                  onSelect={setLogoUrl}
+                  buttonClassName="rounded-xl border-slate-200 dark:border-white/10"
+                  title="เลือกรูปโลโก้จากคลัง"
+                />
+              </div>
               <div className="space-y-1.5">
                 <Label className="text-slate-600 dark:text-slate-400 text-xs">หรือใส่ URL รูปภาพ</Label>
                 <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="/waenweb-logo-r1.svg" className="h-10 rounded-xl bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-sm" />

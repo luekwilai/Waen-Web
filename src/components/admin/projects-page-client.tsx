@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { MediaPicker } from "@/components/admin/media-picker"
 import { Plus, Pencil, Trash2, Eye, Upload, Loader2, GripVertical } from "lucide-react"
 
 export interface AdminProject {
@@ -328,23 +329,31 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">ลากรูปมาวาง หรือคลิกเลือกไฟล์ (แนะนำอัตราส่วน 16:9)</div>
-                    <label htmlFor="desktop-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
-                        {uploadingField === "desktopImage" ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Upload className="h-4 w-4" />
-                        )}
-                        เลือกรูป
-                      </span>
-                    </label>
-                    <input
-                      id="desktop-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(event) => handleImageInputChange("desktopImage", event)}
-                    />
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <label htmlFor="desktop-upload" className="cursor-pointer">
+                        <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
+                          {uploadingField === "desktopImage" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4" />
+                          )}
+                          เลือกรูป
+                        </span>
+                      </label>
+                      <input
+                        id="desktop-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => handleImageInputChange("desktopImage", event)}
+                      />
+                      <MediaPicker
+                        selectedUrl={formData.desktopImage}
+                        onSelect={(url) => updateImageField("desktopImage", url)}
+                        buttonClassName="rounded-lg border-slate-200 dark:border-white/10"
+                        title="เลือกรูป Desktop จากคลัง"
+                      />
+                    </div>
                   </div>
                   {formData.desktopImage && (
                     <div className="mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm">
@@ -377,23 +386,31 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">ลากรูปมาวาง หรือคลิกเลือกไฟล์ (แนะนำอัตราส่วน 9:16)</div>
-                    <label htmlFor="mobile-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
-                        {uploadingField === "mobileImage" ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Upload className="h-4 w-4" />
-                        )}
-                        เลือกรูป
-                      </span>
-                    </label>
-                    <input
-                      id="mobile-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(event) => handleImageInputChange("mobileImage", event)}
-                    />
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <label htmlFor="mobile-upload" className="cursor-pointer">
+                        <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-sm">
+                          {uploadingField === "mobileImage" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4" />
+                          )}
+                          เลือกรูป
+                        </span>
+                      </label>
+                      <input
+                        id="mobile-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => handleImageInputChange("mobileImage", event)}
+                      />
+                      <MediaPicker
+                        selectedUrl={formData.mobileImage}
+                        onSelect={(url) => updateImageField("mobileImage", url)}
+                        buttonClassName="rounded-lg border-slate-200 dark:border-white/10"
+                        title="เลือกรูป Mobile จากคลัง"
+                      />
+                    </div>
                   </div>
                   {formData.mobileImage && (
                     <div className="mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm w-32 mx-auto">

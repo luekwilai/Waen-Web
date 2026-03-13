@@ -12,8 +12,6 @@ export type PackageItem = {
   features: string[]
   duration: string | null
   isPopular: boolean
-  isActive: boolean
-  sortOrder: number
 }
 
 export function PackagesSectionClient({ packages }: { packages: PackageItem[] }) {

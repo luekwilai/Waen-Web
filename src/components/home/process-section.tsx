@@ -55,21 +55,53 @@ export function ProcessSection() {
   const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+  const activeIndexRef = useRef(-1)
 
   useEffect(() => {
-    const handleScroll = () => {
-      const windowMid = window.innerHeight * 0.6
-      let best = -1
-      itemRefs.current.forEach((el, i) => {
-        if (!el) return
-        const rect = el.getBoundingClientRect()
-        if (rect.top < windowMid) best = i
-      })
-      setActiveIndex(best)
+    const visibleIndexes = new Set<number>()
+
+    const updateActiveStep = () => {
+      const nextIndex = visibleIndexes.size > 0 ? Math.max(...visibleIndexes) : -1
+
+      if (activeIndexRef.current === nextIndex) {
+        return
+      }
+
+      activeIndexRef.current = nextIndex
+      setActiveIndex(nextIndex)
     }
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = Number((entry.target as HTMLElement).dataset.stepIndex)
+
+          if (!Number.isFinite(index)) {
+            return
+          }
+
+          if (entry.isIntersecting) {
+            visibleIndexes.add(index)
+          } else {
+            visibleIndexes.delete(index)
+          }
+        })
+
+        updateActiveStep()
+      },
+      {
+        threshold: 0.45,
+        rootMargin: "0px 0px -12% 0px",
+      }
+    )
+
+    itemRefs.current.forEach((item) => {
+      if (item) {
+        observer.observe(item)
+      }
+    })
+
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -89,7 +121,10 @@ export function ProcessSection() {
           return (
             <div
               key={step.num}
-              ref={(el) => { itemRefs.current[index] = el }}
+              ref={(el) => {
+                itemRefs.current[index] = el
+              }}
+              data-step-index={index}
               className={`relative grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-6 md:gap-8 transition-all duration-700 ${
                 isActive ? "opacity-100" : "opacity-40"
               }`}

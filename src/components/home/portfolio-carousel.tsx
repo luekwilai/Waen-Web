@@ -1,10 +1,37 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect, useMemo } from "react"
+import { useState, useRef, useCallback, useEffect, useMemo, useSyncExternalStore } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, ChevronLeft, ChevronRight, FolderOpen, MonitorSmartphone } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+
+type IdleCallbackWindow = Window & typeof globalThis & {
+  requestIdleCallback?: (callback: IdleRequestCallback) => number
+  cancelIdleCallback?: (handle: number) => void
+}
+
+function subscribeToViewport(onChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {}
+  }
+
+  window.addEventListener("resize", onChange)
+
+  return () => {
+    window.removeEventListener("resize", onChange)
+  }
+}
+
+function getCardsPerViewSnapshot() {
+  if (typeof window === "undefined") {
+    return 1
+  }
+
+  if (window.innerWidth >= 1280) return 3
+  if (window.innerWidth >= 768) return 2
+  return 1
+}
 
 type Project = {
   id: string
@@ -14,39 +41,21 @@ type Project = {
   desktopImage: string | null
   mobileImage: string | null
   websiteUrl: string | null
-  sortOrder: number
-  isActive: boolean
 }
 
 export function PortfolioCarousel({ projects }: { projects: Project[] }) {
-  const [cardsPerView, setCardsPerView] = useState(1)
   const [page, setPage] = useState(0)
   const [direction, setDirection] = useState(1)
-  const [isPaused, setIsPaused] = useState(false)
-  const [isDragging, setIsDragging] = useState(false)
+  const cardsPerView = useSyncExternalStore(subscribeToViewport, getCardsPerViewSnapshot, () => 1)
   const dragStartX = useRef<number | null>(null)
+  const isPausedRef = useRef(false)
+  const isDraggingRef = useRef(false)
 
   const total = projects.length
   const hasProjects = total > 0
 
-  useEffect(() => {
-    const calculateCardsPerView = () => {
-      if (window.innerWidth >= 1280) return 3
-      if (window.innerWidth >= 768) return 2
-      return 1
-    }
-
-    const apply = () => setCardsPerView(calculateCardsPerView())
-    apply()
-    window.addEventListener("resize", apply)
-    return () => window.removeEventListener("resize", apply)
-  }, [])
-
   const pageCount = total <= cardsPerView ? 1 : total
-
-  useEffect(() => {
-    setPage((prev) => Math.min(prev, Math.max(0, pageCount - 1)))
-  }, [pageCount])
+  const safePage = Math.min(page, Math.max(0, pageCount - 1))
 
   const pages = useMemo(() => {
     if (!hasProjects) return [] as Project[][]
@@ -77,14 +86,25 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   }, [pageCount])
 
   useEffect(() => {
-    if (pageCount <= 1 || isPaused || isDragging) return
-    const id = setInterval(() => { setDirection(1); setPage((p) => (p + 1) % pageCount) }, 5000)
+    if (pageCount <= 1) return
+
+    const id = setInterval(() => {
+      if (isPausedRef.current || isDraggingRef.current) {
+        return
+      }
+
+      setDirection(1)
+      setPage((currentPage) => (currentPage + 1) % pageCount)
+    }, 5000)
+
     return () => clearInterval(id)
-  }, [isDragging, isPaused, pageCount])
+  }, [pageCount])
 
   // Preload adjacent page images
   useEffect(() => {
     if (!hasProjects || typeof window === "undefined") return
+
+    const idleWindow = window as IdleCallbackWindow
 
     const preload = (src: string | null) => {
       if (!src) return
@@ -92,34 +112,47 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       img.src = src
     }
 
-    const nextPage = pages[(page + 1) % pageCount] ?? []
-    const prevPage = pages[(page - 1 + pageCount) % pageCount] ?? []
-    ;[...nextPage, ...prevPage].forEach((project) => {
-      preload(project.desktopImage)
-      preload(project.mobileImage)
-    })
-  }, [hasProjects, page, pageCount, pages])
+    const preloadTask = () => {
+      const nextPage = pages[(safePage + 1) % pageCount] ?? []
+      nextPage.forEach((project) => {
+        preload(project.desktopImage)
+        preload(project.mobileImage)
+      })
+    }
 
-  const onPointerStart = (clientX: number) => {
-    setIsDragging(true)
-    setIsPaused(true)
+    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+      const idleId = idleWindow.requestIdleCallback(() => preloadTask())
+      return () => idleWindow.cancelIdleCallback?.(idleId)
+    }
+
+    const timeoutId = window.setTimeout(preloadTask, 150)
+    return () => window.clearTimeout(timeoutId)
+  }, [hasProjects, pageCount, pages, safePage])
+
+  const onPointerStart = useCallback((clientX: number) => {
+    isDraggingRef.current = true
+    isPausedRef.current = true
     dragStartX.current = clientX
-  }
+  }, [])
 
-  const onPointerEnd = (clientX: number) => {
-    if (!isDragging) return
+  const resetPointerState = useCallback(() => {
+    isDraggingRef.current = false
+    isPausedRef.current = false
+    dragStartX.current = null
+  }, [])
+
+  const onPointerEnd = useCallback((clientX: number) => {
+    if (!isDraggingRef.current) return
 
     const startX = dragStartX.current
-    dragStartX.current = null
-    setIsDragging(false)
-    setIsPaused(false)
+    resetPointerState()
 
     if (startX === null) return
     const delta = startX - clientX
     if (Math.abs(delta) < 50) return
     if (delta > 0) next()
     else prev()
-  }
+  }, [next, prev, resetPointerState])
 
   if (!hasProjects) {
     return (
@@ -143,6 +176,8 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" as const },
     }),
   }
+
+  const activeProjects = pages[safePage] ?? []
 
   return (
     <div className="w-full relative">
@@ -181,8 +216,12 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       {/* Slide track */}
       <div
         className="relative overflow-hidden select-none px-4 sm:px-6 lg:px-10"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => { setIsPaused(false); setIsDragging(false); dragStartX.current = null }}
+        onMouseEnter={() => {
+          isPausedRef.current = true
+        }}
+        onMouseLeave={() => {
+          resetPointerState()
+        }}
         onMouseDown={(e) => onPointerStart(e.clientX)}
         onMouseUp={(e) => onPointerEnd(e.clientX)}
         onTouchStart={(e) => onPointerStart(e.touches[0].clientX)}
@@ -190,7 +229,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       >
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
-            key={page}
+            key={safePage}
             custom={direction}
             variants={slideVariants}
             initial="enter"
@@ -200,11 +239,11 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 py-4">
-              {(pages[page] ?? []).map((project, slot) => {
-                const isPriority = slot < cardsPerView
+              {activeProjects.map((project, slot) => {
+                const isPriority = safePage === 0 && slot === 0
                 return (
                   <motion.div
-                    key={`${project.id}-${page}-${slot}`}
+                    key={`${project.id}-${safePage}-${slot}`}
                     custom={slot}
                     variants={cardVariants}
                     initial="hidden"
@@ -237,9 +276,8 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                             alt={project.title}
                             fill
                             className="object-cover object-top pt-7 transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
-                            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                            sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc(50vw - 2.5rem), calc(33vw - 3.5rem)"
                             priority={isPriority}
-                            loading={isPriority ? "eager" : "lazy"}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-700">
@@ -264,8 +302,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                               alt={`${project.title} mobile`}
                               fill
                               className="object-cover object-top transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
-                              sizes="(max-width: 767px) 22vw, (max-width: 1279px) 11vw, 8vw"
-                              loading={isPriority ? "eager" : "lazy"}
+                              sizes="(max-width: 767px) 24vw, (max-width: 1279px) 12vw, 8vw"
                             />
                           </motion.div>
                         )}
@@ -326,7 +363,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
             <ChevronLeft className="w-5 h-5" />
           </button>
           <span className="text-sm font-bold font-mono text-slate-900 dark:text-white tabular-nums">
-            {String(page + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
+            {String(safePage + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
           </span>
           <button onClick={next} disabled={pageCount <= 1} className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-lime-400 hover:text-slate-950 hover:border-lime-400 transition-all disabled:opacity-40">
             <ChevronRight className="w-5 h-5" />
@@ -334,20 +371,20 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
         </div>
 
         <div className="hidden md:block text-sm font-bold font-mono text-slate-900 dark:text-white tabular-nums">
-          {String(page + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
+          {String(safePage + 1).padStart(2, "0")} <span className="text-slate-400">/</span> {String(pageCount).padStart(2, "0")}
         </div>
 
         <div className="flex items-center gap-1 bg-white dark:bg-slate-900 py-2 px-4 rounded-full border border-slate-200 dark:border-white/5 shadow-sm">
           {Array.from({ length: pageCount }).map((_, i) => (
             <button
               key={i}
-              onClick={() => goTo(i, page)}
+              onClick={() => goTo(i, safePage)}
               disabled={pageCount <= 1}
               className="relative py-2 px-1 group"
               aria-label={`Go to page ${i + 1}`}
             >
               <div className={`transition-all duration-500 rounded-full ${
-                i === page
+                i === safePage
                   ? "w-8 h-2 bg-lime-500"
                   : "w-2 h-2 bg-slate-200 dark:bg-slate-700 group-hover:bg-slate-400 dark:group-hover:bg-slate-500"
               }`} />

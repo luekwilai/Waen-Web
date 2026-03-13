@@ -13,6 +13,16 @@ export async function PackagesSection() {
   const packages = await prisma.package.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
+    select: {
+      id: true,
+      name: true,
+      nameEn: true,
+      price: true,
+      description: true,
+      features: true,
+      duration: true,
+      isPopular: true,
+    },
   })
 
   const normalizedPackages: PackageItem[] = packages.map((pkg) => ({

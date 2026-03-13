@@ -3,6 +3,7 @@ import { Noto_Sans_Thai, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CustomCursor } from "@/components/custom-cursor";
+import { getSiteSettings } from "@/lib/queries";
 
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-noto-sans-thai",
@@ -17,15 +18,20 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
-  description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
-  icons: {
-    icon: [{ url: "/waenweb-logo-r1.svg", type: "image/svg+xml" }],
-    shortcut: "/waenweb-logo-r1.svg",
-    apple: "/waenweb-logo-r1.svg",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
+  const siteName = settings["site.name"] || "WAENWEB"
+  return {
+    title: `${siteName} - รับทำเว็บไซต์มืออาชีพ`,
+    description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+    icons: {
+      icon: [{ url: logoUrl }],
+      shortcut: logoUrl,
+      apple: logoUrl,
+    },
+  }
+}
 
 export default function RootLayout({
   children,

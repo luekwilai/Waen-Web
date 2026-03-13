@@ -271,13 +271,27 @@ export default async function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <div className="border-y border-slate-200 dark:border-white/5 bg-white/50 dark:bg-white/[0.02] backdrop-blur-md relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-10">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 md:gap-5 text-center">
+      <div className="relative z-10 overflow-hidden">
+        {/* top accent line */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime-400/60 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-slate-200/80 dark:via-white/8 to-transparent" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-wrap justify-center divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 dark:divide-white/8">
             {heroStats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-slate-200/80 dark:border-white/8 bg-white/80 dark:bg-slate-900/60 px-4 py-5 shadow-sm">
-                <div className="text-xl sm:text-2xl font-bold text-lime-600 dark:text-lime-400 break-words">{stat.value}</div>
-                <div className="text-[10px] sm:text-xs text-slate-500 mt-1 uppercase tracking-wide leading-relaxed break-words">{stat.label}</div>
+              <div
+                key={stat.label}
+                className="group relative flex-1 min-w-[140px] flex flex-col items-center justify-center gap-1 py-8 px-6 text-center transition-colors duration-300 hover:bg-slate-50/80 dark:hover:bg-white/[0.03]"
+              >
+                {/* hover glow dot */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <span className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-br from-lime-500 to-emerald-500 dark:from-lime-300 dark:to-emerald-400 bg-clip-text text-transparent leading-none">
+                  {stat.value}
+                </span>
+                <span className="text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
+                  {stat.label}
+                </span>
               </div>
             ))}
           </div>

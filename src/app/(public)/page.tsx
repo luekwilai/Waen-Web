@@ -32,14 +32,31 @@ import {
 
 export const revalidate = 0
 
+const SERVICE_ICONS: Record<string, LucideIcon> = {
+  Smartphone, Search, ShoppingCart, ShieldCheck, Headphones, Clock,
+  Globe, Code2, Star, Zap, Lock, BarChart2,
+}
+
+function ServiceIcon({ name }: { name: string }) {
+  const Icon = SERVICE_ICONS[name] ?? Globe
+  return <Icon className="w-6 h-6" />
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings()
-  return {
-    title: settings["seo.title"] || "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
-    description: settings["seo.description"] || "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
-    icons: settings["site.logoUrl"]
-      ? { icon: settings["site.logoUrl"], shortcut: settings["site.logoUrl"] }
-      : undefined,
+  try {
+    const settings = await getSiteSettings()
+    return {
+      title: settings["seo.title"] || "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
+      description: settings["seo.description"] || "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+      icons: settings["site.logoUrl"]
+        ? { icon: settings["site.logoUrl"], shortcut: settings["site.logoUrl"] }
+        : undefined,
+    }
+  } catch {
+    return {
+      title: "WAENWEB - รับทำเว็บไซต์มืออาชีพ",
+      description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+    }
   }
 }
 
@@ -72,15 +89,6 @@ export default async function HomePage() {
   let processSteps: import("@/components/home/process-section").ProcessStepData[] = []
   try { if (settings["process"]) processSteps = JSON.parse(settings["process"]) } catch { /* use default */ }
 
-  const SERVICE_ICONS: Record<string, LucideIcon> = {
-    Smartphone, Search, ShoppingCart, ShieldCheck, Headphones, Clock,
-    Globe, Code2, Star, Zap, Lock, BarChart2,
-  }
-
-  function ServiceIcon({ name }: { name: string }) {
-    const Icon = SERVICE_ICONS[name] ?? Globe
-    return <Icon className="w-6 h-6" />
-  }
   return (
     <div className="min-h-screen font-sans">
       <AnimatedBackground />

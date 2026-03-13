@@ -113,7 +113,7 @@ export function CustomCursor() {
     <>
       {/* Outer trailing circle (Smooth Spring) */}
       <motion.div
-        className="fixed top-0 left-0 z-[9999] pointer-events-none rounded-full border border-lime-400/50 mix-blend-difference"
+        className="fixed top-0 left-0 z-[9999] pointer-events-none rounded-full border border-lime-300/80 bg-lime-300/10 mix-blend-difference"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -122,28 +122,32 @@ export function CustomCursor() {
           opacity: isVisible ? 1 : 0
         }}
         animate={{
-          width: isPointer ? 64 : 40,
-          height: isPointer ? 64 : 40,
-          backgroundColor: isPointer ? "rgba(163, 230, 53, 0.1)" : "transparent"
+          width: isPointer ? 78 : 52,
+          height: isPointer ? 78 : 52,
+          scale: isPointer ? 1.08 : 1,
+          borderColor: isPointer ? "rgba(190, 242, 100, 0.95)" : "rgba(190, 242, 100, 0.8)",
+          backgroundColor: isPointer ? "rgba(190, 242, 100, 0.18)" : "rgba(190, 242, 100, 0.08)"
         }}
         transition={{
           width: { type: "spring", damping: 20, stiffness: 300, mass: 0.5 },
           height: { type: "spring", damping: 20, stiffness: 300, mass: 0.5 },
-          backgroundColor: { duration: 0.2 }
+          scale: { type: "spring", damping: 18, stiffness: 260, mass: 0.4 },
+          borderColor: { duration: 0.18 },
+          backgroundColor: { duration: 0.18 }
         }}
       />
       
       {/* Inner dot (Direct follow) */}
       <motion.div
-        className="fixed top-0 left-0 z-[10000] pointer-events-none rounded-full bg-lime-400 mix-blend-difference"
+        className="fixed top-0 left-0 z-[10000] pointer-events-none rounded-full bg-lime-300 mix-blend-difference"
         style={{
           x: cursorX,
           y: cursorY,
           translateX: "-50%",
           translateY: "-50%",
-          width: 8,
-          height: 8,
-          opacity: isVisible && !isPointer ? 1 : 0
+          width: isPointer ? 10 : 12,
+          height: isPointer ? 10 : 12,
+          opacity: isVisible ? 1 : 0
         }}
       />
     </>

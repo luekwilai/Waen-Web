@@ -44,12 +44,12 @@ export function AnimatedBackground() {
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
-  const springConfig = { damping: 25, stiffness: 100, mass: 0.5 }
+  const springConfig = { damping: 20, stiffness: 145, mass: 0.42 }
   const smoothX = useSpring(mouseX, springConfig)
   const smoothY = useSpring(mouseY, springConfig)
 
-  const xOffset = useTransform(smoothX, [-0.5, 0.5], [-80, 80])
-  const yOffset = useTransform(smoothY, [-0.5, 0.5], [-80, 80])
+  const xOffset = useTransform(smoothX, [-0.5, 0.5], [-170, 170])
+  const yOffset = useTransform(smoothY, [-0.5, 0.5], [-170, 170])
 
   const blobs = useMemo(
     () => [

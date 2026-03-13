@@ -7,9 +7,9 @@ import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggle } from "./theme-toggle"
 
 const navLinks = [
+  { href: "#portfolio", label: "ผลงาน" },
   { href: "#services", label: "บริการ" },
   { href: "#packages", label: "ราคา" },
-  { href: "#portfolio", label: "ผลงาน" },
   { href: "#contact", label: "ติดต่อ" },
 ]
 
@@ -78,9 +78,9 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 bg-slate-900/5 dark:bg-white/5 p-1 rounded-full border border-slate-200/50 dark:border-white/5">
             {[
+              { name: "ผลงาน", href: "#portfolio" },
               { name: "บริการ", href: "#services" },
               { name: "ราคา", href: "#packages" },
-              { name: "ผลงาน", href: "#portfolio" },
               { name: "ติดต่อ", href: "#contact" },
             ].map((item) => (
               <Link

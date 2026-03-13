@@ -299,46 +299,6 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <ScrollReveal className="text-center mb-16">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">บริการของเรา</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ครบทุกบริการ ในที่เดียว</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
-              เราให้บริการครอบคลุม ทั้งการออกแบบ พัฒนา และดูแลเว็บไซต์
-            </p>
-          </ScrollReveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((s, i) => (
-              <ScrollReveal key={s.id} delay={i * 100}>
-                <SpotlightCard className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/8 hover:bg-slate-50 dark:hover:bg-slate-900/60 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
-                  <div className="w-12 h-12 bg-lime-400/20 dark:bg-lime-400/10 rounded-xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-6 group-hover:bg-lime-400/30 dark:group-hover:bg-lime-400/20 transition-colors">
-                    <ServiceIcon name={s.icon} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">{s.title}</h3>
-                  <p className="text-slate-600 dark:text-slate-400 font-light leading-relaxed text-sm">{s.desc}</p>
-                </SpotlightCard>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section id="process" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <ScrollReveal className="text-center mb-16">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">ขั้นตอนการทำงาน</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ทำงานอย่างเป็นระบบ</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
-              เรารับฟัง วิเคราะห์ และพัฒนา เพื่อส่งมอบผลงานที่ดีที่สุดให้กับคุณ
-            </p>
-          </ScrollReveal>
-          <ProcessSection steps={processSteps} />
-        </div>
-      </section>
-
       {/* Portfolio Section */}
       <section id="portfolio" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -357,6 +317,61 @@ export default async function HomePage() {
         <ScrollReveal delay={150}>
           <PortfolioSection />
         </ScrollReveal>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <ScrollReveal className="text-center mb-12 md:mb-16">
+            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">บริการของเรา</span>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ครบทุกบริการ ในที่เดียว</h2>
+            <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
+              เราให้บริการครอบคลุม ทั้งการออกแบบ พัฒนา และดูแลเว็บไซต์
+            </p>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
+            {services.map((s, i) => (
+              <ScrollReveal key={s.id} delay={i * 70}>
+                <div className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/8 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 overflow-hidden hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 dark:hover:shadow-black/40 hover:border-lime-400/40 dark:hover:border-lime-400/20 h-full flex flex-col">
+                  {/* Gradient sweep on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-lime-400/0 via-transparent to-emerald-400/0 group-hover:from-lime-400/[0.06] group-hover:to-emerald-400/[0.04] transition-all duration-500 pointer-events-none rounded-2xl sm:rounded-3xl" />
+
+                  {/* Number badge */}
+                  <span className="absolute top-3 right-4 text-[11px] sm:text-xs font-black text-slate-200 dark:text-white/[0.07] select-none tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  {/* Icon */}
+                  <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-lime-400/20 to-emerald-400/10 dark:from-lime-400/15 dark:to-emerald-400/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-3 sm:mb-5 shrink-0 group-hover:from-lime-400/35 group-hover:to-emerald-400/20 transition-all duration-300 shadow-sm">
+                    <ServiceIcon name={s.icon} />
+                  </div>
+
+                  {/* Text */}
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 leading-snug">{s.title}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px] sm:text-sm line-clamp-3 flex-1">{s.desc}</p>
+
+                  {/* Bottom accent line */}
+                  <div className="mt-4 h-px w-0 group-hover:w-full bg-gradient-to-r from-lime-400/60 to-emerald-400/60 transition-all duration-500 rounded-full" />
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section id="process" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <ScrollReveal className="text-center mb-16">
+            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">ขั้นตอนการทำงาน</span>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ทำงานอย่างเป็นระบบ</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
+              เรารับฟัง วิเคราะห์ และพัฒนา เพื่อส่งมอบผลงานที่ดีที่สุดให้กับคุณ
+            </p>
+          </ScrollReveal>
+          <ProcessSection steps={processSteps} />
+        </div>
       </section>
 
       {/* Packages Section */}

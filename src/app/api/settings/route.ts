@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -37,6 +38,9 @@ export async function PATCH(request: Request) {
         })
       )
     )
+
+    revalidatePath("/")
+    revalidatePath("/admin/settings")
 
     return NextResponse.json({ success: true })
   } catch (error) {

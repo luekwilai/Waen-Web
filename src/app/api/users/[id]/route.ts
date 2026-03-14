@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 import { isValidEmail, normalizeEmail, sanitizeUser } from "@/lib/user-management"
@@ -48,6 +49,8 @@ export async function PUT(
       },
     })
 
+    revalidateTag("dashboard-stats", "max")
+
     return NextResponse.json({ user: sanitizeUser(user) })
   } catch (error) {
     console.error("Failed to update user:", error)
@@ -80,6 +83,8 @@ export async function DELETE(
     }
 
     await prisma.user.delete({ where: { id } })
+
+    revalidateTag("dashboard-stats", "max")
 
     return NextResponse.json({ success: true })
   } catch (error) {

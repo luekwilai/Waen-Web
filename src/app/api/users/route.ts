@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 import { isValidEmail, normalizeEmail, sanitizeUser } from "@/lib/user-management"
@@ -58,6 +59,8 @@ export async function POST(request: Request) {
         role: "ADMIN",
       },
     })
+
+    revalidateTag("dashboard-stats", "max")
 
     return NextResponse.json({ user: sanitizeUser(user) }, { status: 201 })
   } catch (error) {

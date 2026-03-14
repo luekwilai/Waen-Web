@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -112,6 +113,9 @@ export async function POST(request: Request) {
     } catch (emailError) {
       console.error("Failed to send inquiry notification email:", emailError)
     }
+
+    revalidateTag("inquiries", "max")
+    revalidateTag("dashboard-stats", "max")
 
     return NextResponse.json({ inquiry, emailSent }, { status: 201 })
   } catch (error) {

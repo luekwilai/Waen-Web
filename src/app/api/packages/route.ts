@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -76,6 +77,9 @@ export async function PATCH(request: Request) {
       )
     )
 
+    revalidateTag("packages", "max")
+    revalidateTag("dashboard-stats", "max")
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to reorder packages:", error)
@@ -106,6 +110,9 @@ export async function POST(request: Request) {
       ...pkg,
       features: toFeatureArray(pkg.features),
     }
+
+    revalidateTag("packages", "max")
+    revalidateTag("dashboard-stats", "max")
 
     return NextResponse.json({ package: normalizedPackage }, { status: 201 })
   } catch (error) {

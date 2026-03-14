@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -48,6 +49,9 @@ export async function PUT(
       features: toFeatureArray(pkg.features),
     }
 
+    revalidateTag("packages", "max")
+    revalidateTag("dashboard-stats", "max")
+
     return NextResponse.json({ package: normalizedPackage })
   } catch (error) {
     console.error("Failed to update package:", error)
@@ -71,6 +75,8 @@ export async function DELETE(
   try {
     const { id } = await params
     await prisma.package.delete({ where: { id } })
+    revalidateTag("packages", "max")
+    revalidateTag("dashboard-stats", "max")
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to delete package:", error)

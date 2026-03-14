@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -19,6 +20,8 @@ export async function PUT(
       where: { id },
       data
     })
+    revalidateTag("inquiries", "max")
+    revalidateTag("dashboard-stats", "max")
     return NextResponse.json({ inquiry })
   } catch (error) {
     console.error("Failed to update inquiry:", error)
@@ -42,6 +45,8 @@ export async function DELETE(
   try {
     const { id } = await params
     await prisma.inquiry.delete({ where: { id } })
+    revalidateTag("inquiries", "max")
+    revalidateTag("dashboard-stats", "max")
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to delete inquiry:", error)

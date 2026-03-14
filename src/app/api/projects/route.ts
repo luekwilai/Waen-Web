@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -49,6 +50,9 @@ export async function PATCH(request: Request) {
       )
     )
 
+    revalidateTag("projects", "max")
+    revalidateTag("dashboard-stats", "max")
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to reorder projects:", error)
@@ -69,6 +73,10 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
     const project = await prisma.project.create({ data })
+
+    revalidateTag("projects", "max")
+    revalidateTag("dashboard-stats", "max")
+
     return NextResponse.json({ project }, { status: 201 })
   } catch (error) {
     console.error("Failed to create project:", error)

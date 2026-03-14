@@ -47,6 +47,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   const [page, setPage] = useState(0)
   const [direction, setDirection] = useState(1)
   const cardsPerView = useSyncExternalStore(subscribeToViewport, getCardsPerViewSnapshot, () => 1)
+  const isMobileViewport = cardsPerView === 1
   const dragStartX = useRef<number | null>(null)
   const isPausedRef = useRef(false)
   const isDraggingRef = useRef(false)
@@ -114,7 +115,9 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       const nextPage = pages[(safePage + 1) % pageCount] ?? []
       nextPage.forEach((project) => {
         preload(project.desktopImage)
-        preload(project.mobileImage)
+        if (!isMobileViewport) {
+          preload(project.mobileImage)
+        }
       })
     }
 
@@ -125,7 +128,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
 
     const timeoutId = window.setTimeout(preloadTask, 150)
     return () => window.clearTimeout(timeoutId)
-  }, [hasProjects, pageCount, pages, safePage])
+  }, [hasProjects, isMobileViewport, pageCount, pages, safePage])
 
   const onPointerStart = useCallback((clientX: number) => {
     isDraggingRef.current = true
@@ -164,14 +167,14 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   const slideVariants = {
     enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? "-40%" : "40%", opacity: 0, scale: 0.97 }),
+    exit: (dir: number) => ({ x: dir > 0 ? (isMobileViewport ? "-100%" : "-40%") : (isMobileViewport ? "100%" : "40%"), opacity: 0, scale: isMobileViewport ? 1 : 0.97 }),
   }
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    hidden: { opacity: 0, y: isMobileViewport ? 16 : 40, scale: isMobileViewport ? 1 : 0.95 },
     visible: (i: number) => ({
       opacity: 1, y: 0, scale: 1,
-      transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" as const },
+      transition: { duration: isMobileViewport ? 0.28 : 0.5, delay: isMobileViewport ? i * 0.04 : i * 0.1, ease: "easeOut" as const },
     }),
   }
 
@@ -180,7 +183,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   return (
     <div className="w-full relative">
       {/* Ambient glow */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[120%] pointer-events-none overflow-hidden">
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[120%] pointer-events-none overflow-hidden hidden md:block">
         <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-[40vw] h-[40vw] bg-lime-400/10 dark:bg-lime-400/8 rounded-full blur-[100px]" />
         <div className="absolute right-1/4 top-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-emerald-400/8 dark:bg-emerald-400/6 rounded-full blur-[80px]" />
       </div>
@@ -233,7 +236,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+            transition={{ duration: isMobileViewport ? 0.28 : 0.5, ease: [0.32, 0.72, 0, 1] }}
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 py-4">
@@ -249,9 +252,9 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                     className="group relative h-full"
                   >
                     {/* Hover glow ring */}
-                    <div className="absolute -inset-px rounded-[26px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-lime-400/30 via-emerald-400/15 to-transparent blur-sm pointer-events-none z-0" />
+                    <div className="absolute -inset-px rounded-[26px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-lime-400/30 via-emerald-400/15 to-transparent blur-sm pointer-events-none z-0" />
 
-                    <div className="relative z-10 h-full flex flex-col overflow-hidden rounded-[22px] border border-slate-200/80 dark:border-white/8 bg-white dark:bg-slate-900/80 shadow-lg group-hover:shadow-2xl group-hover:shadow-lime-500/10 group-hover:-translate-y-2 transition-all duration-500">
+                    <div className="relative z-10 h-full flex flex-col overflow-hidden rounded-[22px] border border-slate-200/80 dark:border-white/8 bg-white dark:bg-slate-900/80 shadow-lg md:group-hover:shadow-2xl md:group-hover:shadow-lime-500/10 md:group-hover:-translate-y-2 transition-all duration-500">
                       {/* Screenshot */}
                       <div className="relative aspect-[16/9] bg-slate-100 dark:bg-slate-950 overflow-hidden flex-shrink-0">
                         {/* Browser bar */}
@@ -273,8 +276,9 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                             src={project.desktopImage}
                             alt={project.title}
                             fill
-                            className="object-cover object-top pt-7 transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
-                            sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc(50vw - 2.5rem), calc(33vw - 3.5rem)"
+                            className="object-cover object-top pt-7 md:transition-all md:duration-[12000ms] md:ease-linear md:group-hover:object-bottom"
+                            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                            quality={isMobileViewport ? 60 : 75}
                             priority={isPriority}
                           />
                         ) : (
@@ -292,7 +296,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                             initial={{ y: 16, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: slot * 0.1 + 0.35, duration: 0.45 }}
-                            className="absolute bottom-3 right-3 w-[22%] aspect-[9/19] rounded-[14px] border-[3px] border-slate-900 bg-slate-900 overflow-hidden shadow-2xl z-20"
+                            className="absolute bottom-3 right-3 w-[22%] aspect-[9/19] rounded-[14px] border-[3px] border-slate-900 bg-slate-900 overflow-hidden shadow-2xl z-20 hidden md:block"
                           >
                             <div className="absolute top-0 inset-x-0 h-2.5 bg-slate-900 rounded-b-md w-1/2 mx-auto z-10" />
                             <Image
@@ -301,6 +305,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                               fill
                               className="object-cover object-top transition-all duration-[12000ms] ease-linear group-hover:object-bottom"
                               sizes="(max-width: 767px) 24vw, (max-width: 1279px) 12vw, 8vw"
+                              quality={60}
                             />
                           </motion.div>
                         )}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CustomCursor } from "@/components/custom-cursor";
 import { getSiteSettings } from "@/lib/queries";
@@ -52,6 +54,8 @@ export default function RootLayout({
         >
           <CustomCursor />
           {children}
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>

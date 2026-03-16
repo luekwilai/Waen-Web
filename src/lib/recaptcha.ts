@@ -2,7 +2,7 @@ export async function verifyRecaptchaToken(token: string) {
   const secret = process.env.RECAPTCHA_SECRET_KEY
 
   if (!secret) {
-    return true
+    return process.env.NODE_ENV !== "production"
   }
 
   if (!token) {

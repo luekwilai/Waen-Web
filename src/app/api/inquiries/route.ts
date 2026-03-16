@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server"
 import { revalidateTag } from "next/cache"
+import { z } from "zod"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit"
 
 type InquiryPayload = {
   name: string
@@ -9,6 +11,18 @@ type InquiryPayload = {
   company?: string | null
   message: string
 }
+
+type InquiryEmailResult = {
+  emailSent: boolean
+  error?: string
+}
+
+const inquirySchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(120, "Name is too long"),
+  email: z.email("Invalid email address").transform((value) => value.trim().toLowerCase()),
+  company: z.string().trim().max(120, "Company is too long").optional().nullable().transform((value) => value || null),
+  message: z.string().trim().min(10, "Message is too short").max(5000, "Message is too long"),
+})
 
 function escapeHtml(value: string) {
   return value
@@ -19,10 +33,13 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;")
 }
 
-async function sendInquiryNotification(recipientEmail: string, inquiry: InquiryPayload & { id: string }) {
+async function sendInquiryNotification(recipientEmail: string, inquiry: InquiryPayload & { id: string }): Promise<InquiryEmailResult> {
   const resendApiKey = process.env.RESEND_API_KEY
   if (!resendApiKey) {
-    return false
+    return {
+      emailSent: false,
+      error: "Missing RESEND_API_KEY",
+    }
   }
 
   const fromEmail = process.env.RESEND_FROM_EMAIL || "WAENWEB <onboarding@resend.dev>"
@@ -59,10 +76,13 @@ async function sendInquiryNotification(recipientEmail: string, inquiry: InquiryP
 
   if (!response.ok) {
     const errorText = await response.text()
-    throw new Error(`Failed to send inquiry email: ${errorText}`)
+    return {
+      emailSent: false,
+      error: `Failed to send inquiry email: ${errorText}`,
+    }
   }
 
-  return true
+  return { emailSent: true }
 }
 
 // GET all inquiries
@@ -89,10 +109,37 @@ export async function GET() {
 // POST create new inquiry (from contact form)
 export async function POST(request: Request) {
   try {
-    const data = (await request.json()) as InquiryPayload
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit({
+      key: `inquiry:${clientIp}`,
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    })
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many inquiry requests. Please try again later." },
+        { status: 429 }
+      )
+    }
+
+    const body = await request.json()
+    const parsed = inquirySchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: parsed.error.issues[0]?.message || "Invalid inquiry payload",
+        },
+        { status: 400 }
+      )
+    }
+
+    const data: InquiryPayload = parsed.data
     const inquiry = await prisma.inquiry.create({ data })
 
     let emailSent = false
+    let emailErrorMessage: string | null = null
 
     try {
       const contactEmailSetting = await prisma.siteSetting.findUnique({
@@ -102,22 +149,27 @@ export async function POST(request: Request) {
 
       const recipientEmail = contactEmailSetting?.value?.trim()
       if (recipientEmail) {
-        emailSent = await sendInquiryNotification(recipientEmail, {
+        const emailResult = await sendInquiryNotification(recipientEmail, {
           id: inquiry.id,
           name: inquiry.name,
           email: inquiry.email,
           company: inquiry.company,
           message: inquiry.message,
         })
+        emailSent = emailResult.emailSent
+        emailErrorMessage = emailResult.error ?? null
+      } else {
+        emailErrorMessage = "Missing contact.email setting"
       }
-    } catch (emailError) {
-      console.error("Failed to send inquiry notification email:", emailError)
+    } catch (error) {
+      console.error("Failed to send inquiry notification email:", error)
+      emailErrorMessage = error instanceof Error ? error.message : "Unknown email delivery error"
     }
 
     revalidateTag("inquiries", "max")
     revalidateTag("dashboard-stats", "max")
 
-    return NextResponse.json({ inquiry, emailSent }, { status: 201 })
+    return NextResponse.json({ inquiry, emailSent, emailError: emailErrorMessage }, { status: 201 })
   } catch (error) {
     console.error("Failed to create inquiry:", error)
     return NextResponse.json(

@@ -107,10 +107,7 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
               href="#contact"
               className="hidden md:inline-flex relative items-center justify-center group"
             >
-              {/* Button Shadow & Glow */}
               <div className="absolute inset-0 bg-lime-400/40 dark:bg-lime-400/20 blur-md rounded-full group-hover:bg-lime-400/60 dark:group-hover:bg-lime-400/30 transition-all duration-300 opacity-0 group-hover:opacity-100" />
-              
-              {/* Inner Button */}
               <span className="relative inline-flex items-center gap-2 bg-lime-400 text-slate-950 text-sm font-bold rounded-full py-2.5 px-6 transition-all duration-300 group-hover:scale-105 border border-lime-500/50">
                 ติดต่อเรา
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

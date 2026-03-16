@@ -2,6 +2,7 @@ import { list, put } from "@vercel/blob"
 import { NextResponse } from "next/server"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit"
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -10,12 +11,62 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/webp",
   "image/gif",
 ])
+const ALLOWED_EXTENSIONS = new Map([
+  ["image/jpeg", "jpg"],
+  ["image/png", "png"],
+  ["image/webp", "webp"],
+  ["image/gif", "gif"],
+])
 
 type MediaItem = {
   url: string
   pathname: string
   uploadedAt: string | null
   source: "blob" | "db"
+}
+
+function sanitizeFilename(value: string) {
+  const trimmed = value.trim().toLowerCase()
+  const withoutExtension = trimmed.replace(/\.[^.]+$/, "")
+  const safeBase = withoutExtension
+    .replace(/[^a-z0-9-_]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+
+  return safeBase || "upload"
+}
+
+async function hasValidFileSignature(file: File, mimeType: string) {
+  const bytes = new Uint8Array(await file.slice(0, 16).arrayBuffer())
+
+  if (mimeType === "image/png") {
+    return bytes.length >= 8 &&
+      bytes[0] === 0x89 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x4e &&
+      bytes[3] === 0x47 &&
+      bytes[4] === 0x0d &&
+      bytes[5] === 0x0a &&
+      bytes[6] === 0x1a &&
+      bytes[7] === 0x0a
+  }
+
+  if (mimeType === "image/jpeg") {
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+  }
+
+  if (mimeType === "image/gif") {
+    const signature = String.fromCharCode(...bytes.slice(0, 6))
+    return signature === "GIF87a" || signature === "GIF89a"
+  }
+
+  if (mimeType === "image/webp") {
+    const riff = String.fromCharCode(...bytes.slice(0, 4))
+    const webp = String.fromCharCode(...bytes.slice(8, 12))
+    return riff === "RIFF" && webp === "WEBP"
+  }
+
+  return false
 }
 
 function isImageLikeUrl(value: string | null | undefined) {
@@ -110,6 +161,17 @@ export async function POST(request: Request) {
   }
 
   try {
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit({
+      key: `upload:${clientIp}`,
+      limit: 20,
+      windowMs: 15 * 60 * 1000,
+    })
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json({ error: "Too many upload requests. Please try again later." }, { status: 429 })
+    }
+
     const formData = await request.formData()
     const file = formData.get("file")
 
@@ -128,7 +190,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "File size must not exceed 5MB." }, { status: 400 })
     }
 
-    const blob = await put(`projects/${Date.now()}-${file.name}`, file, {
+    if (!(await hasValidFileSignature(file, file.type))) {
+      return NextResponse.json({ error: "File content does not match the declared image type." }, { status: 400 })
+    }
+
+    const extension = ALLOWED_EXTENSIONS.get(file.type)
+    if (!extension) {
+      return NextResponse.json({ error: "Unsupported file extension." }, { status: 400 })
+    }
+
+    const safeFilename = sanitizeFilename(file.name)
+
+    const blob = await put(`projects/${Date.now()}-${safeFilename}.${extension}`, file, {
       access: "public",
     })
 

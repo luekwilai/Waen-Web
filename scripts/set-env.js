@@ -1,6 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 
-const databaseUrl = 'postgresql://neondb_owner:npg_0ORiNP5dBnkK@ep-shiny-shadow-a1fquwui-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const databaseUrl = process.env.DATABASE_URL || process.argv[2];
 
-fs.writeFileSync('.env.local', `DATABASE_URL=${databaseUrl}`, 'utf8');
+if (!databaseUrl) {
+  throw new Error('Provide DATABASE_URL via environment variable or first CLI argument');
+}
+
+fs.writeFileSync(path.join(__dirname, '../.env.local'), `DATABASE_URL=${databaseUrl}`, 'utf8');
 console.log('DATABASE_URL set in .env.local');

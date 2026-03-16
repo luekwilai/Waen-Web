@@ -27,6 +27,8 @@ export function ContactForm() {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [warningMessage, setWarningMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [consentAccepted, setConsentAccepted] = useState(false)
 
   useEffect(() => {
@@ -41,6 +43,9 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSubmitting(true)
+    setSuccess(false)
+    setWarningMessage(null)
+    setErrorMessage(null)
 
     try {
       const res = await fetch("/api/inquiries", {
@@ -49,14 +54,27 @@ export function ContactForm() {
         body: JSON.stringify(formData),
       })
 
-      if (res.ok) {
-        setSuccess(true)
-        setFormData(initialFormData)
-        setConsentAccepted(false)
-        setTimeout(() => setSuccess(false), 5000)
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data?.error || "เกิดข้อผิดพลาดในการส่งข้อความ")
       }
+
+      setSuccess(true)
+      setFormData(initialFormData)
+      setConsentAccepted(false)
+
+      if (!data?.emailSent) {
+        setWarningMessage(data?.emailError || "บันทึกข้อความแล้ว แต่ระบบส่งอีเมลแจ้งเตือนไม่สำเร็จ")
+      }
+
+      setTimeout(() => {
+        setSuccess(false)
+        setWarningMessage(null)
+      }, 5000)
     } catch (error) {
       console.error("Failed to submit:", error)
+      setErrorMessage(error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการส่งข้อความ")
     } finally {
       setSubmitting(false)
     }
@@ -73,6 +91,18 @@ export function ContactForm() {
           <div className="mb-8 p-4 bg-lime-50 dark:bg-lime-400/10 border border-lime-200 dark:border-lime-400/30 rounded-xl text-lime-700 dark:text-lime-400 font-medium flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
             <CheckCircle2 className="w-5 h-5" />
             <p>ส่งข้อความเรียบร้อยแล้ว! เราจะติดต่อกลับโดยเร็วที่สุด</p>
+          </div>
+        )}
+
+        {warningMessage && (
+          <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-400/10 border border-amber-200 dark:border-amber-400/30 rounded-xl text-amber-700 dark:text-amber-300 font-medium animate-in fade-in slide-in-from-top-4 duration-500">
+            <p>{warningMessage}</p>
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-400/10 border border-red-200 dark:border-red-400/30 rounded-xl text-red-700 dark:text-red-300 font-medium animate-in fade-in slide-in-from-top-4 duration-500">
+            <p>{errorMessage}</p>
           </div>
         )}
 

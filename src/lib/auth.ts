@@ -6,6 +6,7 @@ import type { NextAuthConfig } from "next-auth"
 import authConfig from "./auth.config"
 import { verifyRecaptchaToken } from "./recaptcha"
 import { verifyTotpToken } from "./totp"
+import { checkRateLimit, getClientIp } from "./rate-limit"
 
 const config: NextAuthConfig = {
   ...authConfig,
@@ -18,8 +19,20 @@ const config: NextAuthConfig = {
         totpToken: { label: "TOTP", type: "text" },
         recaptchaToken: { label: "reCAPTCHA", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        const clientIp = getClientIp(request)
+        const normalizedEmail = String(credentials.email).trim().toLowerCase()
+        const rateLimit = checkRateLimit({
+          key: `login:${clientIp}:${normalizedEmail}`,
+          limit: 5,
+          windowMs: 10 * 60 * 1000,
+        })
+
+        if (!rateLimit.allowed) {
           return null
         }
 
@@ -29,7 +42,7 @@ const config: NextAuthConfig = {
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email: normalizedEmail },
         })
 
         if (!user || !user.password) {

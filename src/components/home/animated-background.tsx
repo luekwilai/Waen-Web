@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { useEffect, useMemo, useSyncExternalStore } from "react"
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 
 const parallaxMediaQuery = "(min-width: 1024px) and (hover: hover) and (pointer: fine)"
@@ -30,6 +30,7 @@ function getMediaQuerySnapshot(query: string) {
 
 export function AnimatedBackground() {
   const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const isParallaxEnabled = useSyncExternalStore(
     (onChange) => subscribeToMediaQuery(parallaxMediaQuery, onChange),
     () => getMediaQuerySnapshot(parallaxMediaQuery),
@@ -50,13 +51,16 @@ export function AnimatedBackground() {
 
   const xOffset = useTransform(smoothX, [-0.5, 0.5], [-170, 170])
   const yOffset = useTransform(smoothY, [-0.5, 0.5], [-170, 170])
+  const effectiveTheme = mounted ? resolvedTheme : "light"
+  const effectiveReducedMotion = mounted ? prefersReducedMotion : false
+  const effectiveParallaxEnabled = mounted ? isParallaxEnabled : false
 
   const blobs = useMemo(
     () => [
       {
         className: "absolute w-[30vw] h-[30vw] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[60px]",
         style: {
-          background: resolvedTheme === "dark" ? "rgba(132, 204, 22, 0.4)" : "rgba(163, 230, 53, 0.6)",
+          background: effectiveTheme === "dark" ? "rgba(132, 204, 22, 0.4)" : "rgba(163, 230, 53, 0.6)",
           top: "-10%",
           left: "-10%",
         },
@@ -67,7 +71,7 @@ export function AnimatedBackground() {
       {
         className: "absolute w-[25vw] h-[25vw] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[60px]",
         style: {
-          background: resolvedTheme === "dark" ? "rgba(99, 102, 241, 0.4)" : "rgba(129, 140, 248, 0.5)",
+          background: effectiveTheme === "dark" ? "rgba(99, 102, 241, 0.4)" : "rgba(129, 140, 248, 0.5)",
           top: "0%",
           right: "-10%",
         },
@@ -78,7 +82,7 @@ export function AnimatedBackground() {
       {
         className: "absolute w-[35vw] h-[35vw] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[80px]",
         style: {
-          background: resolvedTheme === "dark" ? "rgba(20, 184, 166, 0.3)" : "rgba(45, 212, 191, 0.4)",
+          background: effectiveTheme === "dark" ? "rgba(20, 184, 166, 0.3)" : "rgba(45, 212, 191, 0.4)",
           bottom: "-20%",
           left: "-10%",
         },
@@ -89,7 +93,7 @@ export function AnimatedBackground() {
       {
         className: "absolute w-[30vw] h-[30vw] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[70px]",
         style: {
-          background: resolvedTheme === "dark" ? "rgba(244, 63, 94, 0.25)" : "rgba(251, 113, 133, 0.4)",
+          background: effectiveTheme === "dark" ? "rgba(244, 63, 94, 0.25)" : "rgba(251, 113, 133, 0.4)",
           bottom: "-10%",
           right: "-20%",
         },
@@ -100,7 +104,7 @@ export function AnimatedBackground() {
       {
         className: "absolute w-[20vw] h-[20vw] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[80px]",
         style: {
-          background: resolvedTheme === "dark" ? "rgba(139, 92, 246, 0.3)" : "rgba(167, 139, 250, 0.5)",
+          background: effectiveTheme === "dark" ? "rgba(139, 92, 246, 0.3)" : "rgba(167, 139, 250, 0.5)",
           top: "30%",
           left: "30%",
         },
@@ -109,11 +113,15 @@ export function AnimatedBackground() {
         mobileHidden: true,
       },
     ],
-    [resolvedTheme]
+    [effectiveTheme]
   )
 
   useEffect(() => {
-    if (!isParallaxEnabled || prefersReducedMotion) {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!effectiveParallaxEnabled || effectiveReducedMotion) {
       mouseX.set(0)
       mouseY.set(0)
       return
@@ -127,10 +135,10 @@ export function AnimatedBackground() {
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true })
     return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [isParallaxEnabled, mouseX, mouseY, prefersReducedMotion])
+  }, [effectiveParallaxEnabled, mouseX, mouseY, effectiveReducedMotion])
 
-  const isDark = resolvedTheme !== "light"
-  const shouldAnimate = !prefersReducedMotion
+  const isDark = effectiveTheme !== "light"
+  const shouldAnimate = !effectiveReducedMotion
 
   return (
     <div className="fixed inset-0 z-[0] overflow-hidden pointer-events-none bg-slate-50 dark:bg-slate-950 transition-colors duration-700" aria-hidden>
@@ -138,7 +146,7 @@ export function AnimatedBackground() {
       {/* Mesh Gradient Blobs */}
       <motion.div 
         className="absolute inset-0 opacity-50 sm:opacity-60 dark:opacity-35 sm:dark:opacity-40 scale-[1.08] sm:scale-[1.15]"
-        style={{ x: isParallaxEnabled && shouldAnimate ? xOffset : 0, y: isParallaxEnabled && shouldAnimate ? yOffset : 0 }}
+        style={{ x: effectiveParallaxEnabled && shouldAnimate ? xOffset : 0, y: effectiveParallaxEnabled && shouldAnimate ? yOffset : 0 }}
       >
         {blobs.map((blob, index) => (
           <motion.div
@@ -166,7 +174,7 @@ export function AnimatedBackground() {
           backgroundImage: isDark
             ? "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)"
             : "radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)",
-          backgroundSize: prefersReducedMotion ? "48px 48px" : "40px 40px",
+          backgroundSize: effectiveReducedMotion ? "48px 48px" : "40px 40px",
           maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
           WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
         }}

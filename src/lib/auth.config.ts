@@ -37,9 +37,9 @@ const authConfig: NextAuthConfig = {
       const { pathname } = request.nextUrl
 
       if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-        const user = auth?.user as { role?: string; email?: string } | undefined
+        const user = auth?.user as { role?: string } | undefined
 
-        return Boolean(user && (user.role === "ADMIN" || user.email === "admin@waenweb.com"))
+        return Boolean(user && user.role === "ADMIN")
       }
 
       return true

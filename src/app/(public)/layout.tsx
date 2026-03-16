@@ -1,4 +1,5 @@
 import { CookieConsentBanner } from "@/components/home/cookie-consent-banner"
+import { AnimatedBackground } from "@/components/home/animated-background"
 
 export default function PublicLayout({
   children,
@@ -7,6 +8,7 @@ export default function PublicLayout({
 }>) {
   return (
     <>
+      <AnimatedBackground />
       {children}
       <CookieConsentBanner />
     </>

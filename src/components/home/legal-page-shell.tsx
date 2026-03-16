@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { BrandLogo } from "@/components/brand-logo"
 import { ArrowLeft, Mail, MessageSquare } from "lucide-react"
-import { AnimatedBackground } from "@/components/home/animated-background"
 import { SiteFooter } from "@/components/home/site-footer"
 
 type LegalPageShellProps = {
@@ -22,8 +21,6 @@ export function LegalPageShell({
 }: LegalPageShellProps) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
-      <AnimatedBackground />
-
       <div className="relative z-10">
         <header className="border-b border-slate-200/70 bg-white/70 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/70">
           <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 sm:px-6 md:flex-row md:items-center md:justify-between">

@@ -5,7 +5,6 @@ import { ContactForm } from "@/components/home/contact-form"
 import { PortfolioSection } from "@/components/home/portfolio-section"
 import { PackagesSection } from "@/components/home/packages-section"
 import { ProcessSection } from "@/components/home/process-section"
-import { AnimatedBackground } from "@/components/home/animated-background"
 import { ScrollReveal } from "@/components/home/scroll-reveal"
 import { SiteHeader } from "@/components/home/site-header"
 import { SiteFooter } from "@/components/home/site-footer"
@@ -120,7 +119,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen font-sans">
-      <AnimatedBackground />
       <SiteHeader logoUrl={logoUrl} siteName={siteName} />
 
       {/* Hero Section */}

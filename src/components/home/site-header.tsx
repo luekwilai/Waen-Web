@@ -50,7 +50,7 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
   return (
     <>
       <header
-        className={`fixed w-full z-50 top-0 transition-all duration-700 ${
+        className={`sticky top-0 w-full z-50 transition-all duration-700 ${
           scrolled
             ? "py-3 bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-white/20 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
             : "py-6 bg-transparent border-b border-transparent"

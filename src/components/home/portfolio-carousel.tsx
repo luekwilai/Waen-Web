@@ -48,6 +48,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   const [direction, setDirection] = useState(1)
   const cardsPerView = useSyncExternalStore(subscribeToViewport, getCardsPerViewSnapshot, () => 1)
   const isMobileViewport = cardsPerView === 1
+  const useReducedMotionCarousel = isMobileViewport
   const dragStartX = useRef<number | null>(null)
   const isPausedRef = useRef(false)
   const isDraggingRef = useRef(false)
@@ -85,7 +86,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
   }, [pageCount])
 
   useEffect(() => {
-    if (pageCount <= 1) return
+    if (pageCount <= 1 || useReducedMotionCarousel) return
 
     const id = setInterval(() => {
       if (isPausedRef.current || isDraggingRef.current) {
@@ -97,7 +98,7 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
     }, 5000)
 
     return () => clearInterval(id)
-  }, [pageCount])
+  }, [pageCount, useReducedMotionCarousel])
 
   // Preload adjacent page images
   useEffect(() => {
@@ -218,7 +219,9 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
       <div
         className="relative overflow-hidden select-none px-4 sm:px-6 lg:px-10"
         onMouseEnter={() => {
-          isPausedRef.current = true
+          if (!useReducedMotionCarousel) {
+            isPausedRef.current = true
+          }
         }}
         onMouseLeave={() => {
           resetPointerState()
@@ -233,10 +236,10 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
             key={safePage}
             custom={direction}
             variants={slideVariants}
-            initial="enter"
+            initial={useReducedMotionCarousel ? false : "enter"}
             animate="center"
-            exit="exit"
-            transition={{ duration: isMobileViewport ? 0.28 : 0.5, ease: [0.32, 0.72, 0, 1] }}
+            exit={useReducedMotionCarousel ? undefined : "exit"}
+            transition={useReducedMotionCarousel ? { duration: 0 } : { duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 py-4">
@@ -247,8 +250,8 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                     key={`${project.id}-${safePage}-${slot}`}
                     custom={slot}
                     variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
+                    initial={useReducedMotionCarousel ? false : "hidden"}
+                    animate={useReducedMotionCarousel ? undefined : "visible"}
                     className="group relative h-full"
                   >
                     {/* Hover glow ring */}
@@ -293,9 +296,9 @@ export function PortfolioCarousel({ projects }: { projects: Project[] }) {
                         {/* Mobile mockup */}
                         {project.mobileImage && (
                           <motion.div
-                            initial={{ y: 16, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: slot * 0.1 + 0.35, duration: 0.45 }}
+                            initial={useReducedMotionCarousel ? false : { y: 16, opacity: 0 }}
+                            animate={useReducedMotionCarousel ? undefined : { y: 0, opacity: 1 }}
+                            transition={useReducedMotionCarousel ? { duration: 0 } : { delay: slot * 0.1 + 0.35, duration: 0.45 }}
                             className="absolute bottom-3 right-3 w-[22%] aspect-[9/19] rounded-[14px] border-[3px] border-slate-900 bg-slate-900 overflow-hidden shadow-2xl z-20 hidden md:block"
                           >
                             <div className="absolute top-0 inset-x-0 h-2.5 bg-slate-900 rounded-b-md w-1/2 mx-auto z-10" />

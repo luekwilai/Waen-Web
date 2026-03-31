@@ -54,6 +54,7 @@ export function AnimatedBackground() {
   const effectiveTheme = mounted ? resolvedTheme : "light"
   const effectiveReducedMotion = mounted ? prefersReducedMotion : false
   const effectiveParallaxEnabled = mounted ? isParallaxEnabled : false
+  const useStaticMobileBackground = !effectiveParallaxEnabled || effectiveReducedMotion
 
   const blobs = useMemo(
     () => [
@@ -144,26 +145,43 @@ export function AnimatedBackground() {
     <div className="fixed inset-0 z-[0] overflow-hidden pointer-events-none bg-slate-50 dark:bg-slate-950 transition-colors duration-700" aria-hidden>
       
       {/* Mesh Gradient Blobs */}
-      <motion.div 
-        className="absolute inset-0 opacity-50 sm:opacity-60 dark:opacity-35 sm:dark:opacity-40 scale-[1.08] sm:scale-[1.15]"
-        style={{ x: effectiveParallaxEnabled && shouldAnimate ? xOffset : 0, y: effectiveParallaxEnabled && shouldAnimate ? yOffset : 0 }}
-      >
-        {blobs.map((blob, index) => (
-          <motion.div
-            key={index}
-            className={`${blob.className} ${blob.mobileHidden ? "hidden sm:block" : "block"}`}
-            style={blob.style}
-            animate={shouldAnimate ? blob.animate : undefined}
-            transition={shouldAnimate ? blob.transition : undefined}
-          />
-        ))}
-      </motion.div>
+      {useStaticMobileBackground ? (
+        <div className="absolute inset-0 opacity-45 sm:opacity-60 dark:opacity-30 sm:dark:opacity-40 scale-[1.04] sm:scale-[1.12]">
+          {blobs.map((blob, index) => (
+            <div
+              key={index}
+              className={`${blob.className} ${blob.mobileHidden ? "hidden sm:block" : "block"}`}
+              style={blob.style}
+            />
+          ))}
+        </div>
+      ) : (
+        <motion.div 
+          className="absolute inset-0 opacity-50 sm:opacity-60 dark:opacity-35 sm:dark:opacity-40 scale-[1.08] sm:scale-[1.15]"
+          style={{ x: xOffset, y: yOffset }}
+        >
+          {blobs.map((blob, index) => (
+            <motion.div
+              key={index}
+              className={`${blob.className} ${blob.mobileHidden ? "hidden sm:block" : "block"}`}
+              style={blob.style}
+              animate={shouldAnimate ? blob.animate : undefined}
+              transition={shouldAnimate ? blob.transition : undefined}
+            />
+          ))}
+        </motion.div>
+      )}
 
       {/* Noise Overlay (Optional: makes gradient look richer and less banded) */}
       <div 
         className="absolute inset-0 opacity-[0.02] sm:opacity-[0.03] dark:opacity-[0.015] sm:dark:opacity-[0.02]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundImage: isDark
+            ? "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)"
+            : "radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)",
+          backgroundSize: effectiveReducedMotion ? "48px 48px" : "40px 40px",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
         }}
       />
 

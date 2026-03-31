@@ -152,22 +152,22 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
           <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/10 dark:bg-lime-400/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
           
           {/* Drawer header */}
-          <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 relative z-10 shrink-0">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 relative z-10 shrink-0">
+            <div className="min-w-0 flex-1">
               <BrandLogo
                 iconSize={40}
                 logoUrl={logoUrl}
                 siteName={siteName}
-                wrapperClassName="flex items-center gap-3"
-                textClassName="flex flex-col leading-none"
-                wordmarkClassName="font-black text-slate-900 dark:text-white text-lg tracking-tight"
+                wrapperClassName="flex min-w-0 items-center gap-3"
+                textClassName="flex min-w-0 flex-1 flex-col leading-none"
+                wordmarkClassName="block truncate font-black text-base tracking-tight text-slate-900 dark:text-white sm:text-lg"
                 subtitle="Studio"
-                subtitleClassName="text-[10px] text-slate-500 uppercase tracking-widest mt-1"
+                subtitleClassName="mt-1 block truncate text-[10px] uppercase tracking-[0.22em] text-slate-500"
               />
             </div>
             <button
               onClick={() => setMobileOpen(false)}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+              className="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>

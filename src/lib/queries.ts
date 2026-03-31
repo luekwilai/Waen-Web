@@ -41,15 +41,19 @@ export async function getAdminUsers() {
   return prisma.user.findMany({ orderBy: { createdAt: "desc" } })
 }
 
-export async function getSiteSettings(): Promise<Record<string, string>> {
-  try {
-    const rows = await prisma.siteSetting.findMany()
-    const settings: Record<string, string> = {}
-    for (const row of rows) {
-      settings[row.key] = row.value
+export const getSiteSettings = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    try {
+      const rows = await prisma.siteSetting.findMany()
+      const settings: Record<string, string> = {}
+      for (const row of rows) {
+        settings[row.key] = row.value
+      }
+      return settings
+    } catch {
+      return {}
     }
-    return settings
-  } catch {
-    return {}
-  }
-}
+  },
+  ["site-settings"],
+  { revalidate: 300, tags: ["site-settings"] }
+)

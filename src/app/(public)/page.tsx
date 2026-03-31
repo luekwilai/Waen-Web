@@ -29,8 +29,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-export const revalidate = 0
-
 const SERVICE_ICONS: Record<string, LucideIcon> = {
   Smartphone, Search, ShoppingCart, ShieldCheck, Headphones, Clock,
   Globe, Code2, Star, Zap, Lock, BarChart2,

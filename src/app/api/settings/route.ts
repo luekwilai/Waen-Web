@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
 
@@ -39,6 +39,7 @@ export async function PATCH(request: Request) {
       )
     )
 
+    revalidateTag("site-settings", "max")
     revalidatePath("/")
     revalidatePath("/admin/settings")
 

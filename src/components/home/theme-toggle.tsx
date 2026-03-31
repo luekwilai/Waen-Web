@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme()
@@ -22,8 +21,8 @@ export function ThemeToggle() {
     >
       {/* Subtle background glow effect */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-tr from-amber-200/40 to-orange-400/40 dark:from-indigo-500/40 dark:to-purple-500/40" />
-      
-      <motion.svg
+
+      <svg
         width="20"
         height="20"
         viewBox="0 0 24 24"
@@ -32,44 +31,14 @@ export function ThemeToggle() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-amber-500 dark:text-indigo-400 transition-colors duration-500 relative z-10"
-        animate={{ rotate: isDark ? 40 : 90 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        className={`relative z-10 transition-all duration-300 ${isDark ? "rotate-45 text-indigo-400" : "rotate-90 text-amber-500"}`}
       >
-        <mask id="moon-mask">
+        <mask id="moon-mask-static">
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
-          <motion.circle
-            cx="12"
-            cy="4"
-            r="9"
-            fill="black"
-            initial={false}
-            animate={{
-              cx: isDark ? 12 : 30,
-              cy: isDark ? 4 : 0,
-            }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          />
+          <circle cx={isDark ? 12 : 30} cy={isDark ? 4 : 0} r="9" fill="black" />
         </mask>
-        <motion.circle
-          cx="12"
-          cy="12"
-          fill={isDark ? "currentColor" : "none"}
-          mask="url(#moon-mask)"
-          initial={false}
-          animate={{
-            r: isDark ? 9 : 5,
-          }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        />
-        <motion.g
-          initial={false}
-          animate={{
-            opacity: isDark ? 0 : 1,
-            scale: isDark ? 0.5 : 1,
-          }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        >
+        <circle cx="12" cy="12" r={isDark ? 9 : 5} fill={isDark ? "currentColor" : "none"} mask="url(#moon-mask-static)" />
+        <g className={`origin-center transition-all duration-300 ${isDark ? "scale-50 opacity-0" : "scale-100 opacity-100"}`}>
           <line x1="12" y1="1" x2="12" y2="3" />
           <line x1="12" y1="21" x2="12" y2="23" />
           <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
@@ -78,8 +47,8 @@ export function ThemeToggle() {
           <line x1="21" y1="12" x2="23" y2="12" />
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </motion.g>
-      </motion.svg>
+        </g>
+      </svg>
     </button>
   )
 }

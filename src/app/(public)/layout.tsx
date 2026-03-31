@@ -1,14 +1,4 @@
-import dynamic from "next/dynamic"
-
-const AnimatedBackground = dynamic(
-  () => import("@/components/home/animated-background").then((mod) => mod.AnimatedBackground),
-  { ssr: false }
-)
-
-const CookieConsentBanner = dynamic(
-  () => import("@/components/home/cookie-consent-banner").then((mod) => mod.CookieConsentBanner),
-  { ssr: false }
-)
+import { PublicClientShell } from "@/components/home/public-client-shell"
 
 export default function PublicLayout({
   children,
@@ -17,9 +7,8 @@ export default function PublicLayout({
 }>) {
   return (
     <>
-      <AnimatedBackground />
+      <PublicClientShell />
       {children}
-      <CookieConsentBanner />
     </>
   )
 }

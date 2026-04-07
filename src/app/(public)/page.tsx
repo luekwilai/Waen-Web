@@ -121,43 +121,30 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative min-h-[100svh] flex items-center px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
-        {/* Background */}
+        {/* Background - simplified, static, lighter blur */}
         <div className="absolute inset-0 pointer-events-none select-none">
-          {/* Giant watermark */}
-          <div className="absolute inset-0 flex items-center justify-end pr-8 opacity-[0.018] dark:opacity-[0.025]">
-            <span className="text-[52vw] font-black text-slate-900 dark:text-white leading-none tracking-tighter">W</span>
-          </div>
-          <div className="absolute top-1/4 right-[-5%] w-[700px] h-[700px] bg-lime-400/10 dark:bg-lime-400/6 rounded-full blur-[140px]" />
-          <div className="absolute bottom-0 left-[-5%] w-[500px] h-[500px] bg-emerald-500/8 dark:bg-emerald-500/4 rounded-full blur-[120px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1100px] h-[1100px] border border-lime-400/5 rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] border border-lime-400/8 rounded-full" />
-          <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
-            style={{ backgroundImage: "radial-gradient(circle, #64748b 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          {/* Subtle gradient blobs - static, smaller blur */}
+          <div className="absolute top-1/4 right-[-5%] w-[500px] h-[500px] bg-lime-400/8 dark:bg-lime-400/5 rounded-full blur-[80px]" />
+          <div className="absolute bottom-0 left-[-5%] w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-500/3 rounded-full blur-[60px]" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
           {/* Left — Text */}
           <div className="flex flex-col items-start text-left">
-            {/* Badge */}
-            <div className="animate-fade-up mb-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-lime-500/30 bg-lime-400/10 dark:border-lime-400/20 dark:bg-lime-400/5 backdrop-blur-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-500 dark:bg-lime-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-500" />
-              </span>
+            {/* Badge - simplified, no ping animation */}
+            <div className="animate-fade-up mb-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-lime-500/30 bg-lime-400/10 dark:border-lime-400/20 dark:bg-lime-400/5">
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-500" />
               <span className="text-xs font-bold text-lime-700 dark:text-lime-300 uppercase tracking-[0.15em]">
                 {heroBadge}
               </span>
             </div>
 
-            {/* Heading */}
-            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8 relative">
-              <span className="absolute -inset-x-6 top-1/2 -translate-y-1/2 h-24 md:h-32 bg-gradient-to-r from-lime-300/15 via-emerald-300/10 to-transparent blur-3xl pointer-events-none" />
+            {/* Heading - simplified, no heavy blur effects */}
+            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8">
               <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-5 whitespace-nowrap text-[clamp(4rem,16vw,8rem)] leading-[0.85]">
-                <span className="text-slate-900 dark:text-white drop-shadow-[0_10px_30px_rgba(15,23,42,0.08)]">WAEN</span>
+                <span className="text-slate-900 dark:text-white">WAEN</span>
                 <span className="relative inline-flex">
-                  <span className="absolute inset-0 bg-gradient-to-r from-lime-400 via-emerald-400 to-lime-300 blur-[30px] md:blur-[60px] opacity-30 dark:opacity-40 animate-pulse" />
                   <span className="relative bg-gradient-to-r from-lime-500 via-lime-400 to-emerald-400 bg-clip-text text-transparent">WEB</span>
-                  <span className="absolute -right-2 top-2 hidden md:block w-3 h-3 rounded-full bg-lime-400 shadow-[0_0_20px_rgba(163,230,53,0.9)] animate-ping" />
                 </span>
               </span>
               <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-500 dark:text-slate-400 mt-3 md:mt-4 tracking-wide">
@@ -197,10 +184,8 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right — Code Editor */}
+          {/* Right — Code Editor - simplified, no glow blur */}
           <div className="animate-fade-up animation-delay-200 hidden lg:flex items-center justify-center relative h-[580px]">
-            <div className="absolute inset-8 bg-lime-400/8 dark:bg-lime-400/6 rounded-3xl blur-3xl" />
-
             {/* Editor window */}
             <div className="relative w-full max-w-[490px] rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/30 dark:shadow-black/60 border border-white/8 z-10">
               {/* Title bar */}
@@ -212,7 +197,7 @@ export default async function HomePage() {
                 </div>
                 <div className="flex text-xs">
                   <span className="px-4 py-3.5 bg-[#0d1117] dark:bg-[#0d1117] text-slate-200 border-r border-white/5 font-medium flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />index.tsx
+                    <span className="w-2 h-2 rounded-full bg-lime-400" />index.tsx
                   </span>
                   <span className="px-4 py-3.5 text-slate-500 border-r border-white/5">styles.css</span>
                   <span className="px-4 py-3.5 text-slate-500">tailwind.config</span>
@@ -235,7 +220,7 @@ export default async function HomePage() {
                   [11, <><span className="text-pink-400">export default function</span> <span className="text-amber-300">Website</span>({'{'}<span className="text-slate-300">title</span>{'}'}<span className="text-slate-300">:</span> <span className="text-sky-300">WebsiteProps</span>) {'{'}</>],
                   [12, <><span className="text-pink-400 pl-4">return</span> <span className="text-slate-300">(</span></>],
                   [13, <><span className="text-slate-300 pl-8">&lt;</span><span className="text-sky-400">main</span> <span className="text-purple-300">className</span><span className="text-slate-300">=</span><span className="text-amber-300">&quot;min-h-screen&quot;</span><span className="text-slate-300">&gt;</span></>],
-                  [14, <><span className="overflow-hidden inline-block border-r-2 border-lime-400 pr-0.5 animate-[typing_3s_steps(30,end)_infinite,blink_1s_step-end_infinite] whitespace-nowrap"><span className="text-slate-300 pl-12">&lt;</span><span className="text-sky-400">Hero</span> <span className="text-purple-300">title</span><span className="text-slate-300">={'{'}title{'}'}</span> <span className="text-slate-300">/&gt;</span></span></>],
+                  [14, <><span className="inline-block border-r-2 border-lime-400 pr-0.5 whitespace-nowrap"><span className="text-slate-300 pl-12">&lt;</span><span className="text-sky-400">Hero</span> <span className="text-purple-300">title</span><span className="text-slate-300">={'{'}title{'}'}</span> <span className="text-slate-300">/&gt;</span></span></>],
                   [15, <><span className="text-slate-300 pl-8">&lt;/</span><span className="text-sky-400">main</span><span className="text-slate-300">&gt;</span></>],
                   [16, <><span className="text-slate-300 pl-4">)</span></>],
                   [17, <>{'}'}</>],
@@ -260,8 +245,8 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 motion-safe:animate-bounce flex flex-col items-center gap-2.5 sm:gap-2 text-slate-400 dark:text-slate-500 pointer-events-none">
+        {/* Scroll Indicator - simplified */}
+        <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 sm:gap-2 text-slate-400 dark:text-slate-500 pointer-events-none">
           <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] sm:tracking-widest font-medium">Scroll</span>
           <div className="w-0.5 h-8 sm:h-10 bg-gradient-to-b from-lime-400 to-transparent rounded-full" />
         </div>
@@ -300,9 +285,9 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <ScrollReveal className="text-center mb-16">
             <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-lime-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
               ผลงาน
-              <span className="w-1.5 h-1.5 rounded-full bg-lime-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
             </span>
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
               ผลงาน<span className="text-lime-500 dark:text-lime-400">ที่ผ่านมา</span>
@@ -388,10 +373,10 @@ export default async function HomePage() {
 
       {/* Contact Section */}
       <section id="contact" className="py-20 md:py-32 relative z-10 overflow-hidden">
-        {/* Section Background & Glow */}
-        <div className="absolute inset-0 bg-slate-50/50 dark:bg-slate-950/50 border-t border-slate-200/50 dark:border-white/5 backdrop-blur-3xl" />
+        {/* Section Background - simplified */}
+        <div className="absolute inset-0 bg-slate-50/50 dark:bg-slate-950/50 border-t border-slate-200/50 dark:border-white/5" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-lime-500/20 dark:via-lime-400/20 to-transparent" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-lime-400/5 dark:bg-lime-400/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-lime-400/5 dark:bg-lime-400/5 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-8 items-center">
@@ -399,10 +384,7 @@ export default async function HomePage() {
             <div className="lg:col-span-2 text-center lg:text-left">
               <ScrollReveal>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime-500/10 dark:bg-lime-400/10 border border-lime-500/20 dark:border-lime-400/20 text-lime-600 dark:text-lime-400 text-xs font-semibold uppercase tracking-widest mb-6">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
-                  </span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500" />
                   พร้อมให้บริการ
                 </div>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-6 leading-[1.1]">

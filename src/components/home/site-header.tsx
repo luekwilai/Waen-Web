@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowRight, Menu, X, Sparkles } from "lucide-react"
+import { ArrowRight, Menu, X } from "lucide-react"
 import { BrandLogo } from "@/components/brand-logo"
 import { ThemeToggle } from "./theme-toggle"
 
@@ -19,10 +19,18 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
   const [activeSection, setActiveSection] = useState("")
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      const y = window.scrollY
+      // Hysteresis: scroll down > 50px to compact, scroll up < 30px to expand
+      if (!scrolled && y > 50) {
+        setScrolled(true)
+      } else if (scrolled && y < 30) {
+        setScrolled(false)
+      }
+    }
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+  }, [scrolled])
 
   useEffect(() => {
     const ids = navLinks.map((l) => l.href.replace("#", ""))
@@ -48,162 +56,238 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
   }
 
   return (
-    <>
+    <div className="sticky top-0 z-50">
       <header
-        className={`sticky top-0 w-full z-50 transition-all duration-700 ${
-          scrolled
-            ? "py-3 bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-white/20 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
-            : "py-6 bg-transparent border-b border-transparent"
-        }`}
+        className={`transition-[padding] duration-300 ease-out will-change-[padding]
+          ${scrolled ? "py-2" : "py-4 sm:py-6"}
+        `}
       >
-        <div className="flex max-w-7xl mx-auto px-6 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group relative">
-            {/* Logo Glow Behind */}
-            <div className="absolute inset-0 bg-lime-400/20 dark:bg-lime-400/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="mx-auto px-3 sm:px-4 md:px-6 max-w-7xl">
+          <div
+            className={`relative flex items-center justify-between transition-[background-color,box-shadow] duration-300
+              ${scrolled 
+                ? "py-2.5 px-4 sm:px-6 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-lg" 
+                : "py-3 px-2 sm:px-4 bg-transparent"
+              }
+            `}
+          >
+            {/* Subtle shine effect - only when scrolled */}
+            {scrolled && (
+              <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+            )}
 
-            <BrandLogo
-              priority
-              iconSize={44}
-              logoUrl={logoUrl}
-              siteName={siteName}
-              wrapperClassName="relative z-10 flex items-center gap-3"
-              textClassName="flex flex-col leading-none relative z-10 -ml-1"
-              wordmarkClassName="text-xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors duration-300"
-              subtitle="Studio"
-              subtitleClassName="text-[10px] text-slate-500 font-semibold tracking-[0.2em] uppercase mt-0.5"
-            />
-          </Link>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-900/5 dark:bg-white/5 p-1 rounded-full border border-slate-200/50 dark:border-white/5">
-            {[
-              { name: "ผลงาน", href: "#portfolio" },
-              { name: "บริการ", href: "#services" },
-              { name: "ราคา", href: "#packages" },
-              { name: "ติดต่อ", href: "#contact" },
-            ].map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`relative px-5 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
-                  activeSection === item.href.substring(1)
-                    ? "text-lime-700 dark:text-lime-300 bg-lime-400/20 dark:bg-lime-400/10 shadow-sm"
-                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:block">
-              <ThemeToggle />
-            </div>
-            
-            <Link
-              href="#contact"
-              className="hidden md:inline-flex relative items-center justify-center group"
-            >
-              <div className="absolute inset-0 bg-lime-400/40 dark:bg-lime-400/20 blur-md rounded-full group-hover:bg-lime-400/60 dark:group-hover:bg-lime-400/30 transition-all duration-300 opacity-0 group-hover:opacity-100" />
-              <span className="relative inline-flex items-center gap-2 bg-lime-400 text-slate-950 text-sm font-bold rounded-full py-2.5 px-6 transition-all duration-300 group-hover:scale-105 border border-lime-500/50">
-                ติดต่อเรา
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
+            {/* Logo */}
+            <Link href="/" className="relative flex items-center gap-2.5 sm:gap-3 group z-10">
+              <BrandLogo
+                priority
+                iconSize={scrolled ? 36 : 40}
+                logoUrl={logoUrl}
+                siteName={siteName}
+                wrapperClassName="relative flex items-center gap-2.5 sm:gap-3"
+                textClassName="hidden sm:flex flex-col leading-none"
+                wordmarkClassName={`font-black tracking-tighter text-slate-900 dark:text-white ${scrolled ? "text-lg" : "text-xl"}`}
+                subtitle="Studio"
+                subtitleClassName="text-slate-500 font-semibold tracking-[0.15em] uppercase text-[10px] mt-0.5"
+              />
             </Link>
 
-            {/* Mobile hamburger */}
-            <div className="flex md:hidden items-center gap-3">
-              <ThemeToggle />
+            {/* Desktop Nav - Clean pill style */}
+            <nav className={`hidden lg:flex items-center gap-1 ${scrolled ? "bg-slate-100/70 dark:bg-white/5 p-1 rounded-full" : ""}`}>
+              {navLinks.map((item) => (
+                <button
+                  key={item.href}
+                  onClick={() => handleNav(item.href)}
+                  className={`relative px-4 xl:px-5 py-2 text-sm font-medium rounded-full transition-colors duration-200
+                    ${activeSection === item.href.substring(1)
+                      ? scrolled
+                        ? "text-lime-700 dark:text-lime-300 bg-lime-400/25 dark:bg-lime-400/15"
+                        : "text-lime-700 dark:text-lime-300 bg-lime-400/20 dark:bg-lime-400/10"
+                      : scrolled
+                        ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
+                    }
+                  `}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* Right actions */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
+              
+              {/* Desktop CTA - Liquid glass button */}
               <button
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-slate-900 dark:text-white backdrop-blur-md shadow-sm"
-                onClick={() => setMobileOpen((v) => !v)}
-                aria-label="Toggle menu"
+                onClick={() => handleNav("#contact")}
+                className="hidden lg:flex relative items-center justify-center group"
               >
-                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                <span className={`relative inline-flex items-center gap-1.5 bg-lime-400 text-slate-950 font-bold rounded-full transition-all duration-300 border border-lime-500/30 shadow-lg shadow-lime-500/20 hover:shadow-lime-500/30 hover:scale-105 ${scrolled ? "py-2 px-4 text-sm" : "py-2.5 px-5 text-sm"}`}>
+                  ติดต่อเรา
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                </span>
               </button>
+
+              {/* Tablet nav - simplified */}
+              <nav className="hidden md:flex lg:hidden items-center gap-1 bg-slate-100/70 dark:bg-white/5 p-1 rounded-full">
+                {navLinks.slice(0, 3).map((item) => (
+                  <button
+                    key={item.href}
+                    onClick={() => handleNav(item.href)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all
+                      ${activeSection === item.href.substring(1)
+                        ? "text-lime-700 dark:text-lime-300 bg-lime-400/25 dark:bg-lime-400/15"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10"
+                      }
+                    `}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handleNav("#contact")}
+                  className="px-3 py-1.5 text-xs font-bold bg-lime-400 text-slate-950 rounded-full hover:scale-105 transition-transform"
+                >
+                  ติดต่อ
+                </button>
+              </nav>
+
+              {/* Mobile hamburger - Animated SVG */}
+              <div className="flex md:hidden items-center gap-2">
+                <ThemeToggle />
+                <button
+                  className={`relative w-10 h-10 flex items-center justify-center rounded-xl border transition-all duration-200
+                    ${scrolled 
+                      ? "border-slate-200 dark:border-white/15 bg-white/70 dark:bg-white/10 shadow-sm" 
+                      : "border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5"
+                    }
+                    text-slate-900 dark:text-white hover:scale-105 active:scale-90 active:bg-lime-400/20 backdrop-blur-sm`}
+                  onClick={() => setMobileOpen((v) => !v)}
+                  aria-label="Toggle menu"
+                >
+                  {/* Animated Hamburger to X SVG */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+                    {/* Top line - morphs to X */}
+                    <line 
+                      x1="4" 
+                      y1="6" 
+                      x2="20" 
+                      y2="6" 
+                      className={`transition-all duration-300 origin-center ${mobileOpen ? "rotate-45 translate-y-1.5" : ""}`}
+                      style={{ transformOrigin: "12px 12px" }}
+                    />
+                    {/* Middle line - disappears */}
+                    <line 
+                      x1="4" 
+                      y1="12" 
+                      x2="20" 
+                      y2="12" 
+                      className={`transition-all duration-300 ${mobileOpen ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}`}
+                    />
+                    {/* Bottom line - morphs to X */}
+                    <line 
+                      x1="4" 
+                      y1="18" 
+                      x2="20" 
+                      y2="18" 
+                      className={`transition-all duration-300 origin-center ${mobileOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
+                      style={{ transformOrigin: "12px 12px" }}
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
       </header>
 
-      {/* Mobile drawer */}
+      {/* Mobile Menu - Now inside sticky container */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ${
-          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        className={`md:hidden transition-all duration-300 overflow-hidden ${
+          mobileOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        {/* Backdrop */}
-        <div
-          className={`absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100" : "opacity-0"}`}
-          onClick={() => setMobileOpen(false)}
-        />
-
-        {/* Drawer panel */}
-        <div
-          className={`absolute top-0 right-0 h-full w-[85%] sm:w-[350px] max-w-sm bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-white/10 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col ${
-            mobileOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          {/* Decorative gradients */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/10 dark:bg-lime-400/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-          
-          {/* Drawer header */}
-          <div className="flex items-center justify-between gap-3 p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 relative z-10 shrink-0">
-            <div className="min-w-0 flex-1">
+        {/* Menu Panel - Inside header flow */}
+        <div className="mx-auto px-3 sm:px-4 pb-4">
+          <div
+            className={`bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl 
+              rounded-2xl sm:rounded-3xl border border-white/50 dark:border-white/10
+              shadow-[0_16px_40px_-8px_rgba(0,0,0,0.2)] dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.5)]
+              overflow-hidden
+              transition-all duration-300
+              ${mobileOpen ? "translate-y-0 scale-100" : "-translate-y-2 scale-95"}
+            `}
+          >
+            {/* Glass shine effects */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/30 via-transparent to-white/5 dark:from-white/15 dark:via-transparent dark:to-white/5 pointer-events-none" />
+            <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/70 dark:via-white/40 to-transparent pointer-events-none" />
+            
+            {/* Decorative gradient blob */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-lime-400/20 dark:bg-lime-400/10 blur-3xl rounded-full pointer-events-none" />
+            
+            {/* Drawer header */}
+            <div className="flex items-center justify-between gap-3 p-5 border-b border-slate-200/60 dark:border-white/10 relative z-10 shrink-0">
               <BrandLogo
-                iconSize={40}
+                iconSize={36}
                 logoUrl={logoUrl}
                 siteName={siteName}
-                wrapperClassName="flex min-w-0 items-center gap-3"
-                textClassName="flex min-w-0 flex-1 flex-col leading-none"
-                wordmarkClassName="block truncate font-black text-base tracking-tight text-slate-900 dark:text-white sm:text-lg"
+                wrapperClassName="flex items-center gap-2.5"
+                textClassName="flex flex-col leading-none"
+                wordmarkClassName="font-black text-base tracking-tight text-slate-900 dark:text-white"
                 subtitle="Studio"
-                subtitleClassName="mt-1 block truncate text-[10px] uppercase tracking-[0.22em] text-slate-500"
+                subtitleClassName="text-[10px] uppercase tracking-[0.2em] text-slate-500"
               />
-            </div>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Drawer links */}
-          <nav className="p-5 sm:p-6 space-y-2 relative z-10 overflow-y-auto flex-1">
-            {navLinks.map(({ href, label }, i) => (
               <button
-                key={href}
-                onClick={() => handleNav(href)}
-                className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-900 transition-all text-left group"
-                style={{ transitionDelay: `${i * 50}ms` }}
+                onClick={() => setMobileOpen(false)}
+                className="h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-900/80 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all duration-200 border border-slate-200/50 dark:border-white/10 active:scale-90 group"
               >
-                <div className="flex items-center gap-4">
-                  <span className="w-2 h-2 rounded-full bg-lime-500/50 dark:bg-lime-400/50 group-hover:bg-lime-500 dark:group-hover:bg-lime-400 group-hover:scale-150 transition-all duration-300" />
-                  <span className="font-bold text-lg">{label}</span>
-                </div>
-                <ArrowRight className="w-4 h-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-lime-500" />
+                {/* Animated X with rotation */}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:rotate-90">
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                </svg>
               </button>
-            ))}
-          </nav>
+            </div>
 
-          {/* Drawer Footer / CTA */}
-          <div className="p-5 sm:p-6 border-t border-slate-100 dark:border-white/10 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm z-10 shrink-0">
-            <Link
-              href="#contact"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 w-full bg-lime-400 text-slate-950 font-bold rounded-2xl py-4 transition-all hover:scale-[1.02] shadow-xl shadow-lime-500/20 dark:shadow-lime-400/10 border border-lime-500/50"
-            >
-              ติดต่อเรา
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {/* Drawer links */}
+            <nav className="p-4 space-y-1 relative z-10">
+              {navLinks.map(({ href, label }, i) => (
+                <button
+                  key={href}
+                  onClick={() => handleNav(href)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left group transition-all duration-300
+                    ${activeSection === href.substring(1)
+                      ? "bg-lime-400/15 dark:bg-lime-400/10 text-lime-700 dark:text-lime-300 border border-lime-400/20 dark:border-lime-400/10"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5 border border-transparent"
+                    }
+                  `}
+                  style={{ transitionDelay: `${i * 40}ms` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-2 h-2 rounded-full transition-all duration-300 ${activeSection === href.substring(1) ? "bg-lime-500 scale-125" : "bg-slate-300 dark:bg-slate-600 group-hover:bg-lime-500 group-hover:scale-110"}`} />
+                    <span className="font-semibold text-sm">{label}</span>
+                  </div>
+                  <ArrowRight className={`w-4 h-4 transition-all duration-300 ${activeSection === href.substring(1) ? "opacity-100 translate-x-0 text-lime-500" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-lime-500"}`} />
+                </button>
+              ))}
+            </nav>
+
+            {/* Drawer Footer / CTA */}
+            <div className="p-4 border-t border-slate-200/60 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02]">
+              <Link
+                href="#contact"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full bg-lime-400 text-slate-950 font-bold rounded-xl py-3 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-lime-500/25 dark:shadow-lime-400/15 border border-lime-500/30"
+              >
+                ติดต่อเรา
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

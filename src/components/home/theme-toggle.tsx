@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme()
@@ -13,32 +14,101 @@ export function ThemeToggle() {
 
   const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark")
 
+  // Properties for sun and moon animation
+  const properties = {
+    sun: {
+      r: 5,
+      rotate: 0,
+      cx: 30,
+      cy: -4,
+      raysOpacity: 1,
+      raysScale: 1,
+      circleColor: "#f59e0b", // amber-500
+    },
+    moon: {
+      r: 9,
+      rotate: 90,
+      cx: 20,  // ขยับไปทางขวาเพื่อสร้างเสี้ยว
+      cy: 4,   // ลงมาตรงกลางเล็กน้อย
+      raysOpacity: 0,
+      raysScale: 0.5,
+      circleColor: "#818cf8", // indigo-400
+    },
+  }
+
+  const { r, rotate, cx, cy, raysOpacity, raysScale, circleColor } = isDark
+    ? properties.moon
+    : properties.sun
+
   return (
-    <button
+    <motion.button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative w-10 h-10 flex items-center justify-center rounded-full border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-white/5 hover:bg-slate-200/80 dark:hover:bg-white/10 transition-all overflow-hidden group focus:outline-none"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.9 }}
+      className="relative w-10 h-10 flex items-center justify-center rounded-full border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-white/5 overflow-hidden focus:outline-none"
       aria-label="Toggle theme"
     >
-      {/* Subtle background glow effect */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-tr from-amber-200/40 to-orange-400/40 dark:from-indigo-500/40 dark:to-purple-500/40" />
+      {/* Background glow effect */}
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          background: isDark
+            ? "linear-gradient(to top right, rgba(129, 140, 248, 0.4), rgba(168, 85, 247, 0.4))"
+            : "linear-gradient(to top right, rgba(251, 191, 36, 0.4), rgba(251, 146, 60, 0.4))",
+        }}
+        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+      />
 
-      <svg
+      <motion.svg
         width="20"
         height="20"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className={`relative z-10 transition-all duration-300 ${isDark ? "rotate-45 text-indigo-400" : "rotate-90 text-amber-500"}`}
+        className="relative z-10"
+        animate={{ rotate }}
+        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        style={{ transformOrigin: "center" }}
       >
-        <mask id="moon-mask-static">
+        {/* Mask for moon crescent effect */}
+        <mask id="moon-mask">
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
-          <circle cx={isDark ? 12 : 30} cy={isDark ? 4 : 0} r="9" fill="black" />
+          <motion.circle
+            cx={cx}
+            cy={cy}
+            r="9"
+            fill="black"
+            animate={{ cx, cy }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          />
         </mask>
-        <circle cx="12" cy="12" r={isDark ? 9 : 5} fill={isDark ? "currentColor" : "none"} mask="url(#moon-mask-static)" />
-        <g className={`origin-center transition-all duration-300 ${isDark ? "scale-50 opacity-0" : "scale-100 opacity-100"}`}>
+
+        {/* Main circle (sun when small, moon when large with mask) */}
+        <motion.circle
+          cx="12"
+          cy="12"
+          animate={{
+            r,
+            fill: circleColor,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          mask="url(#moon-mask)"
+        />
+
+        {/* Sun rays */}
+        <motion.g
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          animate={{
+            opacity: raysOpacity,
+            scale: raysScale,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          style={{ transformOrigin: "center" }}
+          className="text-amber-500"
+        >
           <line x1="12" y1="1" x2="12" y2="3" />
           <line x1="12" y1="21" x2="12" y2="23" />
           <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
@@ -47,8 +117,8 @@ export function ThemeToggle() {
           <line x1="21" y1="12" x2="23" y2="12" />
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </g>
-      </svg>
-    </button>
+        </motion.g>
+      </motion.svg>
+    </motion.button>
   )
 }

@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 
 import { RecaptchaWidget } from "@/components/security/recaptcha-widget"
 import { ThemeToggle } from "@/components/home/theme-toggle"
+import Link from "next/link"
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
@@ -105,7 +106,15 @@ export default function AdminLoginPage() {
               />
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 font-medium">รหัสผ่าน (Password)</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 font-medium">รหัสผ่าน (Password)</Label>
+                <Link
+                  href="/admin/forgot-password"
+                  className="text-sm text-lime-600 dark:text-lime-400 hover:underline font-medium"
+                >
+                  ลืมรหัสผ่าน?
+                </Link>
+              </div>
               <PasswordInput
                 id="password"
                 value={password}

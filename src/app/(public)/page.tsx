@@ -8,6 +8,7 @@ import { ProcessSection } from "@/components/home/process-section"
 import { ScrollReveal } from "@/components/home/scroll-reveal"
 import { SiteHeader } from "@/components/home/site-header"
 import { SiteFooter } from "@/components/home/site-footer"
+import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { SpotlightCard } from "@/components/spotlight-card"
 import { getSiteSettings } from "@/lib/queries"
 import {
@@ -121,46 +122,66 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative min-h-[100svh] flex items-center px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
-        {/* Background - simplified, static, lighter blur */}
+        {/* Background — layered mesh + dotted grid */}
         <div className="absolute inset-0 pointer-events-none select-none">
-          {/* Subtle gradient blobs - static, smaller blur */}
-          <div className="absolute top-1/4 right-[-5%] w-[500px] h-[500px] bg-lime-400/8 dark:bg-lime-400/5 rounded-full blur-[80px]" />
-          <div className="absolute bottom-0 left-[-5%] w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-500/3 rounded-full blur-[60px]" />
+          {/* Dotted grid with radial fade */}
+          <div className="absolute inset-0 bg-grid-dots opacity-60 dark:opacity-50" />
+          {/* Mesh gradient blobs */}
+          <div className="absolute top-[10%] right-[-8%] w-[560px] h-[560px] bg-lime-400/10 dark:bg-lime-400/8 rounded-full blur-[90px]" />
+          <div className="absolute bottom-[-10%] left-[-8%] w-[480px] h-[480px] bg-emerald-500/8 dark:bg-emerald-500/6 rounded-full blur-[80px]" />
+          <div className="absolute top-[40%] left-[30%] w-[340px] h-[340px] bg-indigo-400/5 dark:bg-indigo-500/5 rounded-full blur-[100px]" />
+          {/* Top fade */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime-400/50 to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
           {/* Left — Text */}
           <div className="flex flex-col items-start text-left">
-            {/* Badge - simplified, no ping animation */}
-            <div className="animate-fade-up mb-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-lime-500/30 bg-lime-400/10 dark:border-lime-400/20 dark:bg-lime-400/5">
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-500" />
+            {/* Badge — animated ping dot + gradient border */}
+            <div className="animate-fade-up mb-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-lime-500/40 bg-lime-400/10 dark:border-lime-400/25 dark:bg-lime-400/5 backdrop-blur-sm shadow-sm shadow-lime-500/10">
+              <span className="relative inline-flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-lime-500 opacity-60 animate-ping" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-400" />
+              </span>
               <span className="text-xs font-bold text-lime-700 dark:text-lime-300 uppercase tracking-[0.15em]">
                 {heroBadge}
               </span>
             </div>
 
-            {/* Heading - simplified, no heavy blur effects */}
+            {/* Heading — shimmer on "WEB" */}
             <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8">
-              <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-5 whitespace-nowrap text-[clamp(4rem,16vw,8rem)] leading-[0.85]">
-                <span className="text-slate-900 dark:text-white">WAEN</span>
+              <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-5 whitespace-nowrap text-[clamp(4rem,16vw,8rem)] leading-[0.85] [text-wrap:balance]">
+                <span className="text-slate-900 dark:text-white drop-shadow-sm">WAEN</span>
                 <span className="relative inline-flex">
-                  <span className="relative bg-gradient-to-r from-lime-500 via-lime-400 to-emerald-400 bg-clip-text text-transparent">WEB</span>
+                  <span
+                    className="relative bg-clip-text text-transparent animate-shimmer-slow"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(90deg, #65a30d 0%, #a3e635 25%, #ffffff 50%, #a3e635 75%, #34d399 100%)",
+                    }}
+                  >
+                    WEB
+                  </span>
                 </span>
               </span>
-              <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-500 dark:text-slate-400 mt-3 md:mt-4 tracking-wide">
+              <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-600 dark:text-slate-300 mt-3 md:mt-4 tracking-wide [text-wrap:balance]">
                 {heroHeading}
               </span>
             </h1>
 
-            <p className="animate-fade-up animation-delay-200 text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
+            <p className="animate-fade-up animation-delay-200 text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-lg mb-8 leading-relaxed">
               {heroDescription}
             </p>
 
             {/* Tech stack pills */}
             <div className="animate-fade-up flex flex-wrap gap-2 mb-10">
-              {techPills.map((tech) => (
-                <span key={tech} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-lime-500 dark:bg-lime-400" />
+              {techPills.map((tech, i) => (
+                <span
+                  key={tech}
+                  className="group inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 backdrop-blur-sm shadow-sm hover:border-lime-400/50 hover:text-lime-700 dark:hover:text-lime-300 hover:-translate-y-0.5 transition-all duration-300"
+                  style={{ animationDelay: `${300 + i * 60}ms` }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-lime-500 dark:bg-lime-400 group-hover:animate-pulse" />
                   {tech}
                 </span>
               ))}
@@ -170,85 +191,61 @@ export default async function HomePage() {
             <div className="animate-fade-up animation-delay-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-16 sm:mb-14 md:mb-12 w-full sm:w-auto">
               <Link
                 href="#contact"
-                className="group w-full sm:w-auto inline-flex items-center justify-center bg-lime-400 hover:bg-lime-300 text-slate-950 transition-all font-black rounded-full py-4 px-9 shadow-xl shadow-lime-500/30 hover:shadow-lime-500/50 hover:-translate-y-1 text-base gap-2"
+                className="btn-shine group w-full sm:w-auto inline-flex items-center justify-center bg-gradient-to-r from-lime-400 to-lime-300 hover:from-lime-300 hover:to-lime-200 text-slate-950 transition-all font-black rounded-full py-4 px-9 shadow-[0_10px_40px_-10px_rgba(163,230,53,0.55)] hover:shadow-[0_14px_50px_-8px_rgba(163,230,53,0.7)] hover:-translate-y-1 text-base gap-2 ring-1 ring-inset ring-white/40"
               >
-                {heroCtaPrimary}
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span className="relative z-10 flex items-center gap-2">
+                  {heroCtaPrimary}
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </span>
               </Link>
               <Link
                 href="#portfolio"
-                className="w-full sm:w-auto inline-flex items-center justify-center bg-transparent hover:bg-slate-100 dark:hover:bg-white/5 text-slate-900 dark:text-white transition-all font-semibold rounded-full py-4 px-8 border border-slate-300 dark:border-white/15 hover:-translate-y-1 text-base"
+                className="group w-full sm:w-auto inline-flex items-center justify-center bg-white/60 dark:bg-white/[0.03] hover:bg-white/90 dark:hover:bg-white/[0.07] text-slate-900 dark:text-white transition-all font-semibold rounded-full py-4 px-8 border border-slate-300 dark:border-white/15 hover:border-lime-400/50 hover:-translate-y-1 text-base backdrop-blur-sm"
               >
                 {heroCtaSecondary}
+                <ArrowRight className="w-4 h-4 ml-1.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
               </Link>
             </div>
           </div>
 
-          {/* Right — Code Editor - simplified, no glow blur */}
-          <div className="animate-fade-up animation-delay-200 hidden lg:flex items-center justify-center relative h-[580px]">
-            {/* Editor window */}
-            <div className="relative w-full max-w-[490px] rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/30 dark:shadow-black/60 border border-white/8 z-10">
-              {/* Title bar */}
-              <div className="flex items-center bg-slate-800 dark:bg-[#1e1e2e]">
-                <div className="flex items-center gap-1.5 px-4 py-3.5 shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  <div className="w-3 h-3 rounded-full bg-lime-500" />
-                </div>
-                <div className="flex text-xs">
-                  <span className="px-4 py-3.5 bg-[#0d1117] dark:bg-[#0d1117] text-slate-200 border-r border-white/5 font-medium flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-lime-400" />index.tsx
-                  </span>
-                  <span className="px-4 py-3.5 text-slate-500 border-r border-white/5">styles.css</span>
-                  <span className="px-4 py-3.5 text-slate-500">tailwind.config</span>
-                </div>
-              </div>
+          {/* Right — Code Editor with floating badges + subtle aura */}
+          <div className="animate-fade-up animation-delay-200 hidden lg:flex items-center justify-center relative h-[580px] group/editor">
+            {/* Aura glow behind editor */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-[420px] h-[420px] rounded-full bg-lime-400/20 dark:bg-lime-400/15 blur-[90px]" />
+            </div>
 
-              {/* Code body */}
-              <div className="bg-[#0d1117] px-0 py-5 font-mono text-[12.5px] leading-6 select-none">
-                {[
-                  [1,  <><span className="text-slate-500">{"// WAENWEB — Professional Web Design"}</span></>],
-                  [2,  <></>],
-                  [3,  <><span className="text-pink-400">import</span> <span className="text-sky-300">React</span><span className="text-slate-300">,</span> {'{'} <span className="text-sky-300">useState</span> {'}'} <span className="text-pink-400">from</span> <span className="text-amber-300">&apos;react&apos;</span></>],
-                  [4,  <><span className="text-pink-400">import</span> {'{'} <span className="text-sky-300">motion</span> {'}'} <span className="text-pink-400">from</span> <span className="text-amber-300">&apos;framer-motion&apos;</span></>],
-                  [5,  <></>],
-                  [6,  <><span className="text-purple-400">interface</span> <span className="text-amber-300">WebsiteProps</span> {'{'}</>],
-                  [7,  <><span className="text-slate-400 pl-4">title</span><span className="text-slate-300">:</span> <span className="text-sky-400">string</span></>],
-                  [8,  <><span className="text-slate-400 pl-4">responsive</span><span className="text-slate-300">:</span> <span className="text-sky-400">boolean</span></>],
-                  [9,  <>{'}'}</>],
-                  [10, <></>],
-                  [11, <><span className="text-pink-400">export default function</span> <span className="text-amber-300">Website</span>({'{'}<span className="text-slate-300">title</span>{'}'}<span className="text-slate-300">:</span> <span className="text-sky-300">WebsiteProps</span>) {'{'}</>],
-                  [12, <><span className="text-pink-400 pl-4">return</span> <span className="text-slate-300">(</span></>],
-                  [13, <><span className="text-slate-300 pl-8">&lt;</span><span className="text-sky-400">main</span> <span className="text-purple-300">className</span><span className="text-slate-300">=</span><span className="text-amber-300">&quot;min-h-screen&quot;</span><span className="text-slate-300">&gt;</span></>],
-                  [14, <><span className="inline-block border-r-2 border-lime-400 pr-0.5 whitespace-nowrap"><span className="text-slate-300 pl-12">&lt;</span><span className="text-sky-400">Hero</span> <span className="text-purple-300">title</span><span className="text-slate-300">={'{'}title{'}'}</span> <span className="text-slate-300">/&gt;</span></span></>],
-                  [15, <><span className="text-slate-300 pl-8">&lt;/</span><span className="text-sky-400">main</span><span className="text-slate-300">&gt;</span></>],
-                  [16, <><span className="text-slate-300 pl-4">)</span></>],
-                  [17, <>{'}'}</>],
-                ].map(([num, code]) => (
-                  <div key={num as number} className="flex items-start px-4 hover:bg-white/[0.02] transition-colors">
-                    <span className="text-slate-600 select-none w-7 shrink-0 text-right mr-5 text-[11px] leading-6">{num}</span>
-                    <span className="text-slate-300">{code as React.ReactNode}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Status bar */}
-              <div className="absolute inset-x-0 bottom-0 h-3 bg-lime-400" />
-              <div className="absolute right-6 bottom-6 text-[10px] font-mono text-lime-300/90 dark:text-lime-300/70 flex items-center gap-4">
-                <span>TypeScript React</span>
-                <span className="flex items-center gap-3">
-                  <span>UTF-8</span>
-                  <span>Ln 14, Col 45</span>
-                </span>
+            {/* Floating tech badges */}
+            <div className="absolute top-6 -left-2 z-20 animate-float-badge">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                <span className="w-2 h-2 rounded-full bg-sky-400" />
+                React 19
               </div>
             </div>
+            <div className="absolute top-20 -right-4 z-20 animate-float-badge" style={{ animationDelay: "1.5s" }}>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                TypeScript
+              </div>
+            </div>
+            <div className="absolute bottom-16 -left-4 z-20 animate-float-badge" style={{ animationDelay: "2.8s" }}>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                Tailwind v4
+              </div>
+            </div>
+
+            {/* Interactive Code Editor */}
+            <HeroCodeEditor />
           </div>
         </div>
 
-        {/* Scroll Indicator - simplified */}
+        {/* Scroll Indicator — mouse + animated flow */}
         <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 sm:gap-2 text-slate-400 dark:text-slate-500 pointer-events-none">
           <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] sm:tracking-widest font-medium">Scroll</span>
-          <div className="w-0.5 h-8 sm:h-10 bg-gradient-to-b from-lime-400 to-transparent rounded-full" />
+          <div className="relative w-[22px] h-[34px] rounded-full border-2 border-slate-300 dark:border-white/20 flex justify-center pt-1.5">
+            <span className="w-1 h-2 rounded-full bg-lime-500 dark:bg-lime-400 animate-bounce" />
+          </div>
         </div>
       </section>
 
@@ -301,11 +298,20 @@ export default async function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="services" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10 overflow-hidden">
+        {/* Subtle background accent */}
+        <div className="absolute top-1/3 right-0 w-[380px] h-[380px] bg-lime-400/5 dark:bg-lime-400/[0.04] rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
           <ScrollReveal className="text-center mb-12 md:mb-16">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">บริการของเรา</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ครบทุกบริการ ในที่เดียว</h2>
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+              บริการของเรา
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+            </span>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+              ครบทุก<span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-600 to-emerald-500 dark:from-lime-400 dark:to-emerald-400">บริการ</span> ในที่เดียว
+            </h2>
             <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
               เราให้บริการครอบคลุม ทั้งการออกแบบ พัฒนา และดูแลเว็บไซต์
             </p>
@@ -313,27 +319,35 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
             {services.map((s, i) => (
-              <ScrollReveal key={s.id} delay={i * 70}>
-                <div className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/8 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 overflow-hidden hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 dark:hover:shadow-black/40 hover:border-lime-400/40 dark:hover:border-lime-400/20 h-full flex flex-col">
-                  {/* Gradient sweep on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-lime-400/0 via-transparent to-emerald-400/0 group-hover:from-lime-400/[0.06] group-hover:to-emerald-400/[0.04] transition-all duration-500 pointer-events-none rounded-2xl sm:rounded-3xl" />
+              <ScrollReveal key={s.id} delay={i * 40}>
+                <div className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/8 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 overflow-hidden hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-2xl hover:shadow-lime-500/10 dark:hover:shadow-lime-400/5 hover:border-lime-400/50 dark:hover:border-lime-400/30 h-full flex flex-col">
+                  {/* Top gradient border accent on hover */}
+                  <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Soft gradient sweep on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-lime-400/0 via-transparent to-emerald-400/0 group-hover:from-lime-400/[0.07] group-hover:to-emerald-400/[0.05] transition-all duration-500 pointer-events-none rounded-2xl sm:rounded-3xl" />
 
                   {/* Number badge */}
-                  <span className="absolute top-3 right-4 text-[11px] sm:text-xs font-black text-slate-200 dark:text-white/[0.07] select-none tabular-nums">
+                  <span className="absolute top-3 right-4 text-2xl sm:text-3xl font-black text-slate-200/90 dark:text-white/[0.06] select-none tabular-nums leading-none group-hover:text-lime-500/20 dark:group-hover:text-lime-400/10 transition-colors duration-500">
                     {String(i + 1).padStart(2, "0")}
                   </span>
 
                   {/* Icon */}
-                  <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-lime-400/20 to-emerald-400/10 dark:from-lime-400/15 dark:to-emerald-400/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-3 sm:mb-5 shrink-0 group-hover:from-lime-400/35 group-hover:to-emerald-400/20 transition-all duration-300 shadow-sm">
+                  <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-lime-400/25 to-emerald-400/10 dark:from-lime-400/20 dark:to-emerald-400/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-3 sm:mb-5 shrink-0 group-hover:from-lime-400/40 group-hover:to-emerald-400/25 group-hover:scale-[1.08] group-hover:-rotate-3 transition-all duration-300 shadow-sm ring-1 ring-inset ring-lime-400/20 dark:ring-lime-400/15">
                     <ServiceIcon name={s.icon} />
                   </div>
 
                   {/* Text */}
-                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 leading-snug">{s.title}</h3>
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 leading-snug group-hover:text-lime-700 dark:group-hover:text-lime-300 transition-colors">{s.title}</h3>
                   <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px] sm:text-sm line-clamp-3 flex-1">{s.desc}</p>
 
-                  {/* Bottom accent line */}
-                  <div className="mt-4 h-px w-0 group-hover:w-full bg-gradient-to-r from-lime-400/60 to-emerald-400/60 transition-all duration-500 rounded-full" />
+                  {/* Hover hint */}
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="relative h-px flex-1 bg-slate-200/60 dark:bg-white/5 overflow-hidden rounded-full">
+                      <div className="absolute inset-y-0 left-0 w-0 group-hover:w-full bg-gradient-to-r from-lime-400/80 to-emerald-400/80 transition-all duration-500 rounded-full" />
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 ml-3 text-lime-500 dark:text-lime-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                  </div>
                 </div>
               </ScrollReveal>
             ))}

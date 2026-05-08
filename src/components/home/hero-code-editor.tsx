@@ -101,7 +101,7 @@ export default function Website({title}: WebsiteProps) {
   },
   {
     id: "tailwind",
-    name: "tailwind.config",
+    name: "tailwind.ts",
     dot: "bg-cyan-400",
     raw: `// tailwind.config.ts
 import type { Config } from 'tailwindcss'
@@ -229,7 +229,7 @@ export function HeroCodeEditor() {
               <button
                 key={t.id}
                 onClick={() => setActiveId(t.id)}
-                className={`px-4 py-3.5 border-r border-white/5 font-medium flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-3.5 border-r border-white/5 font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                   isActive
                     ? "bg-[#0d1117] text-slate-200"
                     : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]"

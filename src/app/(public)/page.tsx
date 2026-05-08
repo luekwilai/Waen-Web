@@ -119,13 +119,9 @@ export default async function HomePage() {
   try { if (settings["process"]) processSteps = JSON.parse(settings["process"]) } catch { /* use default */ }
 
   const serviceImages: Record<string, string | null> = {}
-  if (services.length > 0) {
-    await Promise.all(
-      services.map(async (s) => {
-        serviceImages[s.id] = await fetchUnsplashImage(s.icon)
-      })
-    )
-  }
+  services.forEach((s) => {
+    serviceImages[s.id] = fetchUnsplashImage(s.icon)
+  })
 
   return (
     <div className="min-h-screen font-sans">

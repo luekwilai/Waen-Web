@@ -9,7 +9,7 @@
     "lint": "eslint",
     "seed:admin": "node scripts/seed-admin.js",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma db push && next build"
+    "vercel-build": "prisma db push --accept-data-loss && next build"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

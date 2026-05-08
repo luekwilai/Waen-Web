@@ -11,6 +11,8 @@ import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { SpotlightCard } from "@/components/spotlight-card"
 import { getSiteSettings } from "@/lib/queries"
+import { fetchUnsplashImage } from "@/lib/unsplash"
+import Image from "next/image"
 import {
   Smartphone,
   Search,
@@ -115,6 +117,15 @@ export default async function HomePage() {
 
   let processSteps: import("@/components/home/process-section").ProcessStepData[] = []
   try { if (settings["process"]) processSteps = JSON.parse(settings["process"]) } catch { /* use default */ }
+
+  const serviceImages: Record<string, string | null> = {}
+  if (services.length > 0) {
+    await Promise.all(
+      services.map(async (s) => {
+        serviceImages[s.id] = await fetchUnsplashImage(s.icon)
+      })
+    )
+  }
 
   return (
     <div className="min-h-screen font-sans">
@@ -318,39 +329,67 @@ export default async function HomePage() {
           </ScrollReveal>
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
-            {services.map((s, i) => (
-              <ScrollReveal key={s.id} delay={i * 40}>
-                <div className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/8 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 overflow-hidden hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-2xl hover:shadow-lime-500/10 dark:hover:shadow-lime-400/5 hover:border-lime-400/50 dark:hover:border-lime-400/30 h-full flex flex-col">
-                  {/* Top gradient border accent on hover */}
-                  <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {services.map((s, i) => {
+              const imgUrl = serviceImages[s.id]
+              return (
+                <ScrollReveal key={s.id} delay={i * 40}>
+                  <div className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/8 rounded-2xl sm:rounded-3xl overflow-hidden hover:-translate-y-1.5 transition-all duration-300 shadow-sm hover:shadow-2xl hover:shadow-lime-500/10 dark:hover:shadow-lime-400/5 hover:border-lime-400/50 dark:hover:border-lime-400/30 h-full flex flex-col">
 
-                  {/* Soft gradient sweep on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-lime-400/0 via-transparent to-emerald-400/0 group-hover:from-lime-400/[0.07] group-hover:to-emerald-400/[0.05] transition-all duration-500 pointer-events-none rounded-2xl sm:rounded-3xl" />
+                    {/* Unsplash image */}
+                    {imgUrl ? (
+                      <div className="relative h-36 sm:h-44 shrink-0 overflow-hidden">
+                        <Image
+                          src={imgUrl}
+                          alt={s.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 768px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
+                        {/* Number badge over image */}
+                        <span className="absolute top-2.5 right-3 text-xl sm:text-2xl font-black text-white/30 select-none tabular-nums leading-none">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        {/* Icon over image */}
+                        <div className="absolute bottom-3 left-3 w-9 h-9 sm:w-11 sm:h-11 bg-white/15 backdrop-blur-md rounded-xl flex items-center justify-center text-white ring-1 ring-white/20 group-hover:bg-lime-400/30 transition-colors duration-300">
+                          <ServiceIcon name={s.icon} />
+                        </div>
+                      </div>
+                    ) : (
+                      /* Fallback — no image */
+                      <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-lime-400/25 to-emerald-400/10 dark:from-lime-400/20 dark:to-emerald-400/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-lime-600 dark:text-lime-400 mt-4 sm:mt-6 ml-4 sm:ml-6 shrink-0 group-hover:scale-[1.08] group-hover:-rotate-3 transition-all duration-300 shadow-sm ring-1 ring-inset ring-lime-400/20">
+                        <ServiceIcon name={s.icon} />
+                      </div>
+                    )}
 
-                  {/* Number badge */}
-                  <span className="absolute top-3 right-4 text-2xl sm:text-3xl font-black text-slate-200/90 dark:text-white/[0.06] select-none tabular-nums leading-none group-hover:text-lime-500/20 dark:group-hover:text-lime-400/10 transition-colors duration-500">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                    {/* Content */}
+                    <div className="relative p-4 sm:p-5 flex flex-col flex-1">
+                      {/* Top gradient border accent on hover */}
+                      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* Soft gradient sweep on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-lime-400/0 to-emerald-400/0 group-hover:from-lime-400/[0.05] group-hover:to-emerald-400/[0.03] transition-all duration-500 pointer-events-none" />
 
-                  {/* Icon */}
-                  <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-lime-400/25 to-emerald-400/10 dark:from-lime-400/20 dark:to-emerald-400/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-lime-600 dark:text-lime-400 mb-3 sm:mb-5 shrink-0 group-hover:from-lime-400/40 group-hover:to-emerald-400/25 group-hover:scale-[1.08] group-hover:-rotate-3 transition-all duration-300 shadow-sm ring-1 ring-inset ring-lime-400/20 dark:ring-lime-400/15">
-                    <ServiceIcon name={s.icon} />
-                  </div>
+                      {!imgUrl && (
+                        <span className="absolute top-3 right-4 text-2xl sm:text-3xl font-black text-slate-200/90 dark:text-white/[0.06] select-none tabular-nums leading-none group-hover:text-lime-500/20 transition-colors duration-500">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      )}
 
-                  {/* Text */}
-                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 leading-snug group-hover:text-lime-700 dark:group-hover:text-lime-300 transition-colors">{s.title}</h3>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[11px] sm:text-sm line-clamp-3 flex-1">{s.desc}</p>
+                      <h3 className="relative text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 leading-snug group-hover:text-lime-700 dark:group-hover:text-lime-300 transition-colors">{s.title}</h3>
+                      <p className="relative text-slate-500 dark:text-slate-400 leading-relaxed text-[11px] sm:text-sm line-clamp-3 flex-1">{s.desc}</p>
 
-                  {/* Hover hint */}
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="relative h-px flex-1 bg-slate-200/60 dark:bg-white/5 overflow-hidden rounded-full">
-                      <div className="absolute inset-y-0 left-0 w-0 group-hover:w-full bg-gradient-to-r from-lime-400/80 to-emerald-400/80 transition-all duration-500 rounded-full" />
+                      {/* Hover hint */}
+                      <div className="relative mt-4 flex items-center justify-between">
+                        <div className="relative h-px flex-1 bg-slate-200/60 dark:bg-white/5 overflow-hidden rounded-full">
+                          <div className="absolute inset-y-0 left-0 w-0 group-hover:w-full bg-gradient-to-r from-lime-400/80 to-emerald-400/80 transition-all duration-500 rounded-full" />
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 ml-3 text-lime-500 dark:text-lime-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 ml-3 text-lime-500 dark:text-lime-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                   </div>
-                </div>
-              </ScrollReveal>
-            ))}
+                </ScrollReveal>
+              )
+            })}
           </div>
         </div>
       </section>

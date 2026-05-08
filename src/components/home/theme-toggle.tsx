@@ -74,14 +74,7 @@ export function ThemeToggle() {
         {/* Mask for moon crescent effect */}
         <mask id="moon-mask">
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
-          <motion.circle
-            cx={cx}
-            cy={cy}
-            r="9"
-            fill="black"
-            animate={{ cx, cy }}
-            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          />
+          <circle cx={cx} cy={cy} r="9" fill="black" />
         </mask>
 
         {/* Main circle (sun when small, moon when large with mask) */}

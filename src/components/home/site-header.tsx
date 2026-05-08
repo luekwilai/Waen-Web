@@ -158,9 +158,9 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
               <div className="flex md:hidden items-center gap-2">
                 <ThemeToggle />
                 <button
-                  className={`relative w-10 h-10 flex items-center justify-center rounded-xl border transition-all duration-200
-                    ${scrolled 
-                      ? "border-slate-200 dark:border-white/15 bg-white/70 dark:bg-white/10 shadow-sm" 
+                  className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200
+                    ${scrolled
+                      ? "border-slate-200 dark:border-white/15 bg-white/70 dark:bg-white/10 shadow-sm"
                       : "border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5"
                     }
                     text-slate-900 dark:text-white hover:scale-105 active:scale-90 active:bg-lime-400/20 backdrop-blur-sm`}

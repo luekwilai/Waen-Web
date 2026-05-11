@@ -25,8 +25,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
   const siteName = settings["site.name"] || "WAENWEB"
   return {
-    title: `${siteName} - รับทำเว็บไซต์มืออาชีพ`,
-    description: "รับพัฒนาเว็บไซต์ WordPress คุณภาพสูง ออกแบบสวยงาม รองรับทุกอุปกรณ์",
+    title: {
+      default: `${siteName} | รับทำเว็บไซต์ WordPress มืออาชีพ`,
+      template: `%s | ${siteName}`,
+    },
+    description: "รับทำเว็บไซต์และ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ ออกแบบสวย รองรับมือถือ SEO ติดหน้าแรก",
+    metadataBase: new URL("https://waenweb.com"),
     icons: {
       icon: [{ url: logoUrl }],
       shortcut: logoUrl,

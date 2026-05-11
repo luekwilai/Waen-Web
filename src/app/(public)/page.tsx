@@ -40,49 +40,56 @@ function ServiceIcon({ name }: { name: string }) {
   return <Icon className="w-6 h-6" />
 }
 
+const DEFAULT_TITLE = "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB"
+const DEFAULT_DESC  = "รับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ SEO ติดหน้าแรก ดูแลหลังส่งมอบ ราคาเริ่มต้น 3,900 บาท"
+const KEYWORDS      = "รับทำเว็บไซต์,รับทำเว็บ WordPress,ออกแบบเว็บไซต์,รับทำเว็บราคาถูก,รับทำเว็บธุรกิจ,รับทำเว็บไซต์ครบวงจร,เว็บไซต์มืออาชีพ,รับทำเว็บ SEO,รับทำเว็บร้านค้าออนไลน์,WAENWEB"
+const CANONICAL     = "https://waenweb.com"
+const OG_IMAGE      = "https://waenweb.com/og-image.png"
+
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const settings = await getSiteSettings()
-    const title = settings["seo.title"] || "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB"
-    const description = settings["seo.description"] || "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ"
-    return {
+    const title = settings["seo.title"] || DEFAULT_TITLE
+    const description = settings["seo.description"] || DEFAULT_DESC
+    return buildMetadata(title, description, settings["site.logoUrl"])
+  } catch {
+    return buildMetadata(DEFAULT_TITLE, DEFAULT_DESC)
+  }
+}
+
+function buildMetadata(title: string, description: string, logoUrl?: string): Metadata {
+  return {
+    title,
+    description,
+    keywords: KEYWORDS,
+    authors: [{ name: "WAENWEB", url: CANONICAL }],
+    creator: "WAENWEB",
+    metadataBase: new URL(CANONICAL),
+    alternates: { canonical: CANONICAL },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
+    icons: logoUrl
+      ? { icon: logoUrl, shortcut: logoUrl, apple: logoUrl }
+      : undefined,
+    openGraph: {
       title,
       description,
-      icons: settings["site.logoUrl"]
-        ? { icon: settings["site.logoUrl"], shortcut: settings["site.logoUrl"] }
-        : undefined,
-      openGraph: {
-        title,
-        description,
-        url: "https://waenweb.com",
-        siteName: "WAENWEB",
-        locale: "th_TH",
-        type: "website",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-      },
-    }
-  } catch {
-    return {
-      title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
-      description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
-      openGraph: {
-        title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
-        description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
-        url: "https://waenweb.com",
-        siteName: "WAENWEB",
-        locale: "th_TH",
-        type: "website",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: "รับทำเว็บไซต์ รับทำเว็บ WordPress ออกแบบเว็บธุรกิจ | WAENWEB",
-        description: "บริการรับทำเว็บไซต์และรับทำเว็บ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ และ Portfolio ออกแบบสวย รองรับมือถือ ปรับ SEO และดูแลเว็บไซต์หลังส่งมอบ",
-      },
-    }
+      url: CANONICAL,
+      siteName: "WAENWEB",
+      locale: "th_TH",
+      type: "website",
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [OG_IMAGE],
+      creator: "@waenweb",
+    },
   }
 }
 
@@ -117,8 +124,47 @@ export default async function HomePage() {
   try { if (settings["process"]) processSteps = JSON.parse(settings["process"]) } catch { /* use default */ }
 
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://waenweb.com/#business",
+        "name": siteName || "WAENWEB",
+        "url": "https://waenweb.com",
+        "logo": logoUrl || "https://waenweb.com/waenweb-logo.svg",
+        "image": "https://waenweb.com/og-image.png",
+        "description": DEFAULT_DESC,
+        "email": contactEmail,
+        "priceRange": "฿฿",
+        "currenciesAccepted": "THB",
+        "paymentAccepted": "โอนเงิน, พร้อมเพย์",
+        "areaServed": { "@type": "Country", "name": "Thailand" },
+        "serviceType": ["Web Design", "WordPress Development", "SEO", "E-Commerce"],
+        "address": { "@type": "PostalAddress", "addressCountry": "TH" },
+        "sameAs": [
+          settings["social.facebook"] || "",
+          settings["social.instagram"] || "",
+        ].filter(Boolean),
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://waenweb.com/#website",
+        "url": "https://waenweb.com",
+        "name": siteName || "WAENWEB",
+        "description": DEFAULT_DESC,
+        "inLanguage": "th-TH",
+        "publisher": { "@id": "https://waenweb.com/#business" },
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SiteHeader logoUrl={logoUrl} siteName={siteName} />
 
       {/* Hero Section */}

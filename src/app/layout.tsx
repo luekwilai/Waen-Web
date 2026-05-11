@@ -31,6 +31,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: "รับทำเว็บไซต์และ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ ออกแบบสวย รองรับมือถือ SEO ติดหน้าแรก",
     metadataBase: new URL("https://waenweb.com"),
+    verification: {
+      google: "WPPag1wzslV-OENZ5kXF_mh85GK9EiwpbIAARnp1MQY",
+    },
     icons: {
       icon: [{ url: logoUrl }],
       shortcut: logoUrl,

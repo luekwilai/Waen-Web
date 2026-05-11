@@ -10,6 +10,8 @@ import { SiteHeader } from "@/components/home/site-header"
 import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { SpotlightCard } from "@/components/spotlight-card"
+import { FaqSection } from "@/components/home/faq-section"
+import { LineFloatButton } from "@/components/home/line-float-button"
 import { getSiteSettings } from "@/lib/queries"
 import {
   Smartphone,
@@ -155,6 +157,16 @@ export default async function HomePage() {
         "description": DEFAULT_DESC,
         "inLanguage": "th-TH",
         "publisher": { "@id": "https://waenweb.com/#business" },
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "ทำเว็บไซต์ใช้เวลานานแค่ไหน?", "acceptedAnswer": { "@type": "Answer", "text": "โดยทั่วไปใช้เวลา 7–21 วันทำการ ขึ้นอยู่กับความซับซ้อนของเว็บ" } },
+          { "@type": "Question", "name": "ราคาทำเว็บไซต์เริ่มต้นเท่าไหร่?", "acceptedAnswer": { "@type": "Answer", "text": "ราคาเริ่มต้นที่ 3,900 บาท สำหรับเว็บไซต์ WordPress พื้นฐาน พร้อม SEO และรองรับมือถือ" } },
+          { "@type": "Question", "name": "หลังส่งมอบงานแล้วแก้ไขได้ไหม?", "acceptedAnswer": { "@type": "Answer", "text": "ได้ครับ ทุกแพ็คเกจมีระยะดูแลฟรี 3 เดือนหลังส่งมอบ" } },
+          { "@type": "Question", "name": "รับทำเว็บร้านค้าออนไลน์ได้ไหม?", "acceptedAnswer": { "@type": "Answer", "text": "รับครับ ทำ E-Commerce ด้วย WooCommerce บน WordPress รองรับระบบตะกร้าสินค้าและชำระเงินออนไลน์" } },
+          { "@type": "Question", "name": "ทำแล้วติดหน้าแรก Google ได้ไหม?", "acceptedAnswer": { "@type": "Answer", "text": "ทุกเว็บได้รับการตั้งค่า SEO พื้นฐาน meta tag, sitemap, schema markup และ page speed optimization" } },
+        ],
       },
     ],
   }
@@ -478,6 +490,11 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <ScrollReveal>
+        <FaqSection />
+      </ScrollReveal>
+
       <SiteFooter
         logoUrl={logoUrl}
         siteName={siteName}
@@ -488,6 +505,9 @@ export default async function HomePage() {
         socialYoutube={settings["social.youtube"]}
         serviceNames={services.length > 0 ? services.map((s) => s.title) : undefined}
       />
+
+      {/* Line Float Button */}
+      <LineFloatButton lineId={contactLine} />
     </div>
   )
 }

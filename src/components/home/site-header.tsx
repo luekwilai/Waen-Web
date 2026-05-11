@@ -10,6 +10,7 @@ const navLinks = [
   { href: "#portfolio", label: "ผลงาน" },
   { href: "#services", label: "บริการ" },
   { href: "#packages", label: "ราคา" },
+  { href: "#faq", label: "FAQ" },
   { href: "#contact", label: "ติดต่อ" },
 ]
 

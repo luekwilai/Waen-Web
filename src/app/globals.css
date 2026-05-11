@@ -428,3 +428,56 @@
       0 8px 30px -12px rgba(163, 230, 53, 0.35);
   }
 }
+
+/* ─── Blog article prose ─── */
+.prose-waenweb h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: oklch(0.145 0 0);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.35;
+}
+.dark .prose-waenweb h2 {
+  color: white;
+}
+.prose-waenweb h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: oklch(0.25 0 0);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.dark .prose-waenweb h3 {
+  color: oklch(0.9 0 0);
+}
+.prose-waenweb p {
+  color: oklch(0.4 0 0);
+  line-height: 1.9;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+.dark .prose-waenweb p {
+  color: oklch(0.7 0 0);
+}
+.prose-waenweb ul {
+  margin: 0.75rem 0 1rem 1.25rem;
+  list-style: disc;
+}
+.prose-waenweb li {
+  color: oklch(0.4 0 0);
+  line-height: 1.9;
+  margin-bottom: 0.35rem;
+  padding-left: 0.25rem;
+}
+.dark .prose-waenweb li {
+  color: oklch(0.7 0 0);
+}
+.prose-waenweb strong {
+  font-weight: 700;
+  color: oklch(0.145 0 0);
+}
+.dark .prose-waenweb strong {
+  color: white;
+}

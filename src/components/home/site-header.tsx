@@ -14,6 +14,11 @@ const navLinks = [
   { href: "#contact", label: "ติดต่อ" },
 ]
 
+// Separate page links (not hash anchors)
+const pageLinks = [
+  { href: "/blog", label: "บทความ" },
+]
+
 export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?: string } = {}) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -111,6 +116,20 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
                 >
                   {item.label}
                 </button>
+              ))}
+              {pageLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`relative px-4 xl:px-5 py-2 text-sm font-medium rounded-full transition-colors duration-200
+                    ${scrolled
+                      ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
+                    }
+                  `}
+                >
+                  {item.label}
+                </Link>
               ))}
             </nav>
 
@@ -272,6 +291,21 @@ export function SiteHeader({ logoUrl, siteName }: { logoUrl?: string; siteName?:
                   </div>
                   <ArrowRight className={`w-4 h-4 transition-all duration-300 ${activeSection === href.substring(1) ? "opacity-100 translate-x-0 text-lime-500" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-lime-500"}`} />
                 </button>
+              ))}
+              {pageLinks.map(({ href, label }, i) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-left group transition-all duration-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5 border border-transparent"
+                  style={{ transitionDelay: `${(navLinks.length + i) * 40}ms` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 group-hover:bg-lime-500 transition-all duration-300 group-hover:scale-110" />
+                    <span className="font-semibold text-sm">{label}</span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-lime-500 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0" />
+                </Link>
               ))}
             </nav>
 

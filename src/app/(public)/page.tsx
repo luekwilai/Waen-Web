@@ -11,7 +11,6 @@ import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { SpotlightCard } from "@/components/spotlight-card"
 import { FaqSection } from "@/components/home/faq-section"
-import { LineFloatButton } from "@/components/home/line-float-button"
 import { getSiteSettings } from "@/lib/queries"
 import {
   Smartphone,
@@ -506,8 +505,6 @@ export default async function HomePage() {
         serviceNames={services.length > 0 ? services.map((s) => s.title) : undefined}
       />
 
-      {/* Line Float Button */}
-      <LineFloatButton lineId={contactLine} />
     </div>
   )
 }

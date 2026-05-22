@@ -7,6 +7,7 @@ import { getAllBlogPosts, getBlogPost } from "@/lib/blog"
 import { renderMarkdown } from "@/lib/markdown"
 import { BrandLogo } from "@/components/brand-logo"
 import { SiteFooter } from "@/components/home/site-footer"
+import { ThemeToggle } from "@/components/home/theme-toggle"
 import { getSiteSettings } from "@/lib/queries"
 
 type Props = { params: Promise<{ slug: string }> }
@@ -87,6 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </Link>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link
               href="/blog"
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-white/10"

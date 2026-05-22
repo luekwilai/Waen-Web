@@ -5,6 +5,7 @@ import { getAllBlogPosts } from "@/lib/blog"
 import { BrandLogo } from "@/components/brand-logo"
 import { SiteFooter } from "@/components/home/site-footer"
 import { BlogPostsGrid } from "@/components/blog/blog-posts-grid"
+import { getSiteSettings } from "@/lib/queries"
 
 export const metadata: Metadata = {
   title: "บทความ & คู่มือ | WAENWEB",
@@ -20,8 +21,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BlogPage() {
-  const posts = getAllBlogPosts()
+export default async function BlogPage() {
+  const [posts, settings] = await Promise.all([
+    Promise.resolve(getAllBlogPosts()),
+    getSiteSettings(),
+  ])
+  const logoUrl = settings["site.logoUrl"]
+  const siteName = settings["site.name"]
   const totalReadTime = posts.reduce((acc, p) => acc + parseInt(p.readTime), 0)
   const categories = Array.from(new Set(posts.map((p) => p.category)))
 
@@ -33,6 +39,8 @@ export default function BlogPage() {
           <Link href="/" className="group flex items-center gap-3">
             <BrandLogo
               iconSize={38}
+              logoUrl={logoUrl}
+              siteName={siteName}
               wrapperClassName="flex items-center gap-2.5"
               textClassName="hidden sm:flex flex-col leading-none"
               wordmarkClassName="text-lg font-black tracking-tight text-slate-900 dark:text-white"

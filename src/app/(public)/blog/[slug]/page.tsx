@@ -7,6 +7,7 @@ import { getAllBlogPosts, getBlogPost } from "@/lib/blog"
 import { renderMarkdown } from "@/lib/markdown"
 import { BrandLogo } from "@/components/brand-logo"
 import { SiteFooter } from "@/components/home/site-footer"
+import { getSiteSettings } from "@/lib/queries"
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -36,6 +37,10 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
   const post = getBlogPost(slug)
   if (!post) notFound()
+
+  const settings = await getSiteSettings()
+  const logoUrl = settings["site.logoUrl"]
+  const siteName = settings["site.name"]
 
   const allPosts = getAllBlogPosts()
   const currentIndex = allPosts.findIndex((p) => p.slug === slug)
@@ -72,6 +77,8 @@ export default async function BlogPostPage({ params }: Props) {
           <Link href="/" className="group flex items-center gap-3">
             <BrandLogo
               iconSize={38}
+              logoUrl={logoUrl}
+              siteName={siteName}
               wrapperClassName="flex items-center gap-2.5"
               textClassName="hidden sm:flex flex-col leading-none"
               wordmarkClassName="text-lg font-black tracking-tight text-slate-900 dark:text-white"

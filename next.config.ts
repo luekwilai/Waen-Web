@@ -15,6 +15,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Clean URL for the standalone preview page (direct link only — not linked anywhere on the main site)
+  async rewrites() {
+    return [{ source: "/home-2", destination: "/home-2.html" }];
+  },
+  // Keep the direct-link page out of search engines
+  async headers() {
+    return [
+      {
+        source: "/home-2",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
+        source: "/home-2.html",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

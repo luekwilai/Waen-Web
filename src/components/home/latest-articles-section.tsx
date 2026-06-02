@@ -15,6 +15,7 @@ export function LatestArticlesSection({ posts }: { posts: BlogPost[] }) {
             <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
               บทความ &amp; คู่มือ
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
             </span>
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight">
               บทความ<span className="text-lime-500 dark:text-lime-400">ล่าสุด</span>

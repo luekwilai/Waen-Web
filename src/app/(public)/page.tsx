@@ -9,7 +9,6 @@ import { ScrollReveal } from "@/components/home/scroll-reveal"
 import { SiteHeader } from "@/components/home/site-header"
 import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
-import { SpotlightCard } from "@/components/spotlight-card"
 import { FaqSection } from "@/components/home/faq-section"
 import { WhyChooseUsSection } from "@/components/home/why-choose-us-section"
 import { CtaBanner } from "@/components/home/cta-banner"
@@ -184,7 +183,7 @@ export default async function HomePage() {
       <SiteHeader logoUrl={logoUrl} siteName={siteName} />
 
       {/* Hero Section */}
-      <section className="relative min-h-[100svh] flex items-center px-4 sm:px-6 pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
+      <section className="relative lg:min-h-[100svh] flex items-center px-4 sm:px-6 pt-28 md:pt-32 pb-16 md:pb-24 overflow-hidden">
         {/* Background — layered mesh + dotted grid */}
         <div className="absolute inset-0 pointer-events-none select-none">
           {/* Dotted grid with radial fade */}
@@ -216,13 +215,7 @@ export default async function HomePage() {
               <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-4 whitespace-nowrap text-[clamp(3rem,10vw,5.5rem)] leading-[0.9] [text-wrap:balance]">
                 <span className="text-slate-900 dark:text-white drop-shadow-sm">WAEN</span>
                 <span className="relative inline-flex">
-                  <span
-                    className="relative bg-clip-text text-transparent animate-shimmer-slow [filter:drop-shadow(0_2px_10px_rgba(132,204,22,0.25))]"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(100deg, #65a30d 0%, #a3e635 35%, #ecfdcc 50%, #a3e635 65%, #4ade80 100%)",
-                    }}
-                  >
+                  <span className="web-gradient relative bg-clip-text text-transparent animate-shimmer-slow [filter:drop-shadow(0_2px_10px_rgba(132,204,22,0.25))]">
                     WEB
                   </span>
                 </span>
@@ -396,10 +389,16 @@ export default async function HomePage() {
       {/* Process Section */}
       <section id="process" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <ScrollReveal className="text-center mb-16">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-3 block">ขั้นตอนการทำงาน</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">ทำงานอย่างเป็นระบบ</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
+          <ScrollReveal className="text-center mb-12 md:mb-16">
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+              ขั้นตอนการทำงาน
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+            </span>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+              ทำงานอย่าง<span className="text-lime-500 dark:text-lime-400">เป็นระบบ</span>
+            </h2>
+            <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-light max-w-xl mx-auto">
               เรารับฟัง วิเคราะห์ และพัฒนา เพื่อส่งมอบผลงานที่ดีที่สุดให้กับคุณ
             </p>
           </ScrollReveal>
@@ -410,12 +409,16 @@ export default async function HomePage() {
       {/* Packages Section */}
       <section id="packages" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <ScrollReveal className="text-center mb-20">
-            <span className="text-xs font-semibold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4 block">ราคา</span>
-            <h2 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-5">
+          <ScrollReveal className="text-center mb-12 md:mb-16">
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-lime-600 dark:text-lime-400 uppercase tracking-widest mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+              ราคา
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500" />
+            </span>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
               เลือกแพ็คเกจ<span className="text-lime-500 dark:text-lime-400">ที่ใช่</span>
             </h2>
-            <p className="text-lg text-slate-500 dark:text-slate-400 font-light max-w-xl mx-auto">ราคาโปร่งใส จ่ายครั้งเดียวจบ ไม่มีค่าใช้จ่ายแฝง</p>
+            <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 font-light max-w-xl mx-auto">ราคาโปร่งใส จ่ายครั้งเดียวจบ ไม่มีค่าใช้จ่ายแฝง</p>
           </ScrollReveal>
           <ScrollReveal delay={150}>
             <PackagesSection />

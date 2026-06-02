@@ -22,7 +22,7 @@ export function CtaBanner({ contactLine = "thawatsak" }: { contactLine?: string 
                   ปรึกษาฟรี ไม่มีข้อผูกมัด
                 </span>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-3 leading-[1.1]">
-                  พร้อมเริ่ม<span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-600 to-emerald-500 dark:from-lime-400 dark:to-emerald-400">โปรเจกต์</span>ของคุณแล้วหรือยัง?
+                  พร้อมเริ่ม<span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-600 to-emerald-500 dark:from-lime-400 dark:to-emerald-400">โปรเจค</span>ของคุณแล้วหรือยัง?
                 </h2>
                 <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 font-light max-w-xl mx-auto lg:mx-0">
                   เล่าไอเดียให้เราฟัง แล้วเราจะช่วยวางแผนและประเมินราคาให้ฟรี

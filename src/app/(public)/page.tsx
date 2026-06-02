@@ -11,7 +11,11 @@ import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { SpotlightCard } from "@/components/spotlight-card"
 import { FaqSection } from "@/components/home/faq-section"
+import { WhyChooseUsSection } from "@/components/home/why-choose-us-section"
+import { CtaBanner } from "@/components/home/cta-banner"
+import { LatestArticlesSection } from "@/components/home/latest-articles-section"
 import { getSiteSettings } from "@/lib/queries"
+import { getAllBlogPosts } from "@/lib/blog"
 import {
   Smartphone,
   Search,
@@ -96,6 +100,7 @@ function buildMetadata(title: string, description: string, logoUrl?: string): Me
 
 export default async function HomePage() {
   const settings = await getSiteSettings()
+  const latestPosts = getAllBlogPosts()
 
   const logoUrl = settings["site.logoUrl"] || undefined
   const siteName = settings["site.name"] || undefined
@@ -192,11 +197,11 @@ export default async function HomePage() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime-400/50 to-transparent" />
         </div>
 
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
           {/* Left — Text */}
-          <div className="flex flex-col items-start text-left">
+          <div className="lg:col-span-5 flex flex-col items-start text-left">
             {/* Badge — animated ping dot + gradient border */}
-            <div className="animate-fade-up mb-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-lime-500/40 bg-lime-400/10 dark:border-lime-400/25 dark:bg-lime-400/5 backdrop-blur-sm shadow-sm shadow-lime-500/10">
+            <div className="animate-fade-up mb-5 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-lime-500/40 bg-lime-400/10 dark:border-lime-400/25 dark:bg-lime-400/5 backdrop-blur-sm shadow-sm shadow-lime-500/10">
               <span className="relative inline-flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-lime-500 opacity-60 animate-ping" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-600 dark:bg-lime-400" />
@@ -207,32 +212,32 @@ export default async function HomePage() {
             </div>
 
             {/* Heading — shimmer on "WEB" */}
-            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-6 md:mb-8">
-              <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-5 whitespace-nowrap text-[clamp(4rem,16vw,8rem)] leading-[0.85] [text-wrap:balance]">
+            <h1 className="animate-fade-up animation-delay-100 font-black tracking-tight mb-4 md:mb-5">
+              <span className="relative inline-flex max-w-full items-baseline gap-2 sm:gap-3 md:gap-4 whitespace-nowrap text-[clamp(3rem,10vw,5.5rem)] leading-[0.9] [text-wrap:balance]">
                 <span className="text-slate-900 dark:text-white drop-shadow-sm">WAEN</span>
                 <span className="relative inline-flex">
                   <span
-                    className="relative bg-clip-text text-transparent animate-shimmer-slow"
+                    className="relative bg-clip-text text-transparent animate-shimmer-slow [filter:drop-shadow(0_2px_10px_rgba(132,204,22,0.25))]"
                     style={{
                       backgroundImage:
-                        "linear-gradient(90deg, #65a30d 0%, #a3e635 25%, #ffffff 50%, #a3e635 75%, #34d399 100%)",
+                        "linear-gradient(100deg, #65a30d 0%, #a3e635 35%, #ecfdcc 50%, #a3e635 65%, #4ade80 100%)",
                     }}
                   >
                     WEB
                   </span>
                 </span>
               </span>
-              <span className="block text-xl sm:text-2xl md:text-3xl xl:text-[2.25rem] font-semibold text-slate-600 dark:text-slate-300 mt-3 md:mt-4 tracking-wide [text-wrap:balance]">
+              <span className="block text-lg sm:text-xl md:text-2xl font-semibold text-slate-600 dark:text-slate-300 mt-2.5 md:mt-3 tracking-wide [text-wrap:balance]">
                 {heroHeading}
               </span>
             </h1>
 
-            <p className="animate-fade-up animation-delay-200 text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-lg mb-8 leading-relaxed">
+            <p className="animate-fade-up animation-delay-200 text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-lg mb-6 leading-relaxed">
               {heroDescription}
             </p>
 
             {/* Tech stack pills */}
-            <div className="animate-fade-up flex flex-wrap gap-2 mb-10">
+            <div className="animate-fade-up flex flex-wrap gap-2 mb-7">
               {techPills.map((tech, i) => (
                 <span
                   key={tech}
@@ -246,10 +251,10 @@ export default async function HomePage() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="animate-fade-up animation-delay-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-16 sm:mb-14 md:mb-12 w-full sm:w-auto">
+            <div className="animate-fade-up animation-delay-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10 sm:mb-10 md:mb-8 w-full sm:w-auto">
               <Link
                 href="#contact"
-                className="btn-shine group w-full sm:w-auto inline-flex items-center justify-center bg-gradient-to-r from-lime-400 to-lime-300 hover:from-lime-300 hover:to-lime-200 text-slate-950 transition-all font-black rounded-full py-4 px-9 shadow-[0_10px_40px_-10px_rgba(163,230,53,0.55)] hover:shadow-[0_14px_50px_-8px_rgba(163,230,53,0.7)] hover:-translate-y-1 text-base gap-2 ring-1 ring-inset ring-white/40"
+                className="btn-shine group w-full sm:w-auto inline-flex items-center justify-center bg-gradient-to-r from-lime-400 to-lime-300 hover:from-lime-300 hover:to-lime-200 text-slate-950 transition-all font-black rounded-full py-3.5 px-8 shadow-[0_10px_40px_-10px_rgba(163,230,53,0.55)] hover:shadow-[0_14px_50px_-8px_rgba(163,230,53,0.7)] hover:-translate-y-1 text-sm gap-2 ring-1 ring-inset ring-white/40"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   {heroCtaPrimary}
@@ -258,7 +263,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="#portfolio"
-                className="group w-full sm:w-auto inline-flex items-center justify-center bg-white/60 dark:bg-white/[0.03] hover:bg-white/90 dark:hover:bg-white/[0.07] text-slate-900 dark:text-white transition-all font-semibold rounded-full py-4 px-8 border border-slate-300 dark:border-white/15 hover:border-lime-400/50 hover:-translate-y-1 text-base backdrop-blur-sm"
+                className="group w-full sm:w-auto inline-flex items-center justify-center bg-white/60 dark:bg-white/[0.03] hover:bg-white/90 dark:hover:bg-white/[0.07] text-slate-900 dark:text-white transition-all font-semibold rounded-full py-3.5 px-7 border border-slate-300 dark:border-white/15 hover:border-lime-400/50 hover:-translate-y-1 text-sm backdrop-blur-sm"
               >
                 {heroCtaSecondary}
                 <ArrowRight className="w-4 h-4 ml-1.5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
@@ -266,31 +271,11 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right — Code Editor with floating badges + subtle aura */}
-          <div className="animate-fade-up animation-delay-200 hidden lg:flex items-center justify-center relative h-[580px] group/editor">
+          {/* Right — Code Editor with subtle aura */}
+          <div className="lg:col-span-7 animate-fade-up animation-delay-200 hidden lg:flex items-center justify-center relative h-[580px] group/editor">
             {/* Aura glow behind editor */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-[420px] h-[420px] rounded-full bg-lime-400/20 dark:bg-lime-400/15 blur-[90px]" />
-            </div>
-
-            {/* Floating tech badges */}
-            <div className="absolute top-6 -left-2 z-20 animate-float-badge">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
-                <span className="w-2 h-2 rounded-full bg-sky-400" />
-                React 19
-              </div>
-            </div>
-            <div className="absolute top-20 -right-4 z-20 animate-float-badge" style={{ animationDelay: "1.5s" }}>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                TypeScript
-              </div>
-            </div>
-            <div className="absolute bottom-16 -left-4 z-20 animate-float-badge" style={{ animationDelay: "2.8s" }}>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-lg text-xs font-bold text-slate-700 dark:text-slate-200">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                Tailwind v4
-              </div>
             </div>
 
             {/* Interactive Code Editor */}
@@ -402,6 +387,12 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Why Choose Us Section */}
+      <WhyChooseUsSection />
+
+      {/* Mid-page CTA Banner */}
+      <CtaBanner contactLine={contactLine} />
+
       {/* Process Section */}
       <section id="process" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -431,6 +422,9 @@ export default async function HomePage() {
           </ScrollReveal>
         </div>
       </section>
+
+      {/* Latest Articles Section */}
+      <LatestArticlesSection posts={latestPosts} />
 
       {/* Contact Section */}
       <section id="contact" className="py-20 md:py-32 relative z-10 overflow-hidden">

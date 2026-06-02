@@ -23,6 +23,26 @@ export const getAdminProjects = unstable_cache(
   { revalidate: 30, tags: ["projects"] }
 )
 
+// Public, read-only list of active projects (used by the standalone /home-2 preview).
+export const getPublicProjects = unstable_cache(
+  async () =>
+    prisma.project.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        description: true,
+        desktopImage: true,
+        mobileImage: true,
+        websiteUrl: true,
+      },
+    }),
+  ["public-projects"],
+  { revalidate: 60, tags: ["projects"] }
+)
+
 export const getAdminPackages = unstable_cache(
   async () =>
     prisma.package.findMany({ orderBy: { sortOrder: "asc" } }),

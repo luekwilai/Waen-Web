@@ -57,6 +57,7 @@
 
     <!-- Custom Style Animations & WebKit Utilities -->
     <style>
+        [x-cloak] { display: none !important; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #020817; }
         ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 99px; }
@@ -551,30 +552,36 @@
         </div>
     </section>
 
-    <!-- Portfolio Showcase Section -->
+    <!-- Portfolio Showcase Section (live data from /api/projects/public) -->
     <section id="portfolio" class="py-24 border-t border-cyber-border/60 relative z-10" x-data="{
         device: 'desktop',
         activeProject: 0,
-        projects: [
-            {
-                name: 'Origin Luxury Condo',
-                desc: 'หน้าแสดงผลโครงการอสังหาริมทรัพย์หรูพรีเมียม เน้นการจัดแสดงผลงานแกลเลอรีแบบ Interactive มีลูกเล่นภาพสามมิติ และฟอร์มจองเข้าชมโครงการความเร็วดึงข้อมูลสูง',
-                tags: ['UI/UX Design', 'Custom Coding', 'Core Speed Pro'],
-                score: '99',
-                desktopImg: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=600&auto=format&fit=crop',
-                tabletImg: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=400&auto=format&fit=crop',
-                mobileImg: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=300&auto=format&fit=crop'
-            },
-            {
-                name: 'Siam Gastro App',
-                desc: 'แพลตฟอร์มสั่งจองและจัดรายการเมนูร้านอาหารระดับหรู ทำงานด้วยระบบ Single Page Application รองรับการหยิบสินค้าลงตะกร้าแบบไร้รอยต่อ',
-                tags: ['TypeScript Core', 'Dynamic Cart', 'SEO Ready'],
-                score: '98',
-                desktopImg: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop',
-                tabletImg: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=400&auto=format&fit=crop',
-                mobileImg: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=300&auto=format&fit=crop'
+        loading: true,
+        projects: [],
+        async init() {
+            try {
+                const res = await fetch('/api/projects/public');
+                const data = await res.json();
+                this.projects = (data.projects || []).map(p => ({
+                    name: p.title || 'โปรเจกต์',
+                    category: p.category || '',
+                    desc: p.description || '',
+                    tags: (p.category || '').split(/[\/|,]/).map(s => s.trim()).filter(Boolean),
+                    url: p.websiteUrl || '',
+                    desktopImg: p.desktopImage || '',
+                    mobileImg: p.mobileImage || p.desktopImage || ''
+                }));
+            } catch (e) {
+                this.projects = [];
             }
-        ]
+            this.loading = false;
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+        },
+        get current() { return this.projects[this.activeProject] || null; },
+        currentImg() {
+            if (!this.current) return '';
+            return this.device === 'desktop' ? this.current.desktopImg : this.current.mobileImg;
+        }
     }">
         <div class="max-w-7xl mx-auto px-6">
 
@@ -582,65 +589,80 @@
                 <div>
                     <span class="text-xs font-bold uppercase tracking-widest text-cyber-accent">Project Showcase</span>
                     <h2 class="text-3xl sm:text-4xl font-black text-white mt-2">ผลงานออกแบบอันประณีต</h2>
-                    <p class="text-sm sm:text-base text-cyber-gray mt-2">ทดสอบเปลี่ยนสัดส่วนอุปกรณ์ (Responsive) เพื่อจำลองความเข้ากันได้ของระบบการแสดงผล</p>
+                    <p class="text-sm sm:text-base text-cyber-gray mt-2">ผลงานจริงทั้งหมดของ WAENWEB — สลับมุมมอง PC / Mobile เพื่อดูการแสดงผลแบบ Responsive</p>
                 </div>
 
-                <!-- Device Preview Switchers -->
+                <!-- Device Preview Switchers (PC / Mobile only) -->
                 <div class="flex items-center gap-2 bg-cyber-card border border-cyber-border p-1.5 rounded-xl">
-                    <button @click="device = 'desktop'" :class="device === 'desktop' ? 'bg-cyber-green text-cyber-dark' : 'text-cyber-gray hover:text-white'" class="p-2.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow">
-                        <i data-lucide="monitor" class="w-4 h-4"></i> Desktop
+                    <button @click="device = 'desktop'" :class="device === 'desktop' ? 'bg-cyber-green text-cyber-dark' : 'text-cyber-gray hover:text-white'" class="px-3 py-2.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow">
+                        <i data-lucide="monitor" class="w-4 h-4"></i> PC
                     </button>
-                    <button @click="device = 'tablet'" :class="device === 'tablet' ? 'bg-cyber-green text-cyber-dark' : 'text-cyber-gray hover:text-white'" class="p-2.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow">
-                        <i data-lucide="tablet" class="w-4 h-4"></i> Tablet
-                    </button>
-                    <button @click="device = 'mobile'" :class="device === 'mobile' ? 'bg-cyber-green text-cyber-dark' : 'text-cyber-gray hover:text-white'" class="p-2.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow">
+                    <button @click="device = 'mobile'" :class="device === 'mobile' ? 'bg-cyber-green text-cyber-dark' : 'text-cyber-gray hover:text-white'" class="px-3 py-2.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow">
                         <i data-lucide="smartphone" class="w-4 h-4"></i> Mobile
                     </button>
                 </div>
             </div>
 
+            <!-- Loading State -->
+            <div x-show="loading" class="flex flex-col items-center justify-center py-20 gap-4">
+                <div class="relative w-12 h-12">
+                    <div class="absolute inset-0 rounded-full border-4 border-cyber-border"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-t-cyber-accent animate-spin"></div>
+                </div>
+                <span class="text-sm text-cyber-gray">กำลังโหลดผลงานจริง...</span>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="!loading && projects.length === 0" class="text-center py-20 border border-cyber-border rounded-2xl bg-cyber-card/50">
+                <i data-lucide="folder-open" class="w-10 h-10 text-cyber-gray mx-auto mb-3"></i>
+                <p class="text-sm text-cyber-gray">ยังไม่มีผลงานในระบบ</p>
+            </div>
+
             <!-- Portfolio Core Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center" x-show="!loading && projects.length > 0" x-cloak>
 
                 <!-- Left Details -->
                 <div class="lg:col-span-5 space-y-8">
-                    <div class="flex gap-4 border-b border-cyber-border/40 pb-4">
+                    <!-- Project Selector Tabs (scrollable when many) -->
+                    <div class="flex gap-4 border-b border-cyber-border/40 pb-4 overflow-x-auto">
                         <template x-for="(proj, idx) in projects" :key="idx">
-                            <button @click="activeProject = idx" :class="activeProject === idx ? 'text-cyber-accent border-cyber-accent' : 'text-cyber-gray border-transparent'" class="pb-2 font-bold text-sm tracking-wide border-b-2 hover:text-white transition-all" x-text="`0${idx+1}. ${proj.name}`"></button>
+                            <button @click="activeProject = idx" :class="activeProject === idx ? 'text-cyber-accent border-cyber-accent' : 'text-cyber-gray border-transparent'" class="pb-2 font-bold text-sm tracking-wide border-b-2 hover:text-white transition-all whitespace-nowrap" x-text="`${(idx+1).toString().padStart(2,'0')}. ${proj.name}`"></button>
                         </template>
                     </div>
 
-                    <div class="space-y-4">
-                        <h3 class="text-2xl font-black text-white animate-subtle-pulse" x-text="projects[activeProject].name"></h3>
-                        <p class="text-sm text-cyber-gray leading-relaxed" x-text="projects[activeProject].desc"></p>
-                    </div>
+                    <template x-if="current">
+                        <div class="space-y-8">
+                            <div class="space-y-3">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-cyber-accent" x-text="current.category" x-show="current.category"></span>
+                                <h3 class="text-2xl font-black text-white" x-text="current.name"></h3>
+                                <p class="text-sm text-cyber-gray leading-relaxed" x-text="current.desc" x-show="current.desc"></p>
+                            </div>
 
-                    <div class="flex flex-wrap gap-2">
-                        <template x-for="(tag, index) in projects[activeProject].tags" :key="index">
-                            <span class="px-3 py-1 rounded bg-cyber-dark text-[11px] font-bold border border-cyber-border text-cyber-accent" x-text="tag"></span>
-                        </template>
-                    </div>
+                            <div class="flex flex-wrap gap-2" x-show="current.tags.length">
+                                <template x-for="(tag, index) in current.tags" :key="index">
+                                    <span class="px-3 py-1 rounded bg-cyber-dark text-[11px] font-bold border border-cyber-border text-cyber-accent" x-text="tag"></span>
+                                </template>
+                            </div>
 
-                    <div class="flex items-center gap-4 bg-cyber-card/65 p-4 rounded-xl border border-cyber-border w-fit">
-                        <div class="w-12 h-12 rounded-full border-2 border-cyber-accent flex items-center justify-center font-black text-cyber-accent font-mono" x-text="projects[activeProject].score">99</div>
-                        <div>
-                            <span class="block text-xs text-cyber-gray uppercase">Speed optimization</span>
-                            <span class="text-xs font-bold text-white">ทดสอบด้วยเกณฑ์ระดับสูงของ Google</span>
+                            <!-- Live site link (only if available) -->
+                            <a :href="current.url" target="_blank" rel="noopener" x-show="current.url"
+                               class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyber-accent via-cyber-green to-cyber-emerald text-cyber-dark font-bold text-sm shadow-neon-accent hover:scale-[1.02] transition-all w-fit">
+                                <i data-lucide="external-link" class="w-4 h-4"></i> เข้าชมเว็บไซต์จริง
+                            </a>
                         </div>
-                    </div>
+                    </template>
                 </div>
 
-                <!-- Right Device Mockup -->
+                <!-- Right Device Mockup (PC / Mobile) -->
                 <div class="lg:col-span-7 flex justify-center items-center">
                     <div class="w-full flex justify-center items-center py-6">
                         <div class="border border-cyber-border bg-cyber-card shadow-2xl overflow-hidden relative transition-all duration-500 ease-out"
                              :class="{
                                  'w-full max-w-2xl h-[420px] rounded-2xl': device === 'desktop',
-                                 'w-[340px] h-[450px] rounded-3xl': device === 'tablet',
-                                 'w-[240px] h-[480px] rounded-[36px]': device === 'mobile'
+                                 'w-[260px] h-[500px] rounded-[36px]': device === 'mobile'
                              }">
 
-                            <div class="bg-cyber-dark/95 px-4 py-2 border-b border-cyber-border flex items-center gap-1.5" x-show="device === 'desktop' || device === 'tablet'">
+                            <div class="bg-cyber-dark/95 px-4 py-2 border-b border-cyber-border flex items-center gap-1.5" x-show="device === 'desktop'">
                                 <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
                                 <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
                                 <span class="w-2.5 h-2.5 rounded-full bg-cyber-green/80"></span>
@@ -650,17 +672,16 @@
                                 <span class="w-2.5 h-2.5 rounded-full bg-neutral-800"></span>
                             </div>
 
-                            <div class="w-full h-full relative group">
-                                <img :src="device === 'desktop' ? projects[activeProject].desktopImg : (device === 'tablet' ? projects[activeProject].tabletImg : projects[activeProject].mobileImg)"
-                                     alt="Showcase Project Snapshot"
-                                     class="w-full h-full object-cover transition-all duration-500 ease-out">
+                            <a class="block w-full h-full relative group" :href="current && current.url ? current.url : null" :target="current && current.url ? '_blank' : null" rel="noopener">
+                                <img :src="currentImg()" :alt="current ? current.name : 'Project'"
+                                     class="w-full h-full object-cover object-top transition-all duration-500 ease-out">
 
-                                <div class="absolute inset-0 bg-cyber-dark/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div class="absolute inset-0 bg-cyber-dark/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center" x-show="current && current.url">
                                     <span class="px-4 py-2 bg-cyber-green text-cyber-dark rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-neon-accent">
                                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i> เข้าชมเว็บไซต์จริง
                                     </span>
                                 </div>
-                            </div>
+                            </a>
 
                         </div>
                     </div>

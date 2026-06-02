@@ -129,6 +129,12 @@
             50% { opacity: 1; transform: scale(1.02); }
         }
         .animate-subtle-pulse { animation: subtle-pulse 3s ease-in-out infinite; }
+        /* Editor caret blink */
+        @keyframes caretBlink { 0%,49% { border-color:#a3e635; } 50%,100% { border-color:transparent; } }
+        .caret { border-right:2px solid #a3e635; animation: caretBlink 1s step-end infinite; }
+        /* Hidden scrollbar for editor tab row */
+        .no-bar::-webkit-scrollbar { display:none; }
+        .no-bar { -ms-overflow-style:none; scrollbar-width:none; }
         /* Subtle brand mesh backdrop (lighter in light mode) */
         body {
             background-image:
@@ -301,181 +307,100 @@
                 </div>
             </div>
 
-            <!-- Right Grid: Code Simulator Workspace -->
-            <div class="lg:col-span-7" x-data="{
-                codeTab: 'app',
-                running: false,
-                showResult: false,
-                progress: 0,
-                progressText: 'Compiling project...',
-                runPreview() {
-                    if (this.running) return;
-                    this.running = true;
-                    this.showResult = false;
-                    this.progress = 0;
-                    this.progressText = 'Initializing secure compiler...';
+            <!-- Right Grid: Interactive Code Editor (React 19 / TypeScript / Tailwind v4) -->
+            <div class="lg:col-span-7 flex justify-center lg:justify-end">
+                <div class="relative w-full max-w-[540px] mt-6 lg:mt-0" x-data="heroEditor"
+                     @mousemove="onMove($event)" @mouseleave="onLeave()" @keydown.window="onKey($event)">
 
-                    let interval = setInterval(() => {
-                        this.progress += 5;
-                        if(this.progress === 25) this.progressText = 'Bundling Tailwind v4 nodes...';
-                        if(this.progress === 55) this.progressText = 'Optimizing SEO Semantic HTML...';
-                        if(this.progress === 80) this.progressText = 'Verifying PDPA cookie consent rules...';
-                        if(this.progress === 95) this.progressText = 'Finalizing responsive UI layouts...';
+                    <!-- Ambient glow -->
+                    <div class="absolute -inset-8 bg-cyber-green/10 blur-3xl rounded-full pointer-events-none"></div>
 
-                        if (this.progress >= 100) {
-                            clearInterval(interval);
-                            this.running = false;
-                            this.showResult = true;
-                        }
-                    }, 80);
-                }
-            }">
-                <div class="w-full rounded-2xl border border-cyber-border bg-cyber-card/90 shadow-2xl overflow-hidden shadow-neon-green/10 relative">
-                    <!-- Top Window bar mockups -->
-                    <div class="bg-cyber-dark/80 px-4 py-3 border-b border-cyber-border flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
-                            <span class="w-3 h-3 rounded-full bg-cyber-green/80"></span>
-                        </div>
-                        <div class="flex items-center bg-cyber-dark px-4 py-1 rounded-md text-xs font-mono text-cyber-gray border border-cyber-border/40">
-                            <i data-lucide="lock" class="w-3 h-3 text-cyber-green mr-1.5"></i>
-                            <span>https://waenweb.com/live</span>
-                        </div>
-                        <div class="w-14"></div>
+                    <!-- Floating tech badges -->
+                    <div class="absolute -top-4 -left-3 z-30 hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyber-card border border-cyber-border shadow-xl text-[11px] font-semibold text-cyber-fg animate-float">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> React 19
+                    </div>
+                    <div class="absolute top-20 -right-3 z-30 hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyber-card border border-cyber-border shadow-xl text-[11px] font-semibold text-cyber-fg" style="animation: float 6s ease-in-out infinite">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> TypeScript
+                    </div>
+                    <div class="absolute -bottom-4 left-6 z-30 hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyber-card border border-cyber-border shadow-xl text-[11px] font-semibold text-cyber-fg" style="animation: float 5.4s ease-in-out infinite">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyber-green"></span> Tailwind v4
                     </div>
 
-                    <!-- Code IDE Tabs and Controls -->
-                    <div class="bg-cyber-dark/40 flex items-center justify-between border-b border-cyber-border px-4 py-2">
-                        <div class="flex items-center gap-2">
-                            <button @click="codeTab = 'app'" :class="codeTab === 'app' ? 'bg-cyber-card text-cyber-fg border-cyber-border' : 'text-cyber-gray hover:text-cyber-gray border-transparent'" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-all flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-cyber-green animate-subtle-pulse"></span> index.tsx
-                            </button>
-                            <button @click="codeTab = 'style'" :class="codeTab === 'style' ? 'bg-cyber-card text-cyber-fg border-cyber-border' : 'text-cyber-gray hover:text-cyber-gray border-transparent'" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-all flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-cyber-accent"></span> styles.css
-                            </button>
-                            <button @click="codeTab = 'tailwind'" :class="codeTab === 'tailwind' ? 'bg-cyber-card text-cyber-fg border-cyber-border' : 'text-cyber-gray hover:text-cyber-gray border-transparent'" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-all flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-cyber-blue"></span> tailwind.config.js
-                            </button>
-                        </div>
+                    <!-- Editor window -->
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-10 transition-transform duration-300 will-change-transform"
+                         :style="`transform: perspective(1100px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`">
 
-                        <!-- Run Compiler Button -->
-                        <button @click="runPreview()" class="px-4 py-1.5 rounded-lg bg-cyber-green/10 hover:bg-cyber-green/25 border border-cyber-green/30 text-cyber-accent font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-                            <i data-lucide="play" class="w-3.5 h-3.5 fill-cyber-accent text-cyber-accent"></i> RUN PREVIEW
-                        </button>
-                    </div>
-
-                    <!-- CODE FIELD TEXT -->
-                    <div class="h-[380px] p-5 font-mono text-xs overflow-y-auto relative bg-cyber-dark" x-show="!showResult && !running" x-transition>
-
-                        <!-- File 1: index.tsx -->
-                        <div x-show="codeTab === 'app'" class="space-y-1">
-                            <div><span class="text-amber-400">import</span> <span class="text-cyan-400">React</span> <span class="text-amber-400">from</span> <span class="text-cyber-green">'react'</span>;</div>
-                            <div><span class="text-amber-400">import</span> <span class="text-cyan-400">{ CraftedWebsite, PerformanceCore }</span> <span class="text-amber-400">from</span> <span class="text-cyber-green">'@waenweb-studio/creative'</span>;</div>
-                            <br>
-                            <div><span class="text-rose-400">export default function</span> <span class="text-cyber-blue">WAENWEB_Core</span>() {</div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">return</span> (</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-400">&lt;</span><span class="text-emerald-400">CraftedWebsite</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">speedOptimization</span>=<span class="text-sky-300">{true}</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">customUIRating</span>=<span class="text-emerald-400">"100%"</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">advancedSEO</span>=<span class="text-sky-300">{true}</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">pdpaCompliant</span>=<span class="text-sky-300">{true}</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-400">&gt;</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-400">&lt;</span><span class="text-lime-400">PerformanceCore</span> <span class="text-lime-400">score</span>=<span class="text-sky-300">{100}</span> <span class="text-cyan-400">/&gt;</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-slate-500">// ลองคลิกปุ่ม RUN PREVIEW ด้านบนเพื่อดูรันผลลัพธ์</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-cyan-400">&lt;/</span><span class="text-emerald-400">CraftedWebsite</span><span class="text-cyan-400">&gt;</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;);</div>
-                            <div>}</div>
-                        </div>
-
-                        <!-- File 2: styles.css -->
-                        <div x-show="codeTab === 'style'" class="space-y-1">
-                            <div><span class="text-rose-400">.neon-glowing-lime</span> {</div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">box-shadow</span>: <span class="text-cyan-300">0 0 30px rgba(163, 230, 53, 0.35);</span></div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">border-color</span>: <span class="text-cyan-300">#a3e635;</span></div>
-                            <div>}</div>
-                            <br>
-                            <div><span class="text-rose-400">.glassmorphism-luxury</span> {</div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">background</span>: <span class="text-cyan-300">rgba(15, 23, 42, 0.8);</span></div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">backdrop-filter</span>: <span class="text-cyan-300">blur(24px);</span></div>
-                            <div>&nbsp;&nbsp;<span class="text-amber-400">border</span>: <span class="text-cyan-300">1px solid rgba(255, 255, 255, 0.08);</span></div>
-                            <div>}</div>
-                        </div>
-
-                        <!-- File 3: tailwind.config.js -->
-                        <div x-show="codeTab === 'tailwind'" class="space-y-1">
-                            <div><span class="text-amber-400">module.exports</span> = {</div>
-                            <div>&nbsp;&nbsp;<span class="text-lime-400">theme</span>: {</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">extend</span>: {</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-lime-400">colors</span>: {</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-emerald-400">'waenweb-lime'</span>: <span class="text-cyan-300">'#a3e635'</span>,</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-emerald-400">'waenweb-green'</span>: <span class="text-cyan-300">'#4ade80'</span>,</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-emerald-400">'waenweb-emerald'</span>: <span class="text-cyan-300">'#34d399'</span></div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-                            <div>&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-                            <div>&nbsp;&nbsp;}</div>
-                            <div>}</div>
-                        </div>
-
-                        <!-- Floating Guide Hint -->
-                        <div class="absolute bottom-4 right-4 bg-cyber-dark/90 px-3 py-1.5 rounded-lg border border-cyber-border text-[11px] text-cyber-gray pointer-events-none flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent animate-ping"></span>
-                            <span>ลองคลิกปุ่ม "RUN PREVIEW" เพื่อดูระบบทำงาน</span>
-                        </div>
-                    </div>
-
-                    <!-- RUNNING LOADING STATE SIMULATOR -->
-                    <div class="h-[380px] flex flex-col items-center justify-center p-8 bg-cyber-dark" x-show="running" x-transition>
-                        <div class="relative w-16 h-16 mb-6">
-                            <div class="absolute inset-0 rounded-full border-4 border-cyber-border"></div>
-                            <div class="absolute inset-0 rounded-full border-4 border-t-cyber-accent animate-spin"></div>
-                        </div>
-                        <div class="text-sm font-semibold text-cyber-fg font-mono mb-2" x-text="progressText">Compiling...</div>
-                        <div class="w-64 h-2 bg-cyber-border rounded-full overflow-hidden">
-                            <div class="h-full bg-cyber-green transition-all duration-100" :style="`width: ${progress}%`"></div>
-                        </div>
-                    </div>
-
-                    <!-- WORKSPACE PREVIEW RESULTS WINDOW -->
-                    <div class="h-[380px] bg-cyber-dark p-6 relative flex flex-col justify-between overflow-hidden" x-show="showResult" x-transition>
-
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-[#05140c] bg-cyber-accent px-2.5 py-1 rounded">WAENWEB STUDIO</span>
-                                <span class="text-[10px] text-cyber-green border border-cyber-green/30 px-2 py-0.5 rounded bg-cyber-green/5">Secure Connection</span>
+                        <!-- Title bar -->
+                        <div class="flex items-center bg-[#161b22]">
+                            <div class="flex items-center gap-1.5 px-4 py-3.5 shrink-0">
+                                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="w-3 h-3 rounded-full bg-lime-500"></span>
                             </div>
-                            <button @click="showResult = false" class="text-cyber-gray hover:text-cyber-fg text-xs flex items-center gap-1 bg-cyber-dark/60 px-2.5 py-1 rounded border border-cyber-border/80 transition-colors">
-                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> แก้ไขโค้ดใหม่
-                            </button>
-                        </div>
-
-                        <!-- Core Simulated Interactive Web Module -->
-                        <div class="bg-cyber-dark/85 backdrop-blur border border-cyber-border rounded-xl p-5 shadow-xl animate-float max-w-md mx-auto my-auto w-full text-center">
-                            <div class="w-12 h-12 rounded-full bg-cyber-green/20 flex items-center justify-center mx-auto mb-3 border border-cyber-green/40">
-                                <i data-lucide="check-circle" class="w-6 h-6 text-cyber-accent"></i>
+                            <div class="flex text-xs flex-1 min-w-0 overflow-x-auto no-bar">
+                                <template x-for="t in tabs" :key="t.id">
+                                    <button @click="activeId = t.id"
+                                        :class="t.id === activeId ? 'bg-[#0d1117] text-slate-200' : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'"
+                                        class="px-3 py-3.5 border-r border-white/5 font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                                        <span class="w-2 h-2 rounded-full" :class="t.dot"></span>
+                                        <span x-text="t.name"></span>
+                                    </button>
+                                </template>
                             </div>
-                            <h3 class="text-sm font-bold text-cyber-fg mb-1">สร้างเสร็จพร้อมออนไลน์</h3>
-                            <p class="text-xs text-cyber-gray mb-4">ระบบจัดเตรียมและจำลองหน้าโปรเจกต์เสมือนจริงของธุรกิจคุณ</p>
-
-                            <div class="flex justify-center gap-3 text-[10px] font-bold">
-                                <span class="px-2.5 py-1.5 rounded bg-cyber-border text-cyber-accent border border-cyber-green/20">Speed Optimized</span>
-                                <span class="px-2.5 py-1.5 rounded bg-cyber-border text-cyber-fg hover:bg-cyber-green hover:text-[#05140c] transition-colors cursor-pointer">Live Preview</span>
+                            <div class="flex items-center gap-1 pr-3 pl-2">
+                                <button @click="copy()" title="Copy code (C)"
+                                    :class="copied ? 'text-lime-400' : 'text-slate-400 hover:text-lime-300'"
+                                    class="flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-md hover:bg-white/[0.06] transition-colors">
+                                    <i data-lucide="check" class="w-3.5 h-3.5" x-show="copied" x-cloak></i>
+                                    <i data-lucide="copy" class="w-3.5 h-3.5" x-show="!copied"></i>
+                                    <span class="hidden sm:inline" x-text="copied ? 'Copied!' : 'Copy'"></span>
+                                </button>
+                                <button @click="onRun()" title="Run code"
+                                    class="flex items-center gap-1.5 text-[11px] font-semibold text-lime-300 hover:text-lime-200 px-2.5 py-1.5 rounded-md bg-lime-400/10 hover:bg-lime-400/20 border border-lime-400/20 transition-colors">
+                                    <i data-lucide="play" class="w-3 h-3" :class="running ? 'animate-pulse' : ''" fill="currentColor"></i>
+                                    <span class="hidden sm:inline" x-text="running ? '...' : 'Run'"></span>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Simulated Stats Dashboard -->
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="bg-cyber-dark/50 rounded-lg p-2 text-center border border-cyber-border/40">
-                                <span class="block text-[10px] text-cyber-gray">PageSpeed</span>
-                                <span class="text-xs font-bold text-cyber-accent">100 / 100</span>
+                        <!-- Code body -->
+                        <div class="relative bg-[#0d1117] py-5 font-mono text-[12.5px] leading-6 select-none min-h-[400px]">
+                            <template x-for="(line, idx) in active.lines" :key="activeId + '-' + idx">
+                                <div @mouseenter="hoverLine = idx" @mouseleave="hoverLine = null"
+                                     class="flex items-start px-4 relative transition-colors"
+                                     :class="hoverLine === idx ? 'bg-lime-400/[0.05]' : 'hover:bg-white/[0.02]'">
+                                    <span x-show="hoverLine === idx" class="absolute left-0 top-0 bottom-0 w-[2px] bg-lime-400"></span>
+                                    <span class="w-7 shrink-0 text-right mr-5 text-[11px] leading-6 tabular-nums"
+                                          :class="hoverLine === idx ? 'text-lime-400' : 'text-slate-600'" x-text="idx + 1"></span>
+                                    <span class="flex-1 text-slate-300 min-h-[1.5rem]" x-html="line"></span>
+                                </div>
+                            </template>
+
+                            <!-- Run output toast -->
+                            <div x-show="running || ranOnce" x-transition
+                                 class="absolute right-4 top-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime-400/15 border border-lime-400/30 backdrop-blur-sm text-[11px] font-semibold text-lime-300">
+                                <span class="relative inline-flex h-1.5 w-1.5">
+                                    <span class="absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75 animate-ping"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-lime-400"></span>
+                                </span>
+                                <span x-text="running ? 'Compiling...' : '✓ Build succeeded'"></span>
                             </div>
-                            <div class="bg-cyber-dark/50 rounded-lg p-2 text-center border border-cyber-border/40">
-                                <span class="block text-[10px] text-cyber-gray">SEO Ready</span>
-                                <span class="text-xs font-bold text-cyber-green">Perfect score</span>
+                        </div>
+
+                        <!-- Status bar -->
+                        <div class="flex items-center justify-between bg-cyber-green text-[#05140c] px-4 py-1.5 text-[10px] font-mono font-bold tracking-wide">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#05140c]"></span> main</span>
+                                <span x-text="active.name"></span>
                             </div>
-                            <div class="bg-cyber-dark/50 rounded-lg p-2 text-center border border-cyber-border/40">
-                                <span class="block text-[10px] text-cyber-gray">Security</span>
-                                <span class="text-xs font-bold text-cyber-blue">WAF Guard</span>
+                            <div class="flex items-center gap-3">
+                                <span class="hidden sm:inline">Press
+                                    <kbd class="px-1 rounded bg-black/15">1</kbd>
+                                    <kbd class="px-1 rounded bg-black/15">2</kbd>
+                                    <kbd class="px-1 rounded bg-black/15">3</kbd>
+                                </span>
+                                <span>UTF-8</span>
+                                <span x-text="`Ln ${active.lines.length}, Col 1`"></span>
                             </div>
                         </div>
 
@@ -1199,6 +1124,116 @@
             const isDark = document.documentElement.classList.toggle('dark');
             try { localStorage.setItem('waenweb-theme', isDark ? 'dark' : 'light'); } catch (e) {}
         }
+
+        // ─── Hero interactive code editor (Alpine component) ───
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('heroEditor', () => ({
+                activeId: 'index',
+                copied: false,
+                running: false,
+                ranOnce: false,
+                hoverLine: null,
+                tilt: { x: 0, y: 0 },
+                tabs: [
+                    {
+                        id: 'index', name: 'index.tsx', dot: 'bg-lime-400',
+                        raw: `// WAENWEB — Professional Web Design\n\nimport React, { useState } from 'react'\nimport { motion } from 'framer-motion'\n\ninterface WebsiteProps {\n  title: string\n  responsive: boolean\n}\n\nexport default function Website({ title }: WebsiteProps) {\n  return (\n    <main className="min-h-screen">\n      <Hero title={title} />\n    </main>\n  )\n}`,
+                        lines: [
+                            `<span class='text-slate-500'>// WAENWEB — Professional Web Design</span>`,
+                            ``,
+                            `<span class='text-pink-400'>import</span> <span class='text-sky-300'>React</span>, { <span class='text-sky-300'>useState</span> } <span class='text-pink-400'>from</span> <span class='text-amber-300'>'react'</span>`,
+                            `<span class='text-pink-400'>import</span> { <span class='text-sky-300'>motion</span> } <span class='text-pink-400'>from</span> <span class='text-amber-300'>'framer-motion'</span>`,
+                            ``,
+                            `<span class='text-purple-400'>interface</span> <span class='text-amber-300'>WebsiteProps</span> {`,
+                            `<span class='inline-block pl-4 text-slate-400'>title</span>: <span class='text-sky-400'>string</span>`,
+                            `<span class='inline-block pl-4 text-slate-400'>responsive</span>: <span class='text-sky-400'>boolean</span>`,
+                            `}`,
+                            ``,
+                            `<span class='text-pink-400'>export default function</span> <span class='text-amber-300'>Website</span>({ title }: <span class='text-sky-300'>WebsiteProps</span>) {`,
+                            `<span class='inline-block pl-4 text-pink-400'>return</span> (`,
+                            `<span class='inline-block pl-8 text-slate-300'>&lt;</span><span class='text-sky-400'>main</span> <span class='text-purple-300'>className</span>=<span class='text-amber-300'>"min-h-screen"</span><span class='text-slate-300'>&gt;</span>`,
+                            `<span class='caret inline-block pl-12 text-slate-300'>&lt;</span><span class='text-sky-400'>Hero</span> <span class='text-purple-300'>title</span>=<span class='text-slate-300'>{title}</span> <span class='text-slate-300'>/&gt;</span>`,
+                            `<span class='inline-block pl-8 text-slate-300'>&lt;/</span><span class='text-sky-400'>main</span><span class='text-slate-300'>&gt;</span>`,
+                            `<span class='inline-block pl-4 text-slate-300'>)</span>`,
+                            `}`,
+                        ],
+                    },
+                    {
+                        id: 'styles', name: 'styles.css', dot: 'bg-sky-400',
+                        raw: `/* WAENWEB — Global Styles */\n\n:root {\n  --brand: #a3e635;\n  --brand-dark: #65a30d;\n  --bg: #020817;\n}\n\n.hero {\n  min-height: 100svh;\n  background: radial-gradient(\n    circle at 20% 10%,\n    rgba(163, 230, 53, 0.15),\n    transparent\n  );\n}`,
+                        lines: [
+                            `<span class='text-slate-500'>/* WAENWEB — Global Styles */</span>`,
+                            ``,
+                            `<span class='text-pink-400'>:root</span> {`,
+                            `<span class='inline-block pl-4 text-purple-300'>--brand</span>: <span class='text-amber-300'>#a3e635</span>;`,
+                            `<span class='inline-block pl-4 text-purple-300'>--brand-dark</span>: <span class='text-amber-300'>#65a30d</span>;`,
+                            `<span class='inline-block pl-4 text-purple-300'>--bg</span>: <span class='text-amber-300'>#020817</span>;`,
+                            `}`,
+                            ``,
+                            `<span class='text-sky-400'>.hero</span> {`,
+                            `<span class='inline-block pl-4 text-purple-300'>min-height</span>: <span class='text-amber-300'>100svh</span>;`,
+                            `<span class='inline-block pl-4 text-purple-300'>background</span>: <span class='text-sky-300'>radial-gradient</span>(`,
+                            `<span class='inline-block pl-8 text-slate-300'>circle at </span><span class='text-amber-300'>20% 10%</span><span class='text-slate-300'>,</span>`,
+                            `<span class='inline-block pl-8 text-slate-300'>rgba(</span><span class='text-amber-300'>163, 230, 53, 0.15</span><span class='text-slate-300'>),</span>`,
+                            `<span class='inline-block pl-8 text-slate-300'>transparent</span>`,
+                            `<span class='inline-block pl-4 text-slate-300'>);</span>`,
+                            `}`,
+                        ],
+                    },
+                    {
+                        id: 'tailwind', name: 'tailwind.ts', dot: 'bg-cyan-400',
+                        raw: `// tailwind.config.ts\nimport type { Config } from 'tailwindcss'\n\nexport default {\n  content: ['./src/**/*.{ts,tsx}'],\n  theme: {\n    extend: {\n      colors: {\n        brand: {\n          50: '#f7fee7',\n          400: '#a3e635',\n          600: '#65a30d',\n        },\n      },\n    },\n  },\n} satisfies Config`,
+                        lines: [
+                            `<span class='text-slate-500'>// tailwind.config.ts</span>`,
+                            `<span class='text-pink-400'>import type</span> { <span class='text-sky-300'>Config</span> } <span class='text-pink-400'>from</span> <span class='text-amber-300'>'tailwindcss'</span>`,
+                            ``,
+                            `<span class='text-pink-400'>export default</span> {`,
+                            `<span class='inline-block pl-4 text-purple-300'>content</span>: [<span class='text-amber-300'>'./src/**/*.{ts,tsx}'</span>],`,
+                            `<span class='inline-block pl-4 text-purple-300'>theme</span>: {`,
+                            `<span class='inline-block pl-8 text-purple-300'>extend</span>: {`,
+                            `<span class='inline-block pl-12 text-purple-300'>colors</span>: {`,
+                            `<span class='inline-block pl-16 text-sky-400'>brand</span>: {`,
+                            `<span class='inline-block pl-20 text-purple-300'>50</span>: <span class='text-amber-300'>'#f7fee7'</span>,`,
+                            `<span class='inline-block pl-20 text-purple-300'>400</span>: <span class='text-amber-300'>'#a3e635'</span>,`,
+                            `<span class='inline-block pl-20 text-purple-300'>600</span>: <span class='text-amber-300'>'#65a30d'</span>,`,
+                            `<span class='inline-block pl-16 text-slate-300'>},</span>`,
+                            `<span class='inline-block pl-12 text-slate-300'>},</span>`,
+                            `<span class='inline-block pl-8 text-slate-300'>},</span>`,
+                            `<span class='inline-block pl-4 text-slate-300'>},</span>`,
+                            `} <span class='text-pink-400'>satisfies</span> <span class='text-sky-300'>Config</span>`,
+                        ],
+                    },
+                ],
+                get active() { return this.tabs.find(t => t.id === this.activeId) || this.tabs[0]; },
+                copy() {
+                    try { navigator.clipboard.writeText(this.active.raw); } catch (e) {}
+                    this.copied = true;
+                    setTimeout(() => { this.copied = false; }, 1800);
+                },
+                onRun() {
+                    this.running = true;
+                    setTimeout(() => {
+                        this.running = false;
+                        this.ranOnce = true;
+                        setTimeout(() => { this.ranOnce = false; }, 2400);
+                    }, 900);
+                },
+                onKey(e) {
+                    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+                    if (e.key === '1') this.activeId = 'index';
+                    if (e.key === '2') this.activeId = 'styles';
+                    if (e.key === '3') this.activeId = 'tailwind';
+                    if ((e.key === 'c' || e.key === 'C') && !e.metaKey && !e.ctrlKey) this.copy();
+                },
+                onMove(e) {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    const px = (e.clientX - r.left) / r.width - 0.5;
+                    const py = (e.clientY - r.top) / r.height - 0.5;
+                    this.tilt = { x: py * -4, y: px * 6 };
+                },
+                onLeave() { this.tilt = { x: 0, y: 0 }; },
+            }));
+        });
 
         lucide.createIcons();
 

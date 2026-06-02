@@ -835,7 +835,7 @@ WAENWEB มีบริการดูแลเว็บรายเดือน
     date: "2025-07-28",
     readTime: "6 นาที",
     category: "คำแนะนำ",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
     content: `
 ## ในไทย LINE คือทุกอย่าง
 

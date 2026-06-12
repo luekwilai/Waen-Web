@@ -31,6 +31,8 @@ model Project {
   desktopImage String?
   mobileImage  String?
   websiteUrl   String?
+  metrics      Json?
+  isFeatured   Boolean  @default(false)
   sortOrder    Int      @default(0)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())

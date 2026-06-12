@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ContactForm } from "@/components/home/contact-form"
 import { PortfolioSection } from "@/components/home/portfolio-section"
+import { CaseStudySection } from "@/components/home/case-study-section"
 import { PackagesSection } from "@/components/home/packages-section"
 import { ProcessSection } from "@/components/home/process-section"
 import { ScrollReveal } from "@/components/home/scroll-reveal"
@@ -336,6 +337,9 @@ export default async function HomePage() {
           <PortfolioSection />
         </ScrollReveal>
       </section>
+
+      {/* Case Study Section — featured projects with metrics */}
+      <CaseStudySection />
 
       {/* Services Section */}
       <section id="services" className="py-20 md:py-28 border-t border-slate-200 dark:border-white/5 relative z-10 overflow-hidden">

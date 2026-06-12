@@ -43,6 +43,27 @@ export const getPublicProjects = unstable_cache(
   { revalidate: 60, tags: ["projects"] }
 )
 
+// Public, read-only list of featured projects with metrics (Case Study section on home page).
+export const getFeaturedProjects = unstable_cache(
+  async () =>
+    prisma.project.findMany({
+      where: { isActive: true, isFeatured: true },
+      orderBy: { sortOrder: "asc" },
+      take: 2,
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        description: true,
+        desktopImage: true,
+        websiteUrl: true,
+        metrics: true,
+      },
+    }),
+  ["featured-projects"],
+  { revalidate: 60, tags: ["projects"] }
+)
+
 export const getAdminPackages = unstable_cache(
   async () =>
     prisma.package.findMany({ orderBy: { sortOrder: "asc" } }),

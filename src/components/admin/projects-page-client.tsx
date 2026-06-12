@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { MediaPicker } from "@/components/admin/media-picker"
-import { Plus, Pencil, Trash2, Eye, Upload, Loader2, GripVertical } from "lucide-react"
+import { Plus, Pencil, Trash2, Eye, Upload, Loader2, GripVertical, X } from "lucide-react"
+import { type MetricItem, MAX_METRICS } from "@/lib/project-metrics"
 
 export interface AdminProject {
   id: string
@@ -32,6 +33,8 @@ export interface AdminProject {
   desktopImage: string | null
   mobileImage: string | null
   websiteUrl: string | null
+  metrics: MetricItem[] | null
+  isFeatured: boolean
   isActive: boolean
 }
 
@@ -42,6 +45,8 @@ type ProjectFormState = {
   desktopImage: string
   mobileImage: string
   websiteUrl: string
+  metrics: MetricItem[]
+  isFeatured: boolean
   isActive: boolean
 }
 
@@ -52,6 +57,8 @@ const initialFormState: ProjectFormState = {
   desktopImage: "",
   mobileImage: "",
   websiteUrl: "",
+  metrics: [],
+  isFeatured: false,
   isActive: true,
 }
 
@@ -82,18 +89,23 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    const payload = {
+      ...formData,
+      metrics: formData.metrics.filter((m) => m.value.trim() !== "" && m.label.trim() !== ""),
+    }
+
     try {
       if (editingProject) {
         await fetch(`/api/projects/${editingProject.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         })
       } else {
         await fetch("/api/projects", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         })
       }
 
@@ -115,6 +127,8 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
       desktopImage: project.desktopImage || "",
       mobileImage: project.mobileImage || "",
       websiteUrl: project.websiteUrl || "",
+      metrics: project.metrics ?? [],
+      isFeatured: project.isFeatured,
       isActive: project.isActive,
     })
     setDialogOpen(true)
@@ -133,6 +147,25 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
 
   const updateImageField = (field: ImageField, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const addMetric = () => {
+    setFormData((prev) =>
+      prev.metrics.length >= MAX_METRICS
+        ? prev
+        : { ...prev, metrics: [...prev.metrics, { value: "", label: "" }] }
+    )
+  }
+
+  const updateMetric = (index: number, field: keyof MetricItem, value: string) => {
+    setFormData((prev) => {
+      const metrics = prev.metrics.map((m, i) => (i === index ? { ...m, [field]: value } : m))
+      return { ...prev, metrics }
+    })
+  }
+
+  const removeMetric = (index: number) => {
+    setFormData((prev) => ({ ...prev, metrics: prev.metrics.filter((_, i) => i !== index) }))
   }
 
   const handleImageUpload = async (field: ImageField, file: File) => {
@@ -438,6 +471,71 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                   className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
                 />
               </div>
+              {/* Case Study เด่น */}
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-white/5">
+                <input
+                  type="checkbox"
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                  className="w-5 h-5 rounded border-slate-300 text-lime-500 focus:ring-lime-500"
+                />
+                <Label htmlFor="isFeatured" className="cursor-pointer text-slate-700 dark:text-slate-300 font-medium">
+                  แสดงเป็น Case Study เด่น (โชว์พร้อมตัวเลขผลลัพธ์)
+                </Label>
+              </div>
+
+              {/* ตัวเลขผลลัพธ์ */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-slate-700 dark:text-slate-300">ตัวเลขผลลัพธ์ (สูงสุด {MAX_METRICS} ตัว)</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addMetric}
+                    disabled={formData.metrics.length >= MAX_METRICS}
+                    className="rounded-lg border-slate-200 dark:border-white/10"
+                  >
+                    <Plus className="w-4 h-4 mr-1" /> เพิ่มตัวเลข
+                  </Button>
+                </div>
+                {formData.metrics.length === 0 ? (
+                  <p className="text-sm text-slate-400 dark:text-slate-500">
+                    ยังไม่มีตัวเลข เช่น ค่า &quot;98/100&quot; กับ label &quot;PageSpeed&quot;
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {formData.metrics.map((metric, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Input
+                          value={metric.value}
+                          onChange={(e) => updateMetric(index, "value", e.target.value)}
+                          placeholder="ค่า เช่น 98/100"
+                          className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
+                        />
+                        <Input
+                          value={metric.label}
+                          onChange={(e) => updateMetric(index, "label", e.target.value)}
+                          placeholder="label เช่น PageSpeed"
+                          className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus-visible:ring-lime-500"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeMetric(index)}
+                          className="shrink-0 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-400/10 rounded-lg w-9 h-9"
+                          aria-label="ลบตัวเลข"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-white/5">
                 <input
                   type="checkbox"

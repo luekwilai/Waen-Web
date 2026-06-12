@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
+import { normalizeMetrics } from "@/lib/project-metrics"
 
 // PUT update project
 export async function PUT(
@@ -16,6 +17,9 @@ export async function PUT(
   try {
     const { id } = await params
     const data = await request.json()
+    if ("metrics" in data) {
+      data.metrics = normalizeMetrics(data.metrics)
+    }
     const project = await prisma.project.update({
       where: { id },
       data

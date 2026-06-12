@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
+import { normalizeMetrics } from "@/lib/project-metrics"
 
 // GET all projects
 export async function GET() {
@@ -72,6 +73,9 @@ export async function POST(request: Request) {
 
   try {
     const data = await request.json()
+    if ("metrics" in data) {
+      data.metrics = normalizeMetrics(data.metrics)
+    }
     const project = await prisma.project.create({ data })
 
     revalidateTag("projects", "max")

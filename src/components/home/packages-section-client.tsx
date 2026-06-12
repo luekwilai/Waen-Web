@@ -1,7 +1,15 @@
 "use client"
 
+import Image from "next/image"
 import { SpotlightCard } from "@/components/spotlight-card"
-import { CheckCircle, Clock, ArrowRight, Zap } from "lucide-react"
+import { CheckCircle, Clock, ArrowRight, Zap, ExternalLink } from "lucide-react"
+
+export type ExampleProject = {
+  id: string
+  title: string
+  desktopImage: string | null
+  websiteUrl: string | null
+}
 
 export type PackageItem = {
   id: string
@@ -12,6 +20,67 @@ export type PackageItem = {
   features: string[]
   duration: string | null
   isPopular: boolean
+  exampleProjects: ExampleProject[]
+}
+
+function ExampleProjects({ projects, popular }: { projects: ExampleProject[]; popular: boolean }) {
+  if (projects.length === 0) return null
+
+  const labelClass = popular ? "text-lime-400" : "text-lime-600 dark:text-lime-400"
+  const titleClass = popular ? "text-slate-200" : "text-slate-700 dark:text-slate-300"
+  const rowClass = popular
+    ? "border-white/10 hover:border-lime-400/40 bg-white/[0.03] hover:bg-white/[0.06]"
+    : "border-slate-200 dark:border-white/10 hover:border-lime-500/40 bg-slate-50/60 dark:bg-white/[0.02] hover:bg-slate-100 dark:hover:bg-white/[0.05]"
+
+  return (
+    <div className="mb-6">
+      <p className={`text-[10px] font-semibold uppercase tracking-widest mb-2.5 ${labelClass}`}>
+        เว็บตัวอย่างจากแพ็คเกจนี้
+      </p>
+      <div className="space-y-2">
+        {projects.map((project) => {
+          const inner = (
+            <>
+              <div className="relative w-16 aspect-[16/10] rounded-lg overflow-hidden flex-shrink-0 bg-slate-200 dark:bg-slate-800">
+                {project.desktopImage && (
+                  <Image
+                    src={project.desktopImage}
+                    alt={project.title}
+                    fill
+                    className="object-cover object-top"
+                    sizes="64px"
+                    quality={50}
+                  />
+                )}
+              </div>
+              <span className={`text-sm font-medium leading-snug line-clamp-2 flex-1 ${titleClass}`}>
+                {project.title}
+              </span>
+              {project.websiteUrl && (
+                <ExternalLink className={`w-3.5 h-3.5 flex-shrink-0 ${popular ? "text-slate-400" : "text-slate-400 dark:text-slate-500"}`} />
+              )}
+            </>
+          )
+          const rowBase = `flex items-center gap-3 p-2 rounded-xl border transition-colors ${rowClass}`
+          return project.websiteUrl ? (
+            <a
+              key={project.id}
+              href={project.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={rowBase}
+            >
+              {inner}
+            </a>
+          ) : (
+            <div key={project.id} className={rowBase}>
+              {inner}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 export function PackagesSectionClient({ packages }: { packages: PackageItem[] }) {
@@ -73,6 +142,8 @@ export function PackagesSectionClient({ packages }: { packages: PackageItem[] })
                 ))}
               </ul>
 
+              <ExampleProjects projects={pkg.exampleProjects} popular />
+
               {pkg.duration && (
                 <div className="flex items-center gap-2 text-slate-400 text-xs mb-4">
                   <Clock className="w-3.5 h-3.5" />
@@ -118,6 +189,8 @@ export function PackagesSectionClient({ packages }: { packages: PackageItem[] })
                   </li>
                 ))}
               </ul>
+
+              <ExampleProjects projects={pkg.exampleProjects} popular={false} />
 
               {pkg.duration && (
                 <div className="flex items-center gap-2 text-slate-400 text-xs mb-4">

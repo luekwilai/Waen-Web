@@ -1,13 +1,14 @@
-import { ProjectsPageClient, type AdminProject } from "@/components/admin/projects-page-client"
+import { ProjectsPageClient, type AdminProject, type PackageOption } from "@/components/admin/projects-page-client"
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/get-session"
-import { getAdminProjects } from "@/lib/queries"
+import { getAdminProjects, getAdminPackages } from "@/lib/queries"
 import { normalizeMetrics } from "@/lib/project-metrics"
 
 export default async function AdminProjectsPage() {
-  const [session, projects] = await Promise.all([
+  const [session, projects, packages] = await Promise.all([
     getSession(),
     getAdminProjects(),
+    getAdminPackages(),
   ])
 
   if (!session?.user || (session.user as { role?: string }).role !== "ADMIN") {
@@ -24,8 +25,11 @@ export default async function AdminProjectsPage() {
     websiteUrl: p.websiteUrl,
     metrics: normalizeMetrics(p.metrics),
     isFeatured: p.isFeatured,
+    examplePackageId: p.examplePackageId,
     isActive: p.isActive,
   }))
 
-  return <ProjectsPageClient initialProjects={initialProjects} />
+  const packageOptions: PackageOption[] = packages.map((p) => ({ id: p.id, name: p.name }))
+
+  return <ProjectsPageClient initialProjects={initialProjects} packages={packageOptions} />
 }

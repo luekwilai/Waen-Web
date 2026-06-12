@@ -22,6 +22,12 @@ export async function PackagesSection() {
       features: true,
       duration: true,
       isPopular: true,
+      exampleProjects: {
+        where: { isActive: true },
+        orderBy: { sortOrder: "asc" },
+        take: 2,
+        select: { id: true, title: true, desktopImage: true, websiteUrl: true },
+      },
     },
   })
 

@@ -76,6 +76,9 @@ export async function POST(request: Request) {
     if ("metrics" in data) {
       data.metrics = normalizeMetrics(data.metrics)
     }
+    if ("examplePackageId" in data && !data.examplePackageId) {
+      data.examplePackageId = null
+    }
     const project = await prisma.project.create({ data })
 
     revalidateTag("projects", "max")

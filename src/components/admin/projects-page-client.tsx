@@ -35,8 +35,11 @@ export interface AdminProject {
   websiteUrl: string | null
   metrics: MetricItem[] | null
   isFeatured: boolean
+  examplePackageId: string | null
   isActive: boolean
 }
+
+export type PackageOption = { id: string; name: string }
 
 type ProjectFormState = {
   title: string
@@ -47,6 +50,7 @@ type ProjectFormState = {
   websiteUrl: string
   metrics: MetricItem[]
   isFeatured: boolean
+  examplePackageId: string
   isActive: boolean
 }
 
@@ -59,12 +63,13 @@ const initialFormState: ProjectFormState = {
   websiteUrl: "",
   metrics: [],
   isFeatured: false,
+  examplePackageId: "",
   isActive: true,
 }
 
 type ImageField = "desktopImage" | "mobileImage"
 
-export function ProjectsPageClient({ initialProjects }: { initialProjects: AdminProject[] }) {
+export function ProjectsPageClient({ initialProjects, packages }: { initialProjects: AdminProject[]; packages: PackageOption[] }) {
   const [projects, setProjects] = useState<AdminProject[]>(initialProjects)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingProject, setEditingProject] = useState<AdminProject | null>(null)
@@ -92,6 +97,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
     const payload = {
       ...formData,
       metrics: formData.metrics.filter((m) => m.value.trim() !== "" && m.label.trim() !== ""),
+      examplePackageId: formData.examplePackageId || null,
     }
 
     try {
@@ -129,6 +135,7 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
       websiteUrl: project.websiteUrl || "",
       metrics: project.metrics ?? [],
       isFeatured: project.isFeatured,
+      examplePackageId: project.examplePackageId ?? "",
       isActive: project.isActive,
     })
     setDialogOpen(true)
@@ -534,6 +541,22 @@ export function ProjectsPageClient({ initialProjects }: { initialProjects: Admin
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* เป็นตัวอย่างของแพ็คเกจ */}
+              <div className="space-y-2">
+                <Label htmlFor="examplePackageId" className="text-slate-700 dark:text-slate-300">เป็นตัวอย่างของแพ็คเกจ (แสดงในส่วนราคา)</Label>
+                <select
+                  id="examplePackageId"
+                  value={formData.examplePackageId}
+                  onChange={(e) => setFormData({ ...formData, examplePackageId: e.target.value })}
+                  className="flex h-10 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
+                >
+                  <option value="">— ไม่ผูกกับแพ็คเกจ —</option>
+                  {packages.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-white/5">

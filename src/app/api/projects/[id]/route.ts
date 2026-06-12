@@ -20,6 +20,9 @@ export async function PUT(
     if ("metrics" in data) {
       data.metrics = normalizeMetrics(data.metrics)
     }
+    if ("examplePackageId" in data && !data.examplePackageId) {
+      data.examplePackageId = null
+    }
     const project = await prisma.project.update({
       where: { id },
       data

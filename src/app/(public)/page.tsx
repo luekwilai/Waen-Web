@@ -11,6 +11,7 @@ import { SiteFooter } from "@/components/home/site-footer"
 import { HeroCodeEditor } from "@/components/home/hero-code-editor"
 import { FaqSection } from "@/components/home/faq-section"
 import { WhyChooseUsSection } from "@/components/home/why-choose-us-section"
+import { ClientLogosSection } from "@/components/home/client-logos-section"
 import { CtaBanner } from "@/components/home/cta-banner"
 import { LatestArticlesSection } from "@/components/home/latest-articles-section"
 import { getSiteSettings } from "@/lib/queries"
@@ -284,6 +285,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Client Logos — pulled live from client websites */}
+      <ClientLogosSection />
 
       {/* Stats Section */}
       <div className="relative z-10 overflow-hidden">

@@ -396,6 +396,22 @@
     animation: cursor-blink 1s step-end infinite;
   }
 
+  /* Client logo marquee — track duplicated 2x, shifts by half its width */
+  @keyframes marquee-x {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - 0.75rem)); }
+  }
+  .animate-marquee {
+    animation: marquee-x 40s linear infinite;
+  }
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee { animation: none; }
+  }
+
   /* Dotted grid background with radial fade — used behind hero */
   .bg-grid-dots {
     background-image: radial-gradient(rgba(100, 116, 139, 0.18) 1px, transparent 1px);

@@ -507,3 +507,85 @@
 .dark .prose-waenweb strong {
   color: white;
 }
+/* ─── WAENWEB V2: isolated editorial redesign ─── */
+.v2-page {
+  min-height: 100vh;
+  background: #f5f4ef;
+  color: #111311;
+  isolation: isolate;
+}
+
+.v2-grid {
+  background-color: #f5f4ef;
+  background-image:
+    linear-gradient(rgba(17, 19, 17, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 19, 17, 0.055) 1px, transparent 1px);
+  background-size: 88px 88px;
+  background-position: center top;
+}
+
+.v2-defer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+@keyframes v2-float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(-2deg); }
+}
+
+@keyframes v2-float-delayed {
+  0%, 100% { transform: translateY(0) rotate(5deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+.v2-float { animation: v2-float 7s ease-in-out infinite; }
+.v2-float-delayed { animation: v2-float-delayed 8s 1s ease-in-out infinite; }
+
+.v2-prose h2 {
+  margin: 2.75rem 0 1rem;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  color: #111311;
+}
+
+.v2-prose h3 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.4;
+  color: #111311;
+}
+
+.v2-prose p,
+.v2-prose li {
+  font-size: 1rem;
+  line-height: 1.95;
+  color: rgba(17, 19, 17, 0.66);
+}
+
+.v2-prose p { margin-bottom: 1rem; }
+.v2-prose ul { margin: 1rem 0 1.5rem 1.25rem; list-style: disc; }
+.v2-prose li { margin-bottom: 0.45rem; padding-left: 0.25rem; }
+.v2-prose strong { color: #111311; font-weight: 800; }
+.v2-prose a { color: #527f00; text-decoration: underline; text-decoration-color: #9ee800; text-decoration-thickness: 3px; text-underline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .v2-grid { background-size: 56px 56px; }
+  .v2-prose p,
+  .v2-prose li { font-size: 0.95rem; line-height: 1.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-float,
+  .v2-float-delayed { animation: none; }
+  .v2-page * { scroll-behavior: auto !important; }
+}
+
+.v2-hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.v2-hide-scrollbar::-webkit-scrollbar { display: none; }

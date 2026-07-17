@@ -1,0 +1,2 @@
+@import "https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap";
+:root{--noto-thai:"Noto Sans Thai", sans-serif}*,:before,:after{font-family:var(--noto-thai)!important}.hero h1 em,.contact h2 em{font-style:italic}.timeline-item ul{gap:9px;margin:20px 0 0;padding:0;list-style:none;display:grid}.timeline-item li{color:#4c5663;padding-left:17px;font-size:13px;line-height:1.72;position:relative}.timeline-item li:before{background:var(--lime);content:"";border-radius:50%;width:6px;height:6px;position:absolute;top:.7em;left:0}

@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
   },
   // Clean URL for the standalone preview page (direct link only — not linked anywhere on the main site)
   async rewrites() {
-    return [{ source: "/home-2", destination: "/home-2.html" }];
+    return [
+      { source: "/portfolio", destination: "/portfolio/index.html" },
+      { source: "/home-2", destination: "/home-2.html" },
+    ];
   },
   // Keep the direct-link page out of search engines
   async headers() {

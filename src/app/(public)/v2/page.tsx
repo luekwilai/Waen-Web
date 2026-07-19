@@ -243,7 +243,7 @@ export default async function V2Page() {
           <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
             <SectionLabel>Capabilities</SectionLabel>
             <div className="grid gap-7 lg:grid-cols-2 lg:items-end"><h2 className="text-4xl font-black tracking-[-0.05em] sm:text-6xl">บริการครบ<br />จบในที่เดียว</h2><p className="max-w-lg text-base leading-8 text-black/50 lg:justify-self-end">ตั้งแต่กลยุทธ์ โครงสร้างเนื้อหา และดีไซน์ ไปจนถึงการพัฒนา เปิดใช้งาน และดูแลหลังส่งมอบ</p></div>
-            <div className="mt-12 grid gap-px overflow-hidden rounded-[28px] border border-black/10 bg-black/10 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-12 grid gap-px overflow-hidden rounded-[28px] border border-black/10 bg-black/10 md:grid-cols-2 lg:grid-cols-3">
               {services.map((service, index) => {
                 const Icon = serviceIcons[service.icon as keyof typeof serviceIcons] || Sparkles
                 return <article key={service.id} className="group bg-[#f5f4ef] p-7 transition hover:bg-white sm:p-8"><div className="flex items-center justify-between"><span className="grid h-12 w-12 place-items-center rounded-xl bg-[#9ee800]/20 text-[#4d7600] transition group-hover:bg-[#9ee800] group-hover:text-black"><Icon className="h-5 w-5" /></span><span className="font-mono text-xs text-black/25">0{index + 1}</span></div><h3 className="mt-10 text-xl font-black">{service.title}</h3><p className="mt-3 text-sm leading-7 text-black/48">{service.desc}</p><ArrowUpRight className="mt-7 h-4 w-4 text-black/35 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-black" /></article>

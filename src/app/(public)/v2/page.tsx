@@ -113,6 +113,7 @@ export default async function V2Page() {
   ])
   const posts = getAllBlogPosts()
   const heroProjects = [...projects, ...heroPlaceholders].slice(0, 3)
+  const heroMobileProject = heroProjects.find((project) => project.mobileImage)
   const services = parseArraySetting(settings["services"], defaultServices, isService)
   const heroStats = parseArraySetting<V2HeroStat>(settings["hero.stats"], [
     { value: "50+", label: "โปรเจกต์ที่ส่งมอบ" },
@@ -172,9 +173,12 @@ export default async function V2Page() {
               <div className="v2-float absolute bottom-[6%] left-0 h-[40%] w-[58%] -rotate-3 overflow-hidden rounded-[18px] border-[6px] border-[#151715] bg-[#151715] shadow-[0_30px_65px_-25px_rgba(0,0,0,.55)]">
                 <div className="relative h-full"><Image src={heroProjects[1].desktopImage || heroPlaceholders[1].desktopImage} alt={heroProjects[1].title} fill className="object-cover object-top" sizes="(max-width: 1024px) 58vw, 29vw" /></div>
               </div>
-              <div className="v2-float-delayed absolute bottom-[1%] right-[2%] h-[34%] w-[43%] rotate-5 overflow-hidden rounded-[18px] border-[6px] border-[#151715] bg-[#151715] shadow-[0_30px_65px_-25px_rgba(0,0,0,.55)]">
-                <div className="relative h-full"><Image src={heroProjects[2].desktopImage || heroPlaceholders[2].desktopImage} alt={heroProjects[2].title} fill className="object-cover object-top" sizes="(max-width: 1024px) 43vw, 22vw" /></div>
-              </div>
+              {heroMobileProject?.mobileImage ? (
+                <div className="v2-float-delayed absolute bottom-0 right-[4%] aspect-[9/19] w-[27%] rotate-5 overflow-hidden rounded-[24px] border-[7px] border-[#151715] bg-[#151715] shadow-[0_30px_65px_-25px_rgba(0,0,0,.65)]">
+                  <span aria-hidden="true" className="absolute left-1/2 top-0 z-10 h-3 w-1/2 -translate-x-1/2 rounded-b-lg bg-[#151715]" />
+                  <div className="relative h-full"><Image src={heroMobileProject.mobileImage} alt={`${heroMobileProject.title} เวอร์ชันมือถือ`} fill className="object-cover object-top" sizes="(max-width: 1024px) 27vw, 14vw" /></div>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>

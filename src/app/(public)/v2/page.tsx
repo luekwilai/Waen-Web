@@ -146,7 +146,7 @@ export default async function V2Page() {
               <div className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white/60 px-3.5 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-black/60">
                 <span className="h-2 w-2 rounded-full bg-[#9ee800]" /> {heroBadge}
               </div>
-              <h1 className="mt-7 max-w-3xl text-[clamp(3rem,7vw,6.7rem)] font-black leading-[0.94] tracking-[-0.065em]">
+              <h1 className="mt-7 max-w-3xl text-[clamp(2.75rem,5.8vw,5.8rem)] font-black leading-[1.08] tracking-[-0.035em]">
                 เว็บไซต์ที่ดี<br />ไม่ได้แค่<span className="text-[#78b900]">สวย</span> —<br />แต่ต้องช่วยให้<br className="hidden sm:block" />ธุรกิจเติบโต
               </h1>
               <p className="mt-6 max-w-xl text-base font-black leading-7 text-black/75 sm:text-lg">{heroHeading}</p>

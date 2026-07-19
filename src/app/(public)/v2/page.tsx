@@ -200,7 +200,29 @@ export default async function V2Page() {
               {projects.map((project, index) => {
                 const card = (
                   <article className="group">
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] border border-white/10 bg-white/5"><Image src={project.desktopImage || heroPlaceholders[index % heroPlaceholders.length].desktopImage} alt={project.title} fill className="object-cover object-top transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 1024px) 100vw, 33vw" /><span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-[#9ee800] text-[#111311] opacity-0 transition-all group-hover:opacity-100"><ArrowUpRight className="h-5 w-5" /></span></div>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] border border-white/10 bg-white/5">
+                      <Image
+                        src={project.desktopImage || heroPlaceholders[index % heroPlaceholders.length].desktopImage}
+                        alt=""
+                        fill
+                        className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 1024px) 100vw, 33vw"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 to-transparent" />
+                      {project.mobileImage ? (
+                        <div className="absolute bottom-3 right-3 z-10 aspect-[9/19] w-[24%] overflow-hidden rounded-[14px] border-[4px] border-[#111311] bg-[#111311] shadow-[0_20px_45px_-12px_rgba(0,0,0,.8)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-1 sm:bottom-4 sm:right-4">
+                          <span className="absolute left-1/2 top-0 z-10 h-2 w-1/2 -translate-x-1/2 rounded-b-md bg-[#111311]" />
+                          <Image
+                            src={project.mobileImage}
+                            alt=""
+                            fill
+                            className="object-cover object-top transition-[object-position] duration-[8000ms] ease-linear group-hover:object-bottom"
+                            sizes="(max-width: 1023px) 24vw, 8vw"
+                          />
+                        </div>
+                      ) : null}
+                      <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-[#9ee800] text-[#111311] opacity-0 transition-all group-hover:opacity-100"><ArrowUpRight className="h-5 w-5" /></span>
+                    </div>
                     <div className="mt-5 flex items-start justify-between gap-5"><div><h3 className="text-xl font-black">{project.title}</h3><p className="mt-1 text-xs text-white/40">{project.category}</p></div><span className="font-mono text-xs text-[#9ee800]">0{index + 1}</span></div>
                     <p className="mt-4 line-clamp-2 text-sm leading-6 text-white/45">{project.description}</p>
 

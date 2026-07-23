@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -27,11 +27,27 @@ import { V2Packages, type V2Package } from "@/components/v2/v2-packages"
 import { getAllBlogPosts } from "@/lib/blog"
 import { getPublicPackages, getPublicProjects, getSiteSettings } from "@/lib/queries"
 
+const V2_URL = "https://waenweb.com/v2"
+const V2_TITLE = "รับทำเว็บไซต์สำหรับธุรกิจ ออกแบบเว็บ SEO และ E-Commerce | WAENWEB"
+const V2_DESCRIPTION = "บริการออกแบบและพัฒนาเว็บไซต์สำหรับธุรกิจ บริษัท และร้านค้าออนไลน์ รองรับมือถือ วางโครงสร้าง SEO โหลดเร็ว พร้อมดูแลหลังส่งมอบโดย WAENWEB"
+
 export const metadata: Metadata = {
-  title: "WAENWEB V2 | เว็บไซต์ที่ช่วยให้ธุรกิจเติบโต",
-  description: "แนวทางใหม่ของ WAENWEB บริการออกแบบและพัฒนาเว็บไซต์สำหรับธุรกิจ พร้อม SEO และดูแลหลังส่งมอบ",
-  alternates: { canonical: "https://waenweb.com/v2" },
-  robots: { index: false, follow: true },
+  title: { absolute: V2_TITLE },
+  description: V2_DESCRIPTION,
+  authors: [{ name: "WAENWEB", url: "https://waenweb.com" }],
+  creator: "WAENWEB",
+  alternates: { canonical: "https://waenweb.com" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 },
+  },
+  openGraph: {
+    type: "website", locale: "th_TH", url: V2_URL, siteName: "WAENWEB",
+    title: V2_TITLE, description: V2_DESCRIPTION,
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "WAENWEB บริการออกแบบและพัฒนาเว็บไซต์" }],
+  },
+  twitter: { card: "summary_large_image", title: V2_TITLE, description: V2_DESCRIPTION, images: ["/og-image.png"] },
 }
 
 const heroPlaceholders = [
@@ -130,8 +146,40 @@ export default async function V2Page() {
   const primaryCta = settings["hero.ctaPrimary"] || "เริ่มโปรเจกต์กับเรา"
   const secondaryCta = settings["hero.ctaSecondary"] || "ดูผลงาน"
   const packages: V2Package[] = databasePackages.map((item) => ({ ...item, features: parseFeatures(item.features) }))
+  const socialProfiles = [settings["social.facebook"], settings["social.instagram"], settings["social.youtube"]].filter((item): item is string => Boolean(item))
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService", "@id": "https://waenweb.com/#business",
+        name: siteName, url: "https://waenweb.com",
+        logo: logoUrl ? new URL(logoUrl, V2_URL).toString() : "https://waenweb.com/waenweb-logo-r1.svg",
+        description: V2_DESCRIPTION, email,
+        areaServed: { "@type": "Country", name: "Thailand" }, sameAs: socialProfiles,
+      },
+      {
+        "@type": "WebPage", "@id": `${V2_URL}#webpage`, url: V2_URL,
+        name: V2_TITLE, description: V2_DESCRIPTION, inLanguage: "th-TH",
+        isPartOf: { "@type": "WebSite", "@id": "https://waenweb.com/#website", url: "https://waenweb.com", name: siteName },
+        about: { "@id": "https://waenweb.com/#business" }, mainEntity: { "@id": `${V2_URL}#service` },
+      },
+      {
+        "@type": "Service", "@id": `${V2_URL}#service`,
+        name: "บริการออกแบบและพัฒนาเว็บไซต์สำหรับธุรกิจ", description: V2_DESCRIPTION,
+        serviceType: services.map((service) => service.title),
+        areaServed: { "@type": "Country", name: "Thailand" }, provider: { "@id": "https://waenweb.com/#business" },
+        offers: packages.map((item) => ({
+          "@type": "Offer", name: item.name, description: item.description || `แพ็กเกจ ${item.name}`,
+          price: item.price, priceCurrency: "THB", url: `${V2_URL}#packages`,
+          itemOffered: { "@type": "Service", name: item.name },
+        })),
+      },
+    ],
+  }
+  const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c")
   return (
     <div className="v2-page relative z-10 overflow-x-clip bg-[#f5f4ef] text-[#111311]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataJson }} />
       <V2Header logoUrl={logoUrl} siteName={siteName} />
       <main>
         <section className="v2-grid relative overflow-hidden border-b border-black/10">

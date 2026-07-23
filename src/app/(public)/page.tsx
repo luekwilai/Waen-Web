@@ -75,7 +75,7 @@ function buildMetadata(title: string, description: string, logoUrl?: string): Me
     robots: {
       index: true,
       follow: true,
-      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+      googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 },
     },
     icons: logoUrl
       ? { icon: logoUrl, shortcut: logoUrl, apple: logoUrl }

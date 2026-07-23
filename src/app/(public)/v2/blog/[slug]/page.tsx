@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${post.title} | WAENWEB V2`,
     description: post.description,
-    alternates: { canonical: `https://waenweb.com/v2/blog/${slug}` },
+    alternates: { canonical: `https://waenweb.com/blog/${slug}` },
     robots: { index: false, follow: true },
   }
 }
@@ -53,7 +53,7 @@ export default async function V2BlogPostPage({ params }: Props) {
     datePublished: post.date,
     author: { "@type": "Organization", name: "WAENWEB" },
     publisher: { "@type": "Organization", name: "WAENWEB", url: "https://waenweb.com" },
-    url: `https://waenweb.com/v2/blog/${slug}`,
+    url: `https://waenweb.com/blog/${slug}`,
   }
 
   return (

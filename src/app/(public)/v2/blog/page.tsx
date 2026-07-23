@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight, BookOpen, Clock } from "lucide-react"
 import { V2BlogGrid, type V2BlogSummary } from "@/components/v2/v2-blog-grid"
@@ -10,7 +10,7 @@ import { getSiteSettings } from "@/lib/queries"
 export const metadata: Metadata = {
   title: "บทความและไอเดียสำหรับธุรกิจ | WAENWEB V2",
   description: "ความรู้เรื่องเว็บไซต์ SEO การออกแบบ และการเติบโตออนไลน์จาก WAENWEB",
-  alternates: { canonical: "https://waenweb.com/v2/blog" },
+  alternates: { canonical: "https://waenweb.com/blog" },
   robots: { index: false, follow: true },
 }
 

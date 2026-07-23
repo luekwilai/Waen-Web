@@ -24,12 +24,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: post.title,
     description: post.description,
     alternates: { canonical: `https://waenweb.com/blog/${slug}` },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 } },
     openGraph: {
       title: post.title,
       description: post.description,
       url: `https://waenweb.com/blog/${slug}`,
       type: "article",
       publishedTime: post.date,
+      images: [{ url: post.image, alt: post.title }],
     },
   }
 }
@@ -55,12 +57,17 @@ export default async function BlogPostPage({ params }: Props) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
+    image: post.image,
     datePublished: post.date,
+    dateModified: post.date,
+    inLanguage: "th-TH",
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://waenweb.com/blog/${slug}` },
     author: { "@type": "Organization", name: "WAENWEB" },
     publisher: {
       "@type": "Organization",
       name: "WAENWEB",
       url: "https://waenweb.com",
+      logo: { "@type": "ImageObject", url: "https://waenweb.com/waenweb-logo-r1.svg" },
     },
     url: `https://waenweb.com/blog/${slug}`,
   }
@@ -69,7 +76,7 @@ export default async function BlogPostPage({ params }: Props) {
     <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
       {/* Header */}

@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: `${siteName} | รับทำเว็บไซต์ WordPress มืออาชีพ`,
       template: `%s | ${siteName}`,
     },
-    description: "รับทำเว็บไซต์และ WordPress สำหรับธุรกิจ บริษัท ร้านค้าออนไลน์ ออกแบบสวย รองรับมือถือ SEO ติดหน้าแรก",
+    description: "รับทำเว็บไซต์และ WordPress สำหรับธุรกิจ บริษัท และร้านค้าออนไลน์ ออกแบบสวย รองรับมือถือ โหลดเร็ว และพร้อมสำหรับ SEO",
     metadataBase: new URL("https://waenweb.com"),
     verification: {
       google: "WPPag1wzslV-OENZ5kXF_mh85GK9EiwpbIAARnp1MQY",

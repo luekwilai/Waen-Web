@@ -25,8 +25,7 @@ import { V2Footer } from "@/components/v2/v2-footer"
 import { V2Header } from "@/components/v2/v2-header"
 import { V2Packages, type V2Package } from "@/components/v2/v2-packages"
 import { getAllBlogPosts } from "@/lib/blog"
-import { getFeaturedProjects, getPublicPackages, getPublicProjects, getSiteSettings } from "@/lib/queries"
-import { normalizeMetrics } from "@/lib/project-metrics"
+import { getPublicPackages, getPublicProjects, getSiteSettings } from "@/lib/queries"
 
 export const metadata: Metadata = {
   title: "WAENWEB V2 | เว็บไซต์ที่ช่วยให้ธุรกิจเติบโต",
@@ -105,11 +104,10 @@ function SectionLabel({ children, light = false }: { children: React.ReactNode; 
 }
 
 export default async function V2Page() {
-  const [settings, projects, databasePackages, featuredProjects] = await Promise.all([
+  const [settings, projects, databasePackages] = await Promise.all([
     getSiteSettings(),
     getPublicProjects(),
     getPublicPackages(),
-    getFeaturedProjects(),
   ])
   const posts = getAllBlogPosts()
   const heroProjects = [...projects, ...heroPlaceholders].slice(0, 3)
@@ -132,9 +130,6 @@ export default async function V2Page() {
   const primaryCta = settings["hero.ctaPrimary"] || "เริ่มโปรเจกต์กับเรา"
   const secondaryCta = settings["hero.ctaSecondary"] || "ดูผลงาน"
   const packages: V2Package[] = databasePackages.map((item) => ({ ...item, features: parseFeatures(item.features) }))
-  const featuredCase = featuredProjects[0] || null
-  const caseProject = featuredCase || projects[0] || null
-  const caseMetrics = featuredCase ? normalizeMetrics(featuredCase.metrics) : []
   return (
     <div className="v2-page relative z-10 overflow-x-clip bg-[#f5f4ef] text-[#111311]">
       <V2Header logoUrl={logoUrl} siteName={siteName} />
@@ -293,29 +288,6 @@ export default async function V2Page() {
           </div>
         </section>
 
-        {caseProject ? (
-          <section className="v2-defer bg-white py-20 sm:py-28 lg:py-32">
-            <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-              <div className="grid overflow-hidden rounded-[32px] border border-black/10 lg:grid-cols-2">
-                <div className="relative min-h-[360px] bg-black/5 lg:min-h-[560px]">
-                  <Image src={caseProject.desktopImage || heroPlaceholders[0].desktopImage} alt={caseProject.title} fill className="object-cover object-top" sizes="(max-width: 1024px) 100vw, 50vw" />
-                </div>
-                <div className="flex flex-col justify-center p-7 sm:p-12 lg:p-16">
-                  <SectionLabel>Featured case study</SectionLabel>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-black/35">{caseProject.category}</p>
-                  <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-5xl">{caseProject.title}</h2>
-                  <p className="mt-6 text-base leading-8 text-black/50">{caseProject.description}</p>
-                  {caseMetrics.length > 0 ? (
-                    <div className="mt-9 grid grid-cols-2 gap-4 border-y border-black/10 py-7 sm:grid-cols-3">
-                      {caseMetrics.map((metric) => <div key={`${metric.value}-${metric.label}`}><p className="text-2xl font-black">{metric.value}</p><p className="text-xs text-black/40">{metric.label}</p></div>)}
-                    </div>
-                  ) : null}
-                  {caseProject.websiteUrl ? <a href={caseProject.websiteUrl} target="_blank" rel="noreferrer noopener" className="mt-8 inline-flex items-center gap-2 font-black">ดูเว็บไซต์จริง <ArrowUpRight className="h-4 w-4" /></a> : null}
-                </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
         <section className="v2-defer border-y border-black/10 bg-[#f5f4ef] py-20 sm:py-28 lg:py-32">
           <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"><div><SectionLabel>WAENWEB journal</SectionLabel><h2 className="text-4xl font-black tracking-[-0.05em] sm:text-6xl">บทความและไอเดีย<br />สำหรับธุรกิจ</h2></div><Link href="/v2/blog" className="inline-flex items-center gap-2 font-black">ดูบทความทั้งหมด <ArrowRight className="h-4 w-4" /></Link></div>

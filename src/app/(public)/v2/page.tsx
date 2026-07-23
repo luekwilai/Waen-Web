@@ -275,9 +275,20 @@ export default async function V2Page() {
           </div>
         </section>
 
-        <section id="packages" className="v2-defer bg-[#111311] py-20 text-white sm:py-28 lg:py-32">
-          <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-            <div className="mb-12 grid gap-6 lg:grid-cols-2 lg:items-end"><div><SectionLabel light>Pricing</SectionLabel><h2 className="text-4xl font-black tracking-[-0.05em] sm:text-6xl">แพ็กเกจที่ชัดเจน<br />ไม่มีค่าใช้จ่ายแอบแฝง</h2></div><p className="max-w-lg text-sm leading-7 text-white/45 lg:justify-self-end">ราคาจริงอาจเปลี่ยนตามขอบเขตงาน ทีมงานจะสรุปรายละเอียดและค่าใช้จ่ายทั้งหมดก่อนเริ่มโปรเจกต์</p></div>
+        <section id="packages" className="v2-defer relative overflow-hidden bg-[#111311] py-20 text-white sm:py-28 lg:py-32">
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[#9ee800]/[0.055] blur-[140px]" />
+          <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+            <div className="mb-12 grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-12 lg:items-end lg:pb-12">
+              <div className="lg:col-span-8">
+                <SectionLabel light>Pricing</SectionLabel>
+                <h2 className="max-w-4xl text-4xl font-black leading-[1.12] tracking-[-0.045em] sm:text-6xl">
+                  เลือกแพ็กเกจที่พอดี<br /><span className="text-[#9ee800]">กับเป้าหมายของคุณ</span>
+                </h2>
+              </div>
+              <div className="lg:col-span-4">
+                <p className="max-w-md text-sm leading-7 text-white/60 lg:ml-auto">ราคาจริงอาจเปลี่ยนตามขอบเขตงาน ทีมงานจะสรุปรายละเอียดและค่าใช้จ่ายทั้งหมดก่อนเริ่มโปรเจกต์</p>
+              </div>
+            </div>
             {packages.length > 0 ? <V2Packages packages={packages} /> : <p className="rounded-[24px] border border-white/12 p-8 text-center text-white/50">ยังไม่มีแพ็กเกจที่เปิดแสดงในขณะนี้</p>}
           </div>
         </section>

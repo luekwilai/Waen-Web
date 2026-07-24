@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Save, Globe, Sparkles, Layers, GitBranch, Search, Upload, Plus, Trash2, GripVertical, CheckCircle2, AlertCircle } from "lucide-react"
+import { Save, Globe, PanelsTopLeft, Layers, GitBranch, Search, Upload, Plus, Trash2, GripVertical, CheckCircle2, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,7 +20,7 @@ const ICON_OPTIONS = ["Smartphone", "Search", "ShoppingCart", "ShieldCheck", "He
 
 const tabs = [
   { id: "general", label: "ทั่วไป", icon: Globe },
-  { id: "hero", label: "Hero", icon: Sparkles },
+  { id: "hero", label: "Hero", icon: PanelsTopLeft },
   { id: "services", label: "บริการ", icon: Layers },
   { id: "process", label: "ขั้นตอน", icon: GitBranch },
   { id: "seo", label: "SEO", icon: Search },

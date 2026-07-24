@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, CheckCircle2, Sparkles } from "lucide-react"
+import { Send, CheckCircle2, LoaderCircle } from "lucide-react"
 
 type ContactFormData = {
   name: string
@@ -186,7 +186,7 @@ export function ContactForm() {
               <span className="relative flex items-center justify-center gap-2">
                 {submitting ? (
                   <>
-                    <Sparkles className="w-5 h-5 animate-pulse" />
+                    <LoaderCircle className="w-5 h-5 animate-spin" />
                     กำลังส่งข้อความ...
                   </>
                 ) : (

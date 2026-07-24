@@ -1,6 +1,6 @@
 import { ScrollReveal } from "@/components/home/scroll-reveal"
 import {
-  Sparkles,
+  Palette,
   Zap,
   Smartphone,
   Headphones,
@@ -17,7 +17,7 @@ type Reason = {
 
 const REASONS: Reason[] = [
   {
-    icon: Sparkles,
+    icon: Palette,
     title: "ออกแบบเฉพาะธุรกิจคุณ",
     desc: "ดีไซน์ใหม่ทุกพิกเซลให้สะท้อนแบรนด์ของคุณ ไม่ใช้เทมเพลตซ้ำใคร",
   },

@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { ArrowUpRight, Check, Clock3, Sparkles } from "lucide-react"
+import { ArrowUpRight, BadgeCheck, Check, Clock3 } from "lucide-react"
 
 export type V2Package = {
   id: string
@@ -42,7 +42,7 @@ export function V2Packages({ packages }: { packages: V2Package[] }) {
                 </span>
                 {popular ? (
                   <span className="flex min-h-8 items-center gap-1.5 rounded-full bg-[#111311] px-3.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#9ee800]">
-                    <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> แนะนำ
+                    <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" /> แนะนำ
                   </span>
                 ) : null}
               </div>

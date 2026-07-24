@@ -1,4 +1,4 @@
-﻿import { unstable_cache } from "next/cache"
+import { unstable_cache } from "next/cache"
 import { prisma } from "./prisma"
 
 export const getDashboardStats = unstable_cache(
@@ -95,7 +95,7 @@ export const getSiteSettings = unstable_cache(
       return {}
     }
   },
-  ["site-settings"],
+  ["site-settings-v2"],
   { revalidate: 300, tags: ["site-settings"] }
 )
 

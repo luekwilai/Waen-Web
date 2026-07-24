@@ -139,7 +139,7 @@ export default async function HomePage() {
         "@id": "https://waenweb.com/#business",
         "name": siteName || "WAENWEB",
         "url": "https://waenweb.com",
-        "logo": logoUrl || "https://waenweb.com/waenweb-logo.svg",
+        "logo": logoUrl || "https://waenweb.com/waenweb-logo-r1.svg",
         "image": "https://waenweb.com/og-image.png",
         "description": DEFAULT_DESC,
         "email": contactEmail,

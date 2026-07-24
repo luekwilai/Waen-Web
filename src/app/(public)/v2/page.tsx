@@ -138,7 +138,7 @@ export default async function V2Page() {
   const techPills = parseArraySetting<string>(settings["hero.techPills"], ["WordPress", "React", "TypeScript", "Next.js"], (item): item is string => typeof item === "string")
   const email = settings["contact.email"] || "thawatsak28@gmail.com"
   const lineId = settings["contact.line"] || "thawatsak"
-  const logoUrl = settings["site.logoUrl"] || undefined
+  const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
   const siteName = settings["site.name"] || "WAENWEB"
   const heroBadge = settings["hero.badge"] || "Web design · Development · SEO"
   const heroHeading = settings["hero.heading"] || "รับทำเว็บไซต์สำหรับธุรกิจ บริษัท และร้านค้าออนไลน์"

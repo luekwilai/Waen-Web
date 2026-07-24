@@ -1,59 +1,10 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="ribbonLeft" x1="115" y1="144" x2="240" y2="350" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#666666"/>
-      <stop offset="0.18" stop-color="#111111"/>
-      <stop offset="0.34" stop-color="#3C3C3C"/>
-      <stop offset="0.52" stop-color="#080808"/>
-      <stop offset="0.72" stop-color="#5A5A5A"/>
-      <stop offset="1" stop-color="#090909"/>
-    </linearGradient>
-    <linearGradient id="ribbonCenter" x1="255.5" y1="128" x2="255.5" y2="360" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#747474"/>
-      <stop offset="0.16" stop-color="#181818"/>
-      <stop offset="0.42" stop-color="#4A4A4A"/>
-      <stop offset="0.65" stop-color="#090909"/>
-      <stop offset="1" stop-color="#5D5D5D"/>
-    </linearGradient>
-    <linearGradient id="ribbonRight" x1="399" y1="144" x2="272" y2="350" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#666666"/>
-      <stop offset="0.18" stop-color="#111111"/>
-      <stop offset="0.34" stop-color="#3C3C3C"/>
-      <stop offset="0.52" stop-color="#080808"/>
-      <stop offset="0.72" stop-color="#5A5A5A"/>
-      <stop offset="1" stop-color="#090909"/>
-    </linearGradient>
-    <linearGradient id="edge" x1="130" y1="146" x2="380" y2="332" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/>
-      <stop offset="0.18" stop-color="#FFFFFF" stop-opacity="0.12"/>
-      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.25"/>
-      <stop offset="0.85" stop-color="#FFFFFF" stop-opacity="0.08"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.7"/>
-    </linearGradient>
-    <radialGradient id="shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 236) rotate(90) scale(146 94)">
-      <stop stop-color="#FFFFFF" stop-opacity="0.4"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="softGlow" x="81" y="111" width="350" height="273" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
-    </filter>
-  </defs>
-
-  <g filter="url(#softGlow)" opacity="0.35">
-    <path d="M119 148C149 148 171 171 191 217C201 240 216 277 230 300C237 312 245 319 255 319C265 319 273 312 280 300C294 277 309 240 320 217C340 171 361 148 393 148" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="10" stroke-linecap="round"/>
-    <path d="M119 148C149 148 171 171 191 217C201 240 216 277 230 300C237 312 245 319 255 319C265 319 273 312 280 300C294 277 309 240 320 217C340 171 361 148 393 148" stroke="#000000" stroke-opacity="0.5" stroke-width="22" stroke-linecap="round"/>
+<svg width="352" height="352" viewBox="0 0 352 352" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>WAENWEB</title>
+  <g fill="#111311" stroke="#111311" stroke-width="8" stroke-linejoin="round">
+    <path d="M42 70H88L137 220H91L42 70Z" />
+    <path d="M101 220H143L199 70H153L101 220Z" />
+    <path d="M153 70H199L249 220H203L153 70Z" />
+    <path d="M213 220H255L318 70H272L213 220Z" />
   </g>
-
-  <path d="M119 148C149 148 171 171 191 217C201 240 216 277 230 300C237 312 245 319 255 319C265 319 273 312 280 300C294 277 309 240 320 217C340 171 361 148 393 148" stroke="url(#ribbonLeft)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M119 148C149 148 171 171 191 217C201 240 216 277 230 300C237 312 245 319 255 319C265 319 273 312 280 300C294 277 309 240 320 217C340 171 361 148 393 148" stroke="url(#edge)" stroke-width="31.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.72"/>
-
-  <path d="M214 158C214 139 228 126 246 126C264 126 278 140 278 158C278 182 266 203 256 224C246 203 214 182 214 158Z" fill="url(#ribbonCenter)"/>
-  <path d="M255.5 126C273.17 126 287.5 140.55 287.5 158.5C287.5 177.94 278.51 196.02 269.17 213.55C265.03 221.31 260.82 228.75 257.37 236.11C253.22 228.48 247.92 221.04 242.61 213.59C231.63 198.18 223.5 181.93 223.5 158.5C223.5 140.54 237.83 126 255.5 126Z" stroke="url(#edge)" stroke-width="7"/>
-  <path d="M225 157C225 143 238 134 249 134C260 134 268 143 268 155C268 165 262 177 255 190C246 177 225 167 225 157Z" fill="#0B0B0B"/>
-
-  <path d="M393 148C363 148 341 171 321 217C311 240 296 277 282 300C275 312 267 319 257 319C247 319 239 312 232 300C218 277 203 240 192 217C172 171 151 148 119 148" stroke="url(#ribbonRight)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M393 148C363 148 341 171 321 217C311 240 296 277 282 300C275 312 267 319 257 319C247 319 239 312 232 300C218 277 203 240 192 217C172 171 151 148 119 148" stroke="url(#edge)" stroke-width="31.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-
-  <ellipse cx="256" cy="246" rx="94" ry="146" fill="url(#shine)" opacity="0.85"/>
+  <path d="M272 70H318L305 103H259L272 70Z" fill="#9EE800" stroke="#9EE800" stroke-width="8" stroke-linejoin="round" />
 </svg>

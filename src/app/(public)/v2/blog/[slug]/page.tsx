@@ -41,7 +41,7 @@ export default async function V2BlogPostPage({ params }: Props) {
   const settings = await settingsPromise
   const email = settings["contact.email"] || "thawatsak28@gmail.com"
   const lineId = settings["contact.line"] || "thawatsak"
-  const logoUrl = settings["site.logoUrl"] || undefined
+  const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
   const siteName = settings["site.name"] || "WAENWEB"
 
   const jsonLd = {

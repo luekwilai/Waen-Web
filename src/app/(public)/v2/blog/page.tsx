@@ -23,7 +23,7 @@ export default async function V2BlogPage() {
     slug: post.slug, title: post.title, description: post.description, date: post.date,
     readTime: post.readTime, category: post.category, image: post.image,
   }))
-  const logoUrl = settings["site.logoUrl"] || undefined
+  const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
   const siteName = settings["site.name"] || "WAENWEB"
 
   return (

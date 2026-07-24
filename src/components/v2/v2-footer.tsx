@@ -15,6 +15,8 @@ type Props = {
 
 export function V2Footer({ email, lineId, logoUrl, siteName = "WAENWEB", socialFacebook = "", socialInstagram = "", socialYoutube = "", serviceNames = [] }: Props) {
   const services = serviceNames.length > 0 ? serviceNames : ["Web Design", "Development", "E-Commerce", "SEO", "Website Care"]
+  const usesDefaultLogo = !logoUrl || logoUrl === "/waenweb-logo-r1.svg" || logoUrl === "/waenweb-logo.svg"
+  const footerLogoUrl = usesDefaultLogo ? "/waenweb-logo-inverse.svg" : logoUrl
   const socials = [
     socialFacebook ? { href: socialFacebook, label: "Facebook", icon: Facebook } : null,
     socialInstagram ? { href: socialInstagram, label: "Instagram", icon: Instagram } : null,
@@ -26,7 +28,7 @@ export function V2Footer({ email, lineId, logoUrl, siteName = "WAENWEB", socialF
       <div className="mx-auto max-w-[1440px] px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="grid gap-12 border-b border-white/10 pb-14 md:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <Link href="/v2" className="inline-flex items-center gap-3 text-3xl font-black tracking-[-0.06em]">{logoUrl ? <Image src={logoUrl} alt="" width={38} height={38} className="h-9 w-9 rounded-xl bg-white object-contain" /> : null}{siteName}</Link>
+            <Link href="/v2" className="inline-flex items-center gap-3 text-3xl font-black tracking-[-0.045em]">{footerLogoUrl ? <Image src={footerLogoUrl} alt="" width={38} height={38} className={usesDefaultLogo ? "h-9 w-9 object-contain" : "h-9 w-9 rounded-xl bg-white object-contain"} /> : null}{siteName.toUpperCase() === "WAENWEB" ? "waenweb" : siteName}</Link>
             <p className="mt-5 max-w-md text-sm leading-7 text-white/50">ออกแบบเว็บไซต์และพัฒนาระบบที่ช่วยให้ธุรกิจดูน่าเชื่อถือ ใช้งานง่าย โหลดเร็ว และพร้อมเติบโตในระยะยาว</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href={`mailto:${email}`} className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm text-white/70 transition-colors hover:border-[#9ee800] hover:text-[#9ee800]"><Mail className="h-4 w-4" /> {email}</a>

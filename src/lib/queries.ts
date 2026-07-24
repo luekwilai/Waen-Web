@@ -90,12 +90,17 @@ export const getSiteSettings = unstable_cache(
       for (const row of rows) {
         settings[row.key] = row.value
       }
+      // Retire the previous circular icon even if an older production database
+      // or cached settings record still references the uploaded Blob asset.
+      if (settings["site.logoUrl"]?.includes("360-degree-rotate-icon")) {
+        settings["site.logoUrl"] = "/waenweb-logo-r1.svg"
+      }
       return settings
     } catch {
       return {}
     }
   },
-  ["site-settings-v2"],
+  ["site-settings-v3"],
   { revalidate: 300, tags: ["site-settings"] }
 )
 

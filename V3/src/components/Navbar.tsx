@@ -65,13 +65,13 @@ export const Navbar = ({ onOpenCalculator, onOpenLineModal }: NavbarProps) => {
             </a>
 
             {/* Desktop Nav Links in Rounded-Full Capsule */}
-            <nav className="hidden lg:flex items-center gap-1 bg-[#F0F0EE]/80 border border-[#E5E5E0] rounded-full px-4 py-1.5 backdrop-blur-md shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
+            <nav className="hidden xl:flex items-center gap-1 bg-[#F0F0EE]/80 border border-[#E5E5E0] rounded-full px-4 py-1.5 backdrop-blur-md shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={link.onClick ? (e) => { e.preventDefault(); link.onClick?.(); } : undefined}
-                  className="text-xs font-medium text-stone-600 hover:text-[#1A1A1A] hover:bg-white px-3.5 py-1.5 rounded-full transition-all"
+                  className="shrink-0 whitespace-nowrap text-xs font-medium text-stone-600 hover:text-[#1A1A1A] hover:bg-white px-3.5 py-1.5 rounded-full transition-all"
                 >
                   {link.label}
                 </a>
@@ -79,7 +79,7 @@ export const Navbar = ({ onOpenCalculator, onOpenLineModal }: NavbarProps) => {
             </nav>
 
             {/* Desktop CTA & Availability */}
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="hidden xl:flex items-center gap-3">
               {/* Queue Status Pill */}
               <div className="hidden xl:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F4FAE6] border border-[#78B900]/30 text-[11px] text-[#619500] font-medium">
                 <span className="relative flex h-2 w-2">
@@ -111,7 +111,7 @@ export const Navbar = ({ onOpenCalculator, onOpenLineModal }: NavbarProps) => {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="flex items-center gap-2 lg:hidden">
+            <div className="flex items-center gap-2 xl:hidden">
               <button
                 onClick={onOpenCalculator}
                 className="p-2 rounded-full bg-white border border-[#E5E5E0] text-[#1A1A1A] text-xs flex items-center shadow-xs"
@@ -140,7 +140,7 @@ export const Navbar = ({ onOpenCalculator, onOpenLineModal }: NavbarProps) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[60px] z-40 bg-[#F9F9F7]/98 backdrop-blur-2xl border-b border-[#E5E5E0] p-6 lg:hidden shadow-2xl max-h-[calc(100vh-60px)] overflow-y-auto"
+            className="fixed inset-x-0 top-[60px] z-40 bg-[#F9F9F7]/98 backdrop-blur-2xl border-b border-[#E5E5E0] p-6 xl:hidden shadow-2xl max-h-[calc(100vh-60px)] overflow-y-auto"
           >
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#E5E5E0]">

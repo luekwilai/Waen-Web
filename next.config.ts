@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/V3",
-        destination: "https://waenweb-v3.vercel.app/V3",
+        destination: "https://waenweb-v3.vercel.app/V3/",
       },
       {
         source: "/V3/:path*",

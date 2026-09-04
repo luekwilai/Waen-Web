@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { CustomCursor } from "@/components/custom-cursor";
 import { getSiteSettings } from "@/lib/queries";
 
+export const dynamic = "force-dynamic";
+
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-noto-sans-thai",
   subsets: ["thai", "latin"],

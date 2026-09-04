@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
   // Clean URL for the standalone preview page (direct link only — not linked anywhere on the main site)
   async rewrites() {
     return [
+      {
+        source: "/V3",
+        destination: "https://waenweb-v3.vercel.app/V3",
+      },
+      {
+        source: "/V3/:path*",
+        destination: "https://waenweb-v3.vercel.app/V3/:path*",
+      },
       { source: "/portfolio", destination: "/portfolio/index.html" },
       { source: "/home-2", destination: "/home-2.html" },
     ];

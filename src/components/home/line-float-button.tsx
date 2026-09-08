@@ -1,9 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 
 export function LineFloatButton({ lineId }: { lineId: string }) {
+  const pathname = usePathname()
   const [hovered, setHovered] = useState(false)
+
+  if (pathname === "/") return null
 
   return (
     <a

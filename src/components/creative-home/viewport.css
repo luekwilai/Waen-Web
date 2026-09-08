@@ -1,0 +1,22 @@
+/* Sections fill the viewport; gutters keep their content readable. */
+body:has(.creative-home){--page-gutter:clamp(20px,4.5vw,96px)}
+body:has(.creative-home) .header,body:has(.creative-home) .hero,body:has(.creative-home) .tech-strip,body:has(.creative-home) .section,body:has(.creative-home) footer{
+ width:100%;
+ max-width:none;
+ margin-inline:0;
+ padding-inline:var(--page-gutter);
+}
+body:has(.creative-home) .contact.section{
+ margin:0;
+ border-radius:0;
+ border-inline:0;
+ padding-block:54px 35px;
+}
+body:has(.creative-home) footer{padding-top:32px}
+body:has(.creative-home) .hero-copy,body:has(.creative-home) .model-area,body:has(.creative-home) .section-heading>div,body:has(.creative-home) .faq-list{min-width:0}
+@media(min-width:1600px){
+ body:has(.creative-home) .hero .model-area{height:clamp(590px,33vw,780px)}
+ body:has(.creative-home) .hero h1{font-size:clamp(65px,4.1vw,86px)}
+ body:has(.creative-home) .hero-copy p{max-width:520px;font-size:18px}
+}
+@media(max-width:800px){body:has(.creative-home) .contact.section{padding-block:35px}}

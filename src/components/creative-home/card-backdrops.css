@@ -1,0 +1,31 @@
+/* Scoped glass surfaces. These rules only target elements with translucent fills. */
+body:has(.creative-home) .ww-process-card,body:has(.creative-home) .portfolio-v2-preview:not(.is-compact),body:has(.creative-home) .ww-enquiry-form,body:has(.creative-home) .ww-enquiry-selection,body:has(.creative-home) .quote-controls,body:has(.creative-home) .quote-summary,body:has(.creative-home) .quote-feature {
+  -webkit-backdrop-filter: blur(13px);
+  backdrop-filter: blur(13px);
+}
+
+/* These cards already use the shared 12px blur; add the Safari spelling without
+   changing their established visual treatment. */
+body:has(.creative-home) .service,body:has(.creative-home) .price-card,body:has(.creative-home) .faq-list {
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Existing overlay and editor surfaces keep their stronger, intentional blur. */
+body:has(.creative-home):has(.quote-drawer) [data-slot='sheet-overlay'] {
+  -webkit-backdrop-filter: blur(7px);
+}
+
+body:has(.creative-home) .particle-editor-toggle {
+  -webkit-backdrop-filter: blur(15px);
+}
+
+body:has(.creative-home) .particle-editor {
+  -webkit-backdrop-filter: blur(24px);
+}
+
+@media (max-width: 600px) {
+  body:has(.creative-home) .ww-process-card,body:has(.creative-home) .portfolio-v2-preview:not(.is-compact),body:has(.creative-home) .ww-enquiry-form,body:has(.creative-home) .ww-enquiry-selection,body:has(.creative-home) .quote-controls,body:has(.creative-home) .quote-summary,body:has(.creative-home) .quote-feature {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}

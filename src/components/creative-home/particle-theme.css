@@ -1,0 +1,23 @@
+/* A single continuous scene replaces all former section backgrounds. */
+body:has(.creative-home){background:#060d10;color:#edf5ef;isolation:isolate}
+body:has(.creative-home) .header,body:has(.creative-home) main,body:has(.creative-home) .tech-strip,body:has(.creative-home) footer{position:relative;z-index:1}
+body:has(.creative-home) .header,body:has(.creative-home) .hero,body:has(.creative-home) .tech-strip,body:has(.creative-home) .section,body:has(.creative-home) .services,body:has(.creative-home) .process,body:has(.creative-home) .pricing,body:has(.creative-home) .faq,body:has(.creative-home) .contact,body:has(.creative-home) footer{background:transparent;box-shadow:none}
+body:has(.creative-home) .header{border-color:#b9decd25}
+body:has(.creative-home) .tech-strip{border-color:#c3efd81f}
+body:has(.creative-home) .section{border-color:#c3efd81a}
+body:has(.creative-home) .service,body:has(.creative-home) .step,body:has(.creative-home) .price-card,body:has(.creative-home) .price-card.featured,body:has(.creative-home) .faq-list{background:rgba(7,17,20,.74);border-color:#a9d6c433;backdrop-filter:blur(12px)}
+body:has(.creative-home) .service:hover{background:rgba(12,28,29,.86)}
+body:has(.creative-home) .price-card.featured{border-color:#c9f78b}
+body:has(.creative-home) .section-heading>div,body:has(.creative-home) .section-heading>p,body:has(.creative-home) .faq>div:not(.faq-list){text-shadow:0 2px 22px #030a0c}
+body:has(.creative-home) .section p,body:has(.creative-home) .hero-copy p{color:#b2c2ba}
+body:has(.creative-home) .text-muted{color:#9aafa5}
+body:has(.creative-home) .contact.section{color:#edf5ef;border-color:#b9decd33;padding-block:80px 44px}
+body:has(.creative-home) .contact h2 span{color:#d3ff9d;border-color:#c8f297}
+body:has(.creative-home) .contact-bottom{border-color:#b5d1c22e}
+body:has(.creative-home) .contact-bottom p{color:#b2c2ba}
+body:has(.creative-home) .contact .status-dot{background:#ccfa80}
+body:has(.creative-home) .contact-circle{color:#d5ffa4;background:#c2ff8510;border-color:#d4ffa454;box-shadow:none}
+body:has(.creative-home) .contact-circle:hover{background:#c5fa8522}
+body:has(.creative-home) .hero h1{text-shadow:0 3px 30px #030a0c44}
+body:has(.creative-home) .floating-chip{background:rgba(12,30,27,.82)}
+@media(max-width:800px){body:has(.creative-home) .contact.section{padding-block:55px 35px}}

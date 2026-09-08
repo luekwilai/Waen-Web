@@ -1,6 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { usePathname } from "next/navigation"
 
 const AnimatedBackground = dynamic(
   () => import("@/components/home/animated-background").then((mod) => mod.AnimatedBackground),
@@ -13,9 +14,10 @@ const CookieConsentBanner = dynamic(
 )
 
 export function PublicClientShell() {
+  const pathname = usePathname()
   return (
     <>
-      <AnimatedBackground />
+      {pathname !== "/" && <AnimatedBackground />}
       <CookieConsentBanner />
     </>
   )

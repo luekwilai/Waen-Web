@@ -22,7 +22,17 @@ const whNavigation = [
   ['คำถามที่พบบ่อย', '#faq'],
 ] as const;
 
-export default function SiteHeader() {
+const blogNavigation = [
+  ['ผลงาน', '/#portfolio'],
+  ['บริการ', '/#services'],
+  ['ขั้นตอนการทำงาน', '/#process'],
+  ['แพ็กเกจ', '/#pricing'],
+  ['บทความ', '/blog'],
+  ['คำถามที่พบบ่อย', '/#faq'],
+] as const;
+
+export default function SiteHeader({ blogMode = false }: { blogMode?: boolean }) {
+  const navigation = blogMode ? blogNavigation : whNavigation;
   const [whMenuOpen, setWhMenuOpen] = useState(false);
   const [active, setActive] = useState('');
   const [hovered, setHovered] = useState<string | null>(null);
@@ -38,7 +48,11 @@ export default function SiteHeader() {
       frame = 0;
       setCompact(window.scrollY > 48);
       let current = '';
-      for (const [, href] of whNavigation) {
+      if (blogMode) {
+        setActive('/blog');
+        return;
+      }
+      for (const [, href] of navigation) {
         const section = document.querySelector(href);
         if (section && section.getBoundingClientRect().top <= 150) current = href;
       }
@@ -51,7 +65,7 @@ export default function SiteHeader() {
     window.addEventListener('scroll', scroll, { passive: true });
     window.addEventListener('resize', scroll);
     return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', scroll); window.removeEventListener('resize', scroll); };
-  }, []);
+  }, [blogMode, navigation]);
 
   useEffect(() => {
     const update = () => {
@@ -74,13 +88,13 @@ export default function SiteHeader() {
   const closeWhMenu = () => setWhMenuOpen(false);
 
   return (
-    <header className={`wh-site-header${compact ? ' is-compact' : ''}`}>
+    <header className={`wh-site-header${blogMode ? ' blog-header-scope' : ''}${compact ? ' is-compact' : ''}`}>
       <div className="wh-site-header__bar" onPointerMove={event => {
         if (event.pointerType !== 'mouse') return;
         const rect = event.currentTarget.getBoundingClientRect();
         event.currentTarget.style.setProperty('--wh-pointer', `${event.clientX - rect.left}px`);
       }}>
-        <a className="wh-site-header__brand" href="#" aria-label="WAENWEB หน้าแรก">
+        <a className="wh-site-header__brand" href={blogMode ? '/' : '#'} aria-label="WAENWEB หน้าแรก">
           <BrandLogo iconSize={34} wrapperClassName="wh-site-header__brand-lockup" textClassName="wh-site-header__brand-name" wordmarkClassName="" />
           <span className="wh-site-header__brand-meta">
             <span aria-hidden="true">®</span>
@@ -90,14 +104,14 @@ export default function SiteHeader() {
 
         <nav ref={navRef} className="wh-site-header__desktop-nav" aria-label="เมนูหลัก" onPointerLeave={() => setHovered(null)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setHovered(null); }}>
           <span className="wh-nav-indicator" aria-hidden="true" style={{ '--wh-left': `${indicator.left}px`, '--wh-width': `${indicator.width}px`, opacity: indicator.width ? 1 : 0 } as CSSProperties} />
-          {whNavigation.map(([label, href]) => (
+          {navigation.map(([label, href]) => (
             <a key={href} href={href} aria-current={active === href ? 'location' : undefined} data-highlight={selected === href} onPointerEnter={() => setHovered(href)} onFocus={() => setHovered(href)}>
               {label}
             </a>
           ))}
         </nav>
 
-        <a className="wh-site-header__cta" href="#contact">
+        <a className="wh-site-header__cta" href={blogMode ? '/#contact' : '#contact'}>
           <span>เริ่มโปรเจกต์กัน</span>
           <ArrowUpRight size={16} aria-hidden="true" />
         </a>
@@ -129,17 +143,17 @@ export default function SiteHeader() {
               </SheetDescription>
             </SheetHeader>
             <nav className="wh-site-header__mobile-nav" aria-label="เมนูมือถือ">
-              {whNavigation.map(([label, href], index) => (
+              {navigation.map(([label, href], index) => (
                 <SheetClose nativeButton={false} key={href} render={<a href={href} onClick={closeWhMenu} aria-current={active === href ? 'location' : undefined} style={{ '--wh-order': index } as CSSProperties} />}>
                   <small aria-hidden="true">0{index + 1}</small>
                   <span>{label}</span>
                   <ArrowUpRight size={17} aria-hidden="true" />
                 </SheetClose>
               ))}
-              <SheetClose render={<button type="button" className="wh-site-header__mobile-editor" onClick={() => { openEditorAfterMenuClose.current = true; closeWhMenu(); }} />}>ปรับพื้นหลัง</SheetClose>
+              {!blogMode && <SheetClose render={<button type="button" className="wh-site-header__mobile-editor" onClick={() => { openEditorAfterMenuClose.current = true; closeWhMenu(); }} />}>ปรับพื้นหลัง</SheetClose>}
               <SheetClose nativeButton={false}
                 render={
-                  <a className="wh-site-header__mobile-cta" href="#contact" onClick={closeWhMenu} />
+                  <a className="wh-site-header__mobile-cta" href={blogMode ? '/#contact' : '#contact'} onClick={closeWhMenu} />
                 }
               >
                 <span>เริ่มโปรเจกต์กัน</span>

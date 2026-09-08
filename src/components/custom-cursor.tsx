@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { usePathname } from "next/navigation"
 
 const cursorMediaQuery = "(min-width: 1024px) and (hover: hover) and (pointer: fine)"
 
@@ -26,7 +27,7 @@ function getCursorCapabilitySnapshot() {
   return window.matchMedia(cursorMediaQuery).matches
 }
 
-export function CustomCursor() {
+function CustomCursorImpl() {
   const [isPointer, setIsPointer] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const isDesktopCursorEnabled = useSyncExternalStore(
@@ -152,4 +153,10 @@ export function CustomCursor() {
       />
     </>
   )
+}
+
+export function CustomCursor() {
+  const pathname = usePathname()
+  if (pathname === "/") return null
+  return <CustomCursorImpl />
 }

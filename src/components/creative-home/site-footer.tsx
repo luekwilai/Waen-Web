@@ -1,4 +1,5 @@
-import { ArrowUpRight, Code2, Mail, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, Mail, MessageCircle } from 'lucide-react';
+import { BrandLogo } from '@/components/brand-logo';
 
 const line = 'https://line.me/ti/p/~thawatsak';
 
@@ -6,7 +7,7 @@ export default function SiteFooter() {
   return <footer className="site-footer">
     <div className="site-footer-main">
       <div className="site-footer-brand-block">
-        <a href="/#" className="site-footer-brand"><span className="site-footer-mark"><Code2 size={19} aria-hidden="true" /></span>waenweb<sup>®</sup></a>
+        <a href="/#" className="site-footer-brand"><BrandLogo iconSize={42} wrapperClassName="site-footer-brand-lockup" textClassName="site-footer-brand-word" /></a>
         <p>ออกแบบและพัฒนาเว็บไซต์ที่ตั้งใจทำเพื่อธุรกิจของคุณ</p>
       </div>
       <nav className="site-footer-nav" aria-label="ลิงก์เว็บไซต์">

@@ -1,10 +1,1 @@
-<svg width="352" height="352" viewBox="0 0 352 352" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <title>WAENWEB</title>
-  <g fill="#111311" stroke="#111311" stroke-width="8" stroke-linejoin="round">
-    <path d="M42 70H88L137 220H91L42 70Z" />
-    <path d="M101 220H143L199 70H153L101 220Z" />
-    <path d="M153 70H199L249 220H203L153 70Z" />
-    <path d="M213 220H255L318 70H272L213 220Z" />
-  </g>
-  <path d="M272 70H318L305 103H259L272 70Z" fill="#9EE800" stroke="#9EE800" stroke-width="8" stroke-linejoin="round" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="28" fill="#060d10"/><g fill="#ccfa80"><rect x="18" y="32" width="19" height="64" rx="9.5"/><rect x="42" y="59" width="19" height="37" rx="9.5"/><rect x="66" y="45" width="19" height="51" rx="9.5"/><rect x="90" y="32" width="19" height="64" rx="9.5"/></g></svg>

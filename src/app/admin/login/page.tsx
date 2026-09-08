@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { RecaptchaWidget } from "@/components/security/recaptcha-widget"
 import { ThemeToggle } from "@/components/home/theme-toggle"
 import Link from "next/link"
+import { BrandLogo } from "@/components/brand-logo"
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
@@ -73,13 +74,7 @@ export default function AdminLoginPage() {
       
       <Card className="w-full max-w-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-slate-200 dark:border-white/10 shadow-2xl relative z-10 overflow-hidden">
         <CardHeader className="space-y-2 pb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20 mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white dark:text-slate-950">
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M3 9h18" />
-              <path d="M9 21V9" />
-            </svg>
-          </div>
+          <BrandLogo iconSize={48} wrapperClassName="mx-auto mb-4 flex items-center justify-center" textClassName="hidden" />
           <CardTitle className="text-3xl font-black text-slate-900 dark:text-white text-center tracking-tight">
             WAENWEB Admin
           </CardTitle>

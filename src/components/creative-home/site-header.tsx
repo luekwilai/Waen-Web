@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Code2, Menu } from 'lucide-react';
+import { ArrowUpRight, Menu } from 'lucide-react';
+import { BrandLogo } from '@/components/brand-logo';
 import {
   Sheet,
   SheetClose,
@@ -80,10 +81,7 @@ export default function SiteHeader() {
         event.currentTarget.style.setProperty('--wh-pointer', `${event.clientX - rect.left}px`);
       }}>
         <a className="wh-site-header__brand" href="#" aria-label="WAENWEB หน้าแรก">
-          <span className="wh-site-header__brand-mark" aria-hidden="true">
-            <Code2 size={22} strokeWidth={2.2} />
-          </span>
-          <span className="wh-site-header__brand-name">waenweb</span>
+          <BrandLogo iconSize={34} wrapperClassName="wh-site-header__brand-lockup" textClassName="wh-site-header__brand-name" wordmarkClassName="" />
           <span className="wh-site-header__brand-meta">
             <span aria-hidden="true">®</span>
             <small>digital studio</small>

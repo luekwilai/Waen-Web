@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/home/theme-toggle"
+import { BrandLogo } from "@/components/brand-logo"
 import {
   LayoutDashboard,
   FolderOpen,
@@ -69,12 +70,7 @@ export function AdminSidebar() {
       
       <div className="p-8 border-b border-slate-200 dark:border-white/5 relative z-10 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
-              <LayoutDashboard className="w-4 h-4 text-white dark:text-slate-950" />
-            </div>
-            WAENWEB
-          </h1>
+          <BrandLogo iconSize={32} siteName="WAENWEB" wrapperClassName="flex items-center gap-3" textClassName="text-2xl font-black text-slate-900 dark:text-white tracking-tight" />
           <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-2 ml-11">Admin Panel</p>
         </div>
         <ThemeToggle />
@@ -93,12 +89,7 @@ export function AdminMobileHeader() {
   return (
     <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 transition-colors duration-500">
       <div className="flex items-center justify-between p-4">
-        <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
-            <LayoutDashboard className="w-3 h-3 text-white dark:text-slate-950" />
-          </div>
-          WAENWEB
-        </h1>
+        <BrandLogo iconSize={24} siteName="WAENWEB" wrapperClassName="flex items-center gap-2" textClassName="text-xl font-black text-slate-900 dark:text-white tracking-tight" />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Sheet>
@@ -109,12 +100,7 @@ export function AdminMobileHeader() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 p-0 flex flex-col transition-colors duration-500">
               <div className="p-8 border-b border-slate-200 dark:border-white/5 relative z-10">
-                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-lime-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-lime-500/20">
-                    <LayoutDashboard className="w-4 h-4 text-white dark:text-slate-950" />
-                  </div>
-                  WAENWEB
-                </h1>
+                <BrandLogo iconSize={32} siteName="WAENWEB" wrapperClassName="flex items-center gap-3" textClassName="text-2xl font-black text-slate-900 dark:text-white tracking-tight" />
                 <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-2 ml-11">Admin Panel</p>
               </div>
               <nav className="flex-1 p-6 space-y-2">

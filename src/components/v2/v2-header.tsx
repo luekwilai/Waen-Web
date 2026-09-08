@@ -1,9 +1,9 @@
 ﻿"use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { ArrowUpRight, Menu, X } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
 
 const navItems = [
   { href: "/v2#services", label: "บริการ" },
@@ -26,8 +26,7 @@ export function V2Header({ active = "", logoUrl, siteName = "WAENWEB" }: Props) 
     <header className="sticky top-0 z-50 border-b border-black/10 bg-[#f5f4ef]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
         <Link href="/v2" className="group inline-flex items-center gap-2" aria-label={`${siteName} V2`}>
-          {logoUrl ? <Image src={logoUrl} alt="" width={30} height={30} className="h-7 w-7 rounded-lg object-contain" priority /> : null}
-          <span className="text-xl font-black tracking-[-0.045em] text-[#111311] sm:text-2xl">{siteName.toUpperCase() === "WAENWEB" ? "waenweb" : siteName}</span>
+          <BrandLogo iconSize={30} logoUrl={logoUrl} siteName={siteName} wrapperClassName="inline-flex items-center gap-2" textClassName="text-xl font-black tracking-[-0.045em] text-[#111311] sm:text-2xl" />
           <span className="rounded-full border border-black/15 px-2 py-0.5 font-mono text-[9px] font-semibold tracking-[0.18em] text-black/45 transition-colors group-hover:border-[#9ee800] group-hover:text-black">V2</span>
         </Link>
 

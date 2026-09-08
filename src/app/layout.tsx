@@ -37,7 +37,7 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
-  const logoUrl = settings["site.logoUrl"] || "/waenweb-logo-r1.svg"
+  const logoUrl = "/waenweb-mark.svg"
   const siteName = settings["site.name"] || "WAENWEB"
   return {
     title: {
@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: {
       icon: [{ url: logoUrl }],
       shortcut: logoUrl,
-      apple: logoUrl,
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     },
   }
 }

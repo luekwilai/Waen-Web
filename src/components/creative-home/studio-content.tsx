@@ -3,8 +3,6 @@ import {
   CalendarClock,
   Check,
   CircleDollarSign,
-  Clock3,
-  FileCheck2,
   Gauge,
   Headphones,
   LayoutGrid,
@@ -28,6 +26,7 @@ const articles = [
     readTime: '7 min',
     title: 'เทรนด์เว็บไซต์ปี 2026 ที่ธุรกิจไทยควรรู้และเตรียมรับมือ',
     summary: 'มองแนวโน้มเว็บไซต์ปี 2026 และสิ่งที่ธุรกิจไทยควรเตรียมตัวให้พร้อม',
+    image: '/creative-home/images/articles/editorial-trends.webp',
     href: 'https://waenweb.com/blog/website-2026-trend-thurai-thai-tong-ru',
   },
   {
@@ -35,6 +34,7 @@ const articles = [
     readTime: '7 min',
     title: 'Content Marketing สำหรับธุรกิจไทย ทำเองได้ไม่ต้องจ้างเอเจนซี่แพงๆ',
     summary: 'แนวทางเริ่มทำ Content Marketing สำหรับธุรกิจไทยด้วยตัวเองอย่างเป็นระบบ',
+    image: '/creative-home/images/articles/editorial-content.webp',
     href: 'https://waenweb.com/blog/content-marketing-samnab-website-thurakit-thai',
   },
   {
@@ -42,6 +42,7 @@ const articles = [
     readTime: '8 min',
     title: 'อ่าน Analytics ยังไงให้เป็นประโยชน์ต่อธุรกิจ ไม่ใช่แค่ดูตัวเลข',
     summary: 'ทำความเข้าใจ Analytics เพื่อเปลี่ยนตัวเลขบนเว็บไซต์ให้เป็นข้อมูลช่วยตัดสินใจ',
+    image: '/creative-home/images/articles/editorial-analytics.webp',
     href: 'https://waenweb.com/blog/an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit',
   },
 ] as const;
@@ -79,29 +80,5 @@ export function WhyChooseUs() {
   );
 }
 
-export function ArticlesSection() {
-  return (
-    <section className="studio-section articles-section" id="articles" data-particle-label="บทความ">
-      <div className="studio-section-heading">
-        <div>
-          <span className="eyebrow muted">FROM THE STUDIO</span>
-          <h2>บทความสำหรับ<br /><span>คนทำธุรกิจ.</span></h2>
-        </div>
-        <p>ไอเดียและความรู้เรื่องเว็บไซต์<br className="desktop-break" /> ที่หยิบไปใช้ต่อได้<br /><a className="articles-all-link" href="https://waenweb.com/blog" target="_blank" rel="noreferrer">อ่านบทความทั้งหมด <ArrowUpRight size={14} aria-hidden="true" /></a></p>
-      </div>
-      <div className="article-grid">
-        {articles.map((article, index) => (
-          <article className="article-card" key={article.href}>
-            <div className="article-card-top"><span className="article-index">0{index + 1}</span><span className="article-meta">{article.category} <span aria-hidden="true">·</span> {article.readTime}</span></div>
-            <h3>{article.title}</h3>
-            <p>{article.summary}</p>
-            <a href={article.href} target="_blank" rel="noreferrer" className="article-link">อ่านบทความบน waenweb.com <ArrowUpRight size={17} aria-hidden="true" /></a>
-          </article>
-        ))}
-      </div>
-      <p className="articles-footnote"><FileCheck2 size={15} aria-hidden="true" /> อ่านจากต้นฉบับบน waenweb.com</p>
-    </section>
-  );
-}
-
 export { articles };
+export { EditorialArticles as ArticlesSection } from './editorial-articles';

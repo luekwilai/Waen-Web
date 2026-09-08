@@ -17,7 +17,7 @@ export function PublicClientShell() {
   const pathname = usePathname()
   return (
     <>
-      {pathname !== "/" && <AnimatedBackground />}
+      {pathname !== "/" && !pathname.startsWith("/blog") && <AnimatedBackground />}
       <CookieConsentBanner />
     </>
   )

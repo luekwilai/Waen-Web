@@ -24,7 +24,7 @@ export function LineFloatButton({ lineId }: { lineId: string }) {
         className={`transition-all duration-300 ${hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2 pointer-events-none"}`}
       >
         <div className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg border border-slate-200 dark:border-white/10 whitespace-nowrap">
-          💬 คุยกับเราทาง Line
+          คุยกับเราทาง LINE
         </div>
       </div>
 

@@ -14,6 +14,7 @@ import "@/components/creative-home/service-images.css";
 import "@/components/creative-home/site-footer.css";
 import "@/components/creative-home/site-header.css";
 import "@/components/creative-home/studio-content.css";
+import "@/components/creative-home/editorial-articles.css";
 import "@/components/creative-home/work-process.css";
 import "@/components/creative-home/contact-form.css";
 import { Analytics } from "@vercel/analytics/next";

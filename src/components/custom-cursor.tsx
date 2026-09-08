@@ -157,6 +157,6 @@ function CustomCursorImpl() {
 
 export function CustomCursor() {
   const pathname = usePathname()
-  if (pathname === "/") return null
+  if (pathname === "/" || pathname.startsWith("/blog")) return null
   return <CustomCursorImpl />
 }

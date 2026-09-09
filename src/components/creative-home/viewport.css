@@ -1,6 +1,6 @@
 /* Sections fill the viewport; gutters keep their content readable. */
 body:has(.creative-home){--page-gutter:clamp(20px,4.5vw,96px)}
-body:has(.creative-home) .header,body:has(.creative-home) .hero,body:has(.creative-home) .tech-strip,body:has(.creative-home) .section,body:has(.creative-home) footer{
+body:has(.creative-home) .header,body:has(.creative-home) .hero,body:has(.creative-home) .tech-strip,body:has(.creative-home) .section,body:has(.creative-home) .studio-section,body:has(.creative-home) footer{
  width:100%;
  max-width:none;
  margin-inline:0;
@@ -20,3 +20,10 @@ body:has(.creative-home) .hero-copy,body:has(.creative-home) .model-area,body:ha
  body:has(.creative-home) .hero-copy p{max-width:520px;font-size:18px}
 }
 @media(max-width:800px){body:has(.creative-home) .contact.section{padding-block:35px}}
+
+/* studio sections keep their editorial vertical rhythm while sharing page gutters */
+body:has(.creative-home) .studio-section.editorial-section{
+ max-width:none;
+ margin-inline:0;
+ padding-inline:var(--page-gutter);
+}

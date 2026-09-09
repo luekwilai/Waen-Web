@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Waves, Dna, Infinity as InfinityIcon, Box, Pyramid, Donut, Flower2, Bug, Diamond, Shell, ScatterChart, Orbit, Code2, CircleHelp, Circle, ChartNoAxesColumnIncreasing, Globe2, Heart, RotateCcw, Save, Settings2, Star, Workflow, X, ArrowDown } from 'lucide-react';
 import { Slider } from '@/components/creative-home/ui/slider';
-import { SHAPES, clearParticleConfig, loadParticleConfig, normalizeSettings, saveParticleConfig, type ParticleShape, type ParticleSettings, type SectionParticleConfig } from './particle-config';
+import { SHAPES, normalizeSettings, type ParticleShape, type ParticleSettings, type SectionParticleConfig } from './particle-config';
 import { makeShape, type Shape } from './particle-shapes';
 import { discoverParticleSections, transitionAt, sectionSettings, type ParticleSection } from './particle-sections';
 
@@ -15,9 +15,7 @@ const CONTROLS = [
   {key:'motion',label:'ระยะการเคลื่อนไหว',min:0,max:1,step:.05},
   {key:'smoothness',label:'ความนุ่มนวลในการเปลี่ยนรูป',min:0,max:1,step:.05},
 ] as const;
-function browserStorage():Storage|null {try{return window.localStorage;}catch{return null;}}
-
-export default function ParticleBackground({ canCustomizeBackground = false }: { canCustomizeBackground?: boolean }) {
+export default function ParticleBackground({ canCustomizeBackground = false, initialConfig = {} }: { canCustomizeBackground?: boolean; initialConfig?: SectionParticleConfig }) {
   const host=useRef<HTMLDivElement>(null);
   const toggle=useRef<HTMLButtonElement>(null);
   const closeButton=useRef<HTMLButtonElement>(null);
@@ -29,6 +27,7 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
   const [selected,setSelected]=useState('');
   const [mobile,setMobile]=useState(false);
   const [status,setStatus]=useState('');
+  const [saving,setSaving]=useState(false);
   const [unavailable,setUnavailable]=useState(false);
   const requestDraw=useRef<()=>void>(()=>{});
   const mobileRef=useRef(false);
@@ -36,7 +35,7 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
   useEffect(()=>{
     const media=window.matchMedia('(max-width:700px)');
     mobileRef.current=media.matches;setMobile(media.matches);
-    configRef.current=canCustomizeBackground ? loadParticleConfig(browserStorage(),media.matches) : {};
+    configRef.current=initialConfig;
     const discover=()=>{
       const next=discoverParticleSections();
       if(next.length===sectionsRef.current.length&&next.every((s,i)=>s.id===sectionsRef.current[i].id&&s.label===sectionsRef.current[i].label&&s.element===sectionsRef.current[i].element))return;
@@ -51,7 +50,7 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
     const resize=()=>{mobileRef.current=media.matches;setMobile(media.matches);requestDraw.current();};
     media.addEventListener('change',resize);
     return()=>{observer.disconnect();media.removeEventListener('change',resize);};
-  },[canCustomizeBackground]);
+  },[initialConfig]);
 
   useEffect(()=>{
     let disposed=false;
@@ -145,17 +144,23 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
   useEffect(()=>{ if(!canCustomizeBackground)return; const openFromMenu=()=>setOpen(true); window.addEventListener('waenweb:open-particle-editor',openFromMenu); return()=>window.removeEventListener('waenweb:open-particle-editor',openFromMenu); },[canCustomizeBackground]);
   const settings=sectionSettings(configRef.current,selected,mobile);
   const update=(patch:Partial<ParticleSettings>)=>{
-    if(!canCustomizeBackground||!selected)return;
+    if(!canCustomizeBackground||!selected||saving)return;
     configRef.current={...configRef.current,[selected]:normalizeSettings({...settings,...patch},mobile)};
     setRevision(v=>v+1);setStatus('ปรับแล้ว • กดบันทึกเพื่อเก็บไว้');
   };
-  const save=()=>{
-    if(!canCustomizeBackground)return;
-    setStatus(saveParticleConfig(browserStorage(),configRef.current)?'บันทึกแล้วในเบราว์เซอร์นี้':'บันทึกไม่ได้ เบราว์เซอร์ไม่อนุญาตให้เก็บข้อมูล');
+  const save=async()=>{
+    if(!canCustomizeBackground||saving)return;
+    setSaving(true);setStatus('กำลังบันทึก…');
+    try {
+      const response=await fetch('/api/particle-background',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(configRef.current)});
+      if(!response.ok)throw new Error('save failed');
+      setStatus('บันทึกแล้ว ผู้เข้าชมทุกคนจะเห็นค่าใหม่นี้เมื่อเปิดหรือรีเฟรชหน้า');
+    } catch { setStatus('บันทึกไม่สำเร็จ ลองอีกครั้ง'); }
+    finally { setSaving(false); }
   };
   const reset=()=>{
-    if(!canCustomizeBackground)return;
-    const cleared=clearParticleConfig(browserStorage());configRef.current={};setRevision(v=>v+1);setStatus(cleared?'คืนค่าเริ่มต้นทุกส่วนแล้ว':'คืนค่าบนหน้านี้แล้ว แต่ล้างค่าที่บันทึกไว้ไม่ได้');
+    if(!canCustomizeBackground||saving)return;
+    configRef.current={};setRevision(v=>v+1);setStatus('คืนค่าเริ่มต้นในฉบับร่างแล้ว • กดบันทึกเพื่อเผยแพร่');
   };
   const close=()=>{setOpen(false);const entry=document.querySelector<HTMLButtonElement>('.wh-site-header__menu-trigger');if(entry)entry.focus();else toggle.current?.focus();};
   if(!canCustomizeBackground)return <div ref={host} className="particle-background" aria-hidden="true"/>;
@@ -164,7 +169,7 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
     <button ref={toggle} type="button" className="particle-editor-toggle" aria-expanded={open} aria-controls="particle-editor" onClick={()=>setOpen(v=>!v)}><Settings2 size={18}/> ปรับพื้นหลัง</button>
     {open&&<aside id="particle-editor" className="particle-editor" aria-labelledby="particle-editor-title">
       <div className="particle-editor-heading"><div><span>BACKGROUND STUDIO</span><h2 id="particle-editor-title">ออกแบบจุดแสง</h2></div><button ref={closeButton} type="button" onClick={close} aria-label="ปิดแผงปรับพื้นหลัง"><X size={20}/></button></div>
-      <p className="particle-editor-note">ปรับแล้วเห็นผลทันที บันทึกไว้เฉพาะเบราว์เซอร์เครื่องนี้</p>
+      <p className="particle-editor-note">ปรับแล้วเห็นผลทันที ค่าในฉบับร่างจะเผยแพร่เมื่อกดบันทึก</p>
       {unavailable&&<p role="status">อุปกรณ์นี้ยังแสดงจุดแสงไม่ได้ แต่เลือกและบันทึกค่าได้</p>}
       <label className="particle-section-label" htmlFor="particle-section">เลือกส่วนของหน้า</label>
       <select id="particle-section" value={selected} onChange={e=>setSelected(e.target.value)}>{sections.map(s=><option key={s.id} value={s.id}>{s.label}</option>)}</select>
@@ -179,7 +184,7 @@ export default function ParticleBackground({ canCustomizeBackground = false }: {
       <div className="particle-ranges">{CONTROLS.map(c=><div className="particle-control" key={c.key}><div><label id={'particle-label-'+c.key}>{c.label}</label><output>{c.key==='count'?settings[c.key].toLocaleString('th-TH'):settings[c.key].toFixed(2)}</output></div><Slider disabled={!selected} aria-labelledby={'particle-label-'+c.key} value={[settings[c.key]]} min={c.min} max={c.max} step={c.step} onValueChange={value=>update({[c.key]:Array.isArray(value)?value[0]:value})}/></div>)}</div>
       <p className="particle-editor-note">เลือกค่า 0 เพื่อหยุดการเคลื่อนไหวหรือตอบสนองต่อการเลื่อนทันที ระบบจะลดการเคลื่อนไหวตามการตั้งค่าอุปกรณ์</p>
       <p className="particle-editor-status" role="status">{status}</p>
-      <div className="particle-editor-actions"><button type="button" onClick={save}><Save size={16}/> บันทึกทั้งหมด</button><button type="button" onClick={reset}><RotateCcw size={16}/> คืนค่าเริ่มต้น</button></div>
+      <div className="particle-editor-actions"><button type="button" onClick={save} disabled={saving}><Save size={16}/> {saving?'กำลังบันทึก…':'บันทึกทั้งหมด'}</button><button type="button" onClick={reset} disabled={saving}><RotateCcw size={16}/> คืนค่าเริ่มต้น</button></div>
       <p className="particle-editor-note">ส่วนใหม่ของเว็บจะปรากฏในรายการโดยอัตโนมัติ</p>
     </aside>}
   </>;

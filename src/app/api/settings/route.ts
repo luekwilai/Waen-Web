@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { revalidatePath, revalidateTag } from "next/cache"
 import { requireAdminApiSession } from "@/lib/admin-access"
 import { prisma } from "@/lib/prisma"
+import { PARTICLE_SETTING_KEY } from "@/components/creative-home/particle-config"
 
 export const dynamic = "force-dynamic"
 
@@ -28,6 +29,9 @@ export async function PATCH(request: Request) {
 
   try {
     const body = (await request.json()) as Record<string, string>
+    if (Object.hasOwn(body, PARTICLE_SETTING_KEY)) {
+      return NextResponse.json({ error: "Use the particle background endpoint for this setting" }, { status: 400 })
+    }
 
     await prisma.$transaction(
       Object.entries(body).map(([key, value]) =>

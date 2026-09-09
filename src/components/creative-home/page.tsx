@@ -13,6 +13,7 @@ import WorkProcess from './work-process';
 import ContactForm from './contact-form';
 import { ArticlesSection } from './studio-content';
 import SiteFooter from './site-footer';
+import type { SectionParticleConfig } from './particle-config';
 const line='https://line.me/ti/p/~thawatsak';
 const services=[
  {icon:Smartphone,image:'/creative-home/images/services/responsive.webp',alt:'อุปกรณ์ดิจิทัลสีเขียวและงาช้างแสดงเว็บไซต์ที่ปรับตามหน้าจอ',title:'สวยในทุกหน้าจอ',en:'RESPONSIVE DESIGN',text:'ออกแบบให้ใช้งานลื่นไหล ทั้งบนคอมพิวเตอร์ แท็บเล็ต และมือถือ'},
@@ -37,7 +38,7 @@ const questions=[
  ['เว็บไซต์ร้านค้าเชื่อมต่อ WooCommerce หรือ Payment Gateway ได้ไหม?','สามารถวางระบบ WooCommerce และเชื่อมต่อ Payment Gateway ได้ โดยรายละเอียดผู้ให้บริการ ขอบเขตฟีเจอร์ และค่าใช้จ่ายยืนยันแยกกันก่อนเริ่มงาน'],
  ['ทำ SEO แล้วเว็บไซต์จะติดอันดับแน่นอนไหม?','เราวางโครงสร้าง SEO ตามขอบเขตของแต่ละแพ็กเกจ แต่ผลการจัดอันดับขึ้นอยู่กับหลายปัจจัย จึงไม่รับประกันอันดับบน Search Engine'],
 ];
-export default function Home({ canCustomizeBackground = false }: { canCustomizeBackground?: boolean }){
+export default function Home({ canCustomizeBackground = false, initialParticleConfig = {} }: { canCustomizeBackground?: boolean; initialParticleConfig?: SectionParticleConfig }){
  const quoteReturnFocus=useRef<HTMLElement|null>(null);
  const [selection,setSelection]=useState<EnquirySelection|null>(null);
  const [quoteOpen,setQuoteOpen]=useState(false);
@@ -48,7 +49,7 @@ export default function Home({ canCustomizeBackground = false }: { canCustomizeB
  const goToForm=()=>{const el=document.getElementById('enquiry-heading');el?.focus({preventScroll:true});el?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});};
  const changePackage=()=>{const el=document.getElementById('pricing');el?.scrollIntoView({behavior:'smooth'});document.querySelector<HTMLButtonElement>('.price-card button')?.focus({preventScroll:true});};
 
- return <div className="creative-home"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" /><ParticleBackground canCustomizeBackground={canCustomizeBackground}/><Motion/><a className="skip-link" href="#main">ข้ามไปเนื้อหา</a>
+ return <div className="creative-home"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" /><ParticleBackground canCustomizeBackground={canCustomizeBackground} initialConfig={initialParticleConfig}/><Motion/><a className="skip-link" href="#main">ข้ามไปเนื้อหา</a>
  <SiteHeader canCustomizeBackground={canCustomizeBackground}/>
  <main id="main"><section className="hero" id="hero" data-particle-label="หน้าแรก"><div className="hero-topline"><span className="eyebrow"><span className="status-dot"/> AVAILABLE FOR YOUR NEXT PROJECT</span><span className="edition">DESIGN. DEVELOP. DELIVER.</span></div><div className="hero-copy"><div className="intro">WEB DESIGN & DEVELOPMENT STUDIO</div><h1>จากไอเดียของคุณ<br/><span>สู่เว็บไซต์ที่ใช่.</span></h1><p>สร้างเว็บไซต์ที่เป็นตัวคุณ และทำงานให้ธุรกิจคุณ<br className="desktop-break"/> ตั้งแต่ดีไซน์บรรทัดแรก ถึงวันที่พร้อมเติบโตไปด้วยกัน</p><div className="hero-actions"><a className="button primary" href="#contact">คุยเรื่องเว็บไซต์ของคุณ <ArrowUpRight size={19}/></a><a className="button text-button" href="#pricing">ดูแพ็กเกจ <ArrowRight size={18}/></a></div><div className="hero-proof"><span><PenTool size={15}/> ออกแบบเพื่อแบรนด์คุณ</span><span><Code2 size={16}/> พัฒนาอย่างใส่ใจ</span></div></div><div className="model-area"><Laptop/><div className="model-caption"><span>01 / FROM CODE TO EXPERIENCE</span><span>ลากเพื่อหมุนโมเดล <ArrowUpRight size={14}/></span></div></div><div className="hero-bottom"><span>CRAFTED WITH CARE. BUILT FOR YOU.</span><a href="#services">เลื่อนเพื่อรู้จักเรา <ArrowDown size={15}/></a></div></section>
  <div className="tech-strip"><span>OUR TOOLBOX</span><strong><Globe2/> WordPress</strong><strong><Atom/> React</strong><strong>Next.js</strong><strong><span className="ts-mark">TS</span> TypeScript</strong><strong><span className="tailwind-mark">≈</span> Tailwind CSS</strong></div>

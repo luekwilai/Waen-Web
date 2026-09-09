@@ -1,6 +1,7 @@
 import CreativeHome from "@/components/creative-home/page"
 import type { Metadata } from "next"
 import { auth } from "@/lib/auth"
+import { getParticleBackgroundConfig } from "@/lib/queries"
 
 export const metadata: Metadata = {
   title: { absolute: "WAENWEB — ออกแบบเว็บไซต์ให้ธุรกิจเติบโต" },
@@ -11,8 +12,8 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const session = await auth()
+  const [session, initialParticleConfig] = await Promise.all([auth(), getParticleBackgroundConfig()])
   const canCustomizeBackground = (session?.user as { role?: string } | undefined)?.role === "ADMIN"
 
-  return <CreativeHome canCustomizeBackground={canCustomizeBackground} />
+  return <CreativeHome canCustomizeBackground={canCustomizeBackground} initialParticleConfig={initialParticleConfig} />
 }

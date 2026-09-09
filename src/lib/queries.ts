@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache"
 import { prisma } from "./prisma"
+import { PARTICLE_SETTING_KEY, validateParticleConfig, type SectionParticleConfig } from "@/components/creative-home/particle-config"
 
 export const getDashboardStats = unstable_cache(
   async () => {
@@ -102,6 +103,22 @@ export const getSiteSettings = unstable_cache(
   },
   ["site-settings-v3"],
   { revalidate: 300, tags: ["site-settings"] }
+)
+
+export const getParticleBackgroundConfig = unstable_cache(
+  async (): Promise<SectionParticleConfig> => {
+    try {
+      const row = await prisma.siteSetting.findUnique({ where: { key: PARTICLE_SETTING_KEY }, select: { value: true } })
+      if (!row) return {}
+      const parsed: unknown = JSON.parse(row.value)
+      const result = validateParticleConfig(parsed)
+      return 'config' in result ? result.config : {}
+    } catch {
+      return {}
+    }
+  },
+  ["particle-background-setting-v1"],
+  { revalidate: 300, tags: ["site-settings", "particle-background"] }
 )
 
 // Public package data for the isolated V2 experience.

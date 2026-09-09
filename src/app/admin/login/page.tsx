@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 import { RecaptchaWidget } from "@/components/security/recaptcha-widget"
-import { ThemeToggle } from "@/components/home/theme-toggle"
+import { AdminThemeSwitch } from "@/components/admin/admin-nav"
 import Link from "next/link"
 import { BrandLogo } from "@/components/brand-logo"
 
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 relative transition-colors duration-500">
       <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
+        <AdminThemeSwitch />
       </div>
       
       {/* Decorative Background Elements */}

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ThemeToggle } from "@/components/home/theme-toggle"
+import { AdminThemeSwitch } from "@/components/admin/admin-nav"
 import { RecaptchaWidget } from "@/components/security/recaptcha-widget"
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
 
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 relative transition-colors duration-500">
       <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
+        <AdminThemeSwitch />
       </div>
 
       {/* Decorative Background Elements */}

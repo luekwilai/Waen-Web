@@ -3,20 +3,11 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle } from "@/components/home/theme-toggle"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { ExternalLink, FolderOpen, LayoutDashboard, LogOut, Mail, Menu, Moon, Package, Settings, Sun, Users } from "lucide-react"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { BrandLogo } from "@/components/brand-logo"
-import {
-  LayoutDashboard,
-  FolderOpen,
-  Mail,
-  Package,
-  LogOut,
-  Menu,
-  Users,
-  Settings,
-} from "lucide-react"
 
 const navItems = [
   { href: "/admin/dashboard", label: "แดชบอร์ด", icon: LayoutDashboard },
@@ -27,92 +18,47 @@ const navItems = [
   { href: "/admin/settings", label: "ตั้งค่าเว็บ", icon: Settings },
 ]
 
-function NavLinks() {
-  const pathname = usePathname()
+export function AdminThemeSwitch() {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = mounted && resolvedTheme === "dark"
   return (
-    <>
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
-            pathname === item.href
-              ? "bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 shadow-sm"
-              : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent"
-          }`}
-        >
-          <item.icon className={`w-5 h-5 shrink-0 transition-colors ${pathname === item.href ? "text-lime-500 dark:text-lime-400" : "text-slate-500 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300"}`} />
-          {item.label}
-        </Link>
-      ))}
-    </>
+    <button type="button" role="switch" aria-checked={isDark} aria-label={isDark ? "เปลี่ยนเป็นโหมดสว่าง" : "เปลี่ยนเป็นโหมดมืด"} className="admin-theme-switch" onClick={() => setTheme(isDark ? "light" : "dark")}>
+      <span className="admin-theme-switch-track"><span className="admin-theme-switch-thumb">{isDark ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}</span></span>
+      <span className="admin-theme-switch-label">{isDark ? "มืด" : "สว่าง"}</span>
+    </button>
   )
+}
+
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+  const pathname = usePathname()
+  return <>{navItems.map((item) => {
+    const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
+    const Icon = item.icon
+    return <Link key={item.href} href={item.href} onClick={onNavigate} className={`admin-nav-link${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined}><Icon aria-hidden="true" />{item.label}</Link>
+  })}</>
 }
 
 function LogoutButton() {
-  return (
-    <Button
-      variant="ghost"
-      className="w-full justify-start text-rose-500/80 dark:text-rose-400/80 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors rounded-xl h-12 px-4 font-medium"
-      onClick={() => signOut({ callbackUrl: "/admin/login" })}
-    >
-      <LogOut className="w-5 h-5 mr-3" />
-      ออกจากระบบ
-    </Button>
-  )
+  return <button type="button" className="admin-logout" onClick={() => signOut({ callbackUrl: "/admin/login" })}><LogOut aria-hidden="true" />ออกจากระบบ</button>
+}
+
+function Brand() {
+  return <div className="admin-brand"><BrandLogo iconSize={30} siteName="WAENWEB" wrapperClassName="flex items-center gap-3" textClassName="admin-brand-wordmark" /><span className="admin-brand-label">CONTROL ROOM</span></div>
+}
+
+function SiteLink() {
+  return <Link href="/" className="admin-site-link">ดูเว็บไซต์ <ExternalLink aria-hidden="true" /></Link>
 }
 
 export function AdminSidebar() {
-  return (
-    <aside className="hidden md:flex w-72 shrink-0 flex-col bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-white/5 shadow-2xl z-10 relative transition-colors duration-500">
-      {/* Subtle Glow */}
-      <div className="absolute top-0 right-0 w-[200px] h-[300px] bg-lime-500/5 blur-[80px] pointer-events-none rounded-full" />
-      
-      <div className="p-8 border-b border-slate-200 dark:border-white/5 relative z-10 flex items-center justify-between">
-        <div>
-          <BrandLogo iconSize={32} siteName="WAENWEB" wrapperClassName="flex items-center gap-3" textClassName="text-2xl font-black text-slate-900 dark:text-white tracking-tight" />
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-2 ml-11">Admin Panel</p>
-        </div>
-        <ThemeToggle />
-      </div>
-      <nav className="flex-1 p-6 space-y-2 relative z-10">
-        <NavLinks />
-      </nav>
-      <div className="p-6 border-t border-slate-200 dark:border-white/5 relative z-10">
-        <LogoutButton />
-      </div>
-    </aside>
-  )
+  return <aside className="admin-sidebar"><div className="admin-sidebar-head"><Brand /><AdminThemeSwitch /></div><nav className="admin-nav" aria-label="เมนูผู้ดูแลระบบ"><NavLinks /></nav><div className="admin-sidebar-foot"><SiteLink /><LogoutButton /></div></aside>
 }
 
 export function AdminMobileHeader() {
-  return (
-    <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 transition-colors duration-500">
-      <div className="flex items-center justify-between p-4">
-        <BrandLogo iconSize={24} siteName="WAENWEB" wrapperClassName="flex items-center gap-2" textClassName="text-xl font-black text-slate-900 dark:text-white tracking-tight" />
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-72 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 p-0 flex flex-col transition-colors duration-500">
-              <div className="p-8 border-b border-slate-200 dark:border-white/5 relative z-10">
-                <BrandLogo iconSize={32} siteName="WAENWEB" wrapperClassName="flex items-center gap-3" textClassName="text-2xl font-black text-slate-900 dark:text-white tracking-tight" />
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-2 ml-11">Admin Panel</p>
-              </div>
-              <nav className="flex-1 p-6 space-y-2">
-                <NavLinks />
-              </nav>
-              <div className="p-6 border-t border-slate-200 dark:border-white/5">
-                <LogoutButton />
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </div>
-  )
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+  useEffect(() => setOpen(false), [pathname])
+  return <header className="admin-mobile-header"><Brand /><div className="admin-mobile-actions"><AdminThemeSwitch /><Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><button type="button" className="admin-menu-button" aria-label="เปิดเมนูผู้ดูแลระบบ"><Menu aria-hidden="true" /></button></SheetTrigger><SheetContent side="right" className="admin-mobile-sheet"><SheetTitle className="sr-only">เมนูผู้ดูแลระบบ</SheetTitle><div className="admin-sheet-brand"><Brand /></div><nav className="admin-nav" aria-label="เมนูผู้ดูแลระบบ"><NavLinks onNavigate={() => setOpen(false)} /></nav><div className="admin-sidebar-foot"><SiteLink /><LogoutButton /></div></SheetContent></Sheet></div></header>
 }

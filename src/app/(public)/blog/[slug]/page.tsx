@@ -68,9 +68,9 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const covers: Record<string, string> = {
-    "website-2026-trend-thurai-thai-tong-ru": "iphone-trends",
-    "content-marketing-samnab-website-thurakit-thai": "iphone-content",
-    "an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit": "iphone-analytics",
+    "website-2026-trend-thurai-thai-tong-ru": "context-trends",
+    "content-marketing-samnab-website-thurakit-thai": "context-content",
+    "an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit": "context-analytics",
   }
   const image = covers[slug] ? `/creative-home/images/articles/${covers[slug]}.webp` : post.image
   const headings: { id: string; title: string }[] = []

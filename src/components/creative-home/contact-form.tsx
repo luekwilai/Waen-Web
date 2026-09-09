@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { z } from 'zod';
 import { ArrowRight, ChevronDown, Info, Circle, CircleCheck, FileText, BriefcaseBusiness, ShoppingCart, Settings2, MessageCircle, LockKeyhole } from 'lucide-react';
 import { Input } from '@/components/creative-home/ui/input';
@@ -15,7 +15,44 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
   const total=selection?.kind==='package'?selection.total:quote?.total;
   const lines=selection?.kind==='package'?selection.features:quote?[`${quote.pageCount} หน้า`,...quote.items.map(item=>`${item.label}: ฿${item.amount.toLocaleString('th-TH')}`)]:[];
   const [adviceHelpOpen,setAdviceHelpOpen]=useState(false);
+  const [advicePointerMode,setAdvicePointerMode]=useState(false);
   const adviceHelpRef=useRef<HTMLDivElement>(null);
+  const adviceTooltipRef=useRef<HTMLDivElement>(null);
+  const adviceHoverModeRef=useRef(false);
+  const adviceHoverDismissedRef=useRef(false);
+  const advicePointerRef=useRef({x:0,y:0});
+  const advicePositionFrameRef=useRef<number|null>(null);
+  const positionAdviceTooltip=()=>{
+    const tooltip=adviceTooltipRef.current;
+    const wrapper=adviceHelpRef.current;
+    if(!tooltip||!wrapper||typeof window==='undefined')return;
+    const {x:clientX,y:clientY}=advicePointerRef.current;
+    const gap=14;
+    const edge=8;
+    const {width,height}=tooltip.getBoundingClientRect();
+    let left=clientX+gap;
+    let top=clientY+gap;
+    if(left+width>window.innerWidth-edge)left=clientX-gap-width;
+    if(top+height>window.innerHeight-edge)top=clientY-gap-height;
+    left=Math.max(edge,Math.min(left,window.innerWidth-width-edge));
+    top=Math.max(edge,Math.min(top,window.innerHeight-height-edge));
+    const wrapperRect=wrapper.getBoundingClientRect();
+    tooltip.style.setProperty('--advice-tooltip-left',`${left-wrapperRect.left}px`);
+    tooltip.style.setProperty('--advice-tooltip-top',`${top-wrapperRect.top}px`);
+  };
+  const scheduleAdviceTooltipPosition=()=>{
+    if(advicePositionFrameRef.current!==null)return;
+    advicePositionFrameRef.current=requestAnimationFrame(()=>{advicePositionFrameRef.current=null;positionAdviceTooltip();});
+  };
+  const handleAdvicePointerMove=(event:ReactPointerEvent<HTMLDivElement>)=>{
+    if(event.pointerType!=='mouse')return;
+    if(adviceHoverDismissedRef.current)return;
+    advicePointerRef.current={x:event.clientX,y:event.clientY};
+    if(!adviceHoverModeRef.current){adviceHoverModeRef.current=true;setAdvicePointerMode(true);setAdviceHelpOpen(true);}
+    scheduleAdviceTooltipPosition();
+  };
+  useLayoutEffect(()=>{if(adviceHelpOpen&&adviceHoverModeRef.current)positionAdviceTooltip();},[adviceHelpOpen,advicePointerMode]);
+  useEffect(()=>()=>{if(advicePositionFrameRef.current!==null)cancelAnimationFrame(advicePositionFrameRef.current);},[]);
   useEffect(()=>{if(!adviceHelpOpen)return;const close=(event:PointerEvent)=>{if(event.target instanceof Node&&!adviceHelpRef.current?.contains(event.target))setAdviceHelpOpen(false);};document.addEventListener("pointerdown",close);return()=>document.removeEventListener("pointerdown",close);},[adviceHelpOpen]);
   const [adviceSelected,setAdviceSelected]=useState(false);
   const [pending, setPending] = useState(false);
@@ -66,10 +103,10 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
       <div className="ww-enquiry-plan-list">
         {packageOptions.map((option,index)=>{const selected=selection?.kind==='package'&&selection.name===option.name;const Icon=icons[index]||FileText;return <button key={option.name} type="button" disabled={pending} className={`ww-enquiry-plan ${selected?'is-selected':''}`} aria-pressed={selected} onClick={()=>{setAdviceSelected(false);onSelect({kind:'package',name:option.name,total:Number(option.price.replaceAll(',','')),features:option.features});}}>{selected?<CircleCheck size={20}/>:<Circle size={20}/>}<Icon size={24}/><span className="ww-enquiry-plan-copy"><strong>{option.name}</strong><small>{option.desc}</small></span><b>฿{option.price}</b></button>;})}
         <button type="button" disabled={pending} className={`ww-enquiry-plan ${selection?.kind==='custom'?'is-selected':''}`} aria-pressed={selection?.kind==='custom'} onClick={event=>selection?.kind==='custom'?onEdit():onCustomize(event.currentTarget)}>{selection?.kind==='custom'?<CircleCheck size={20}/>:<Circle size={20}/>}<Settings2 size={24}/><span className="ww-enquiry-plan-copy"><strong>Custom</strong><small>เลือกจำนวนหน้าและฟีเจอร์เอง</small></span><b>ปรับเอง</b></button>
-        <div ref={adviceHelpRef} className="ww-enquiry-advice-wrap" onMouseEnter={()=>setAdviceHelpOpen(true)} onMouseLeave={()=>setAdviceHelpOpen(false)} onKeyDown={event=>{if(event.key==='Escape'){setAdviceHelpOpen(false);event.stopPropagation();}}}>
+        <div ref={adviceHelpRef} className="ww-enquiry-advice-wrap" onPointerEnter={handleAdvicePointerMove} onPointerMove={handleAdvicePointerMove} onPointerLeave={event=>{if(event.pointerType==='mouse'){adviceHoverDismissedRef.current=false;adviceHoverModeRef.current=false;setAdvicePointerMode(false);setAdviceHelpOpen(false);}}} onKeyDown={event=>{if(event.key==='Escape'){adviceHoverDismissedRef.current=true;adviceHoverModeRef.current=false;setAdvicePointerMode(false);setAdviceHelpOpen(false);event.stopPropagation();}}}>
         <button type="button" disabled={pending} className={`ww-enquiry-plan ${!selection&&adviceSelected?'is-selected':''}`} aria-pressed={!selection&&adviceSelected} aria-describedby={adviceHelpOpen?"enquiry-advice-help":undefined} onClick={()=>{setAdviceSelected(true);onRemove();}}>{!selection&&adviceSelected?<CircleCheck size={20}/>:<Circle size={20}/>}<MessageCircle size={24}/><span className="ww-enquiry-plan-copy"><strong>ขอคำแนะนำ</strong><small>ยังไม่แน่ใจ ให้เราช่วยเลือก</small></span><b>ปรึกษาฟรี</b></button>
-          <button type="button" className="ww-enquiry-advice-help" aria-expanded={adviceHelpOpen} aria-controls="enquiry-advice-help" onClick={()=>setAdviceHelpOpen(true)} onFocus={event=>{if(event.currentTarget.matches(':focus-visible'))setAdviceHelpOpen(true);}} onBlur={event=>{if(!event.currentTarget.parentElement?.contains(event.relatedTarget))setAdviceHelpOpen(false);}}><Info size={16} aria-hidden="true"/>ขอคำแนะนำแล้วต้องทำอย่างไร?</button>
-          {adviceHelpOpen&&<div id="enquiry-advice-help" role="tooltip" className="ww-enquiry-advice-tooltip"><p>1. เลือก “ขอคำแนะนำ” แล้วกรอกข้อมูลและไอเดียเว็บไซต์</p><p>2. กด “ส่งข้อความ” เราจะติดต่อกลับเพื่อคุยความต้องการ</p><p>3. เราช่วยแนะนำแพ็กเกจและประเมินราคาให้ก่อนตัดสินใจ โดยไม่มีค่าใช้จ่ายในการปรึกษา</p></div>}
+          <button type="button" className="ww-enquiry-advice-help" aria-expanded={adviceHelpOpen} aria-controls="enquiry-advice-help" onClick={()=>{adviceHoverModeRef.current=false;setAdvicePointerMode(false);setAdviceHelpOpen(true);}} onFocus={event=>{if(event.currentTarget.matches(':focus-visible')){adviceHoverModeRef.current=false;setAdvicePointerMode(false);setAdviceHelpOpen(true);}}} onBlur={event=>{if(!event.currentTarget.parentElement?.contains(event.relatedTarget))setAdviceHelpOpen(false);}}><Info size={16} aria-hidden="true"/>ขอคำแนะนำแล้วต้องทำอย่างไร?</button>
+          {adviceHelpOpen&&<div ref={adviceTooltipRef} id="enquiry-advice-help" role="tooltip" className={`ww-enquiry-advice-tooltip${advicePointerMode?' is-pointer-positioned':''}`}><p>1. เลือก “ขอคำแนะนำ” แล้วกรอกข้อมูลและไอเดียเว็บไซต์</p><p>2. กด “ส่งข้อความ” เราจะติดต่อกลับเพื่อคุยความต้องการ</p><p>3. เราช่วยแนะนำแพ็กเกจและประเมินราคาให้ก่อนตัดสินใจ โดยไม่มีค่าใช้จ่ายในการปรึกษา</p></div>}
         </div>
       </div>
       <div className="ww-enquiry-estimate" aria-live="polite"><span>{selection?`ประมาณราคา · ${title}`:'ยังไม่ต้องตัดสินใจตอนนี้'}</span><b>{selection?`฿${total?.toLocaleString('th-TH')}`:'คุยกันก่อนได้'}</b><small>{selection?'ราคาเบื้องต้น ไม่รวม Hosting และ Domain':'เราช่วยประเมินขอบเขตและแนะนำแพ็กเกจให้ได้'}</small>{selection&&<details><summary>รายละเอียดที่เลือก</summary><ul>{lines.map((line,index)=><li key={index}>{line}</li>)}</ul></details>}</div>

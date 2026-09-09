@@ -14,8 +14,8 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
         className="flex-1 flex flex-col w-full h-full"
       >

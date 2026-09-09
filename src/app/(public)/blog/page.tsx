@@ -4,7 +4,7 @@ import { BlogHeader, BlogFooter } from "@/components/blog/blog-shell"
 import { BlogPostsGrid } from "@/components/blog/blog-posts-grid"
 import styles from "./blog-index.module.css"
 
-export const metadata: Metadata = { title: { absolute: "บทความสำหรับคนทำธุรกิจ | WAENWEB" }, description: "บทความให้ความรู้เรื่องเว็บไซต์ WordPress SEO และธุรกิจออนไลน์จาก WAENWEB", alternates: { canonical: "https://waenweb.com/blog" }, openGraph: { title: "บทความสำหรับคนทำธุรกิจ | WAENWEB", description: "ความรู้เรื่องเว็บไซต์ SEO และธุรกิจออนไลน์จาก WAENWEB", url: "https://waenweb.com/blog", type: "website", images: ["/creative-home/images/articles/editorial-trends.webp"] }, robots: { index: true, follow: true } }
+export const metadata: Metadata = { title: { absolute: "บทความสำหรับคนทำธุรกิจ | WAENWEB" }, description: "บทความให้ความรู้เรื่องเว็บไซต์ WordPress SEO และธุรกิจออนไลน์จาก WAENWEB", alternates: { canonical: "https://waenweb.com/blog" }, openGraph: { title: "บทความสำหรับคนทำธุรกิจ | WAENWEB", description: "ความรู้เรื่องเว็บไซต์ SEO และธุรกิจออนไลน์จาก WAENWEB", url: "https://waenweb.com/blog", type: "website", images: ["/creative-home/images/articles/iphone-trends.webp"] }, robots: { index: true, follow: true } }
 
 export default function BlogPage() {
   const posts = getAllBlogPosts()

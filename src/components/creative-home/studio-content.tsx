@@ -26,7 +26,7 @@ const articles = [
     readTime: '7 min',
     title: 'เทรนด์เว็บไซต์ปี 2026 ที่ธุรกิจไทยควรรู้และเตรียมรับมือ',
     summary: 'มองแนวโน้มเว็บไซต์ปี 2026 และสิ่งที่ธุรกิจไทยควรเตรียมตัวให้พร้อม',
-    image: '/creative-home/images/articles/editorial-trends.webp',
+    image: '/creative-home/images/articles/iphone-trends.webp',
     href: 'https://waenweb.com/blog/website-2026-trend-thurai-thai-tong-ru',
   },
   {
@@ -34,7 +34,7 @@ const articles = [
     readTime: '7 min',
     title: 'Content Marketing สำหรับธุรกิจไทย ทำเองได้ไม่ต้องจ้างเอเจนซี่แพงๆ',
     summary: 'แนวทางเริ่มทำ Content Marketing สำหรับธุรกิจไทยด้วยตัวเองอย่างเป็นระบบ',
-    image: '/creative-home/images/articles/editorial-content.webp',
+    image: '/creative-home/images/articles/iphone-content.webp',
     href: 'https://waenweb.com/blog/content-marketing-samnab-website-thurakit-thai',
   },
   {
@@ -42,7 +42,7 @@ const articles = [
     readTime: '8 min',
     title: 'อ่าน Analytics ยังไงให้เป็นประโยชน์ต่อธุรกิจ ไม่ใช่แค่ดูตัวเลข',
     summary: 'ทำความเข้าใจ Analytics เพื่อเปลี่ยนตัวเลขบนเว็บไซต์ให้เป็นข้อมูลช่วยตัดสินใจ',
-    image: '/creative-home/images/articles/editorial-analytics.webp',
+    image: '/creative-home/images/articles/iphone-analytics.webp',
     href: 'https://waenweb.com/blog/an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit',
   },
 ] as const;

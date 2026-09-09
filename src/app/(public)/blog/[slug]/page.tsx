@@ -68,11 +68,11 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const covers: Record<string, string> = {
-    "website-2026-trend-thurai-thai-tong-ru": "trends",
-    "content-marketing-samnab-website-thurakit-thai": "content",
-    "an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit": "analytics",
+    "website-2026-trend-thurai-thai-tong-ru": "iphone-trends",
+    "content-marketing-samnab-website-thurakit-thai": "iphone-content",
+    "an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit": "iphone-analytics",
   }
-  const image = covers[slug] ? `/creative-home/images/articles/editorial-${covers[slug]}.webp` : post.image
+  const image = covers[slug] ? `/creative-home/images/articles/${covers[slug]}.webp` : post.image
   const headings: { id: string; title: string }[] = []
   const content = htmlContent.replace(/<h2>(.*?)<\/h2>/g, (_, title: string) => {
     const id = `section-${headings.length + 1}`

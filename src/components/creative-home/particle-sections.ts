@@ -12,7 +12,7 @@ export function transitionAt(entries: number[], centers: number[], modes: Partic
   for(let i=1;i<centers.length;i++) {
     const mode=modes[i] || 'blend';
     const target=Math.max(previous,Math.min(maxScroll,Math.max(0,mode==='entry'?entries[i]:centers[i])));
-    if(at<target) return {index:i-1,mix:mode==='blend'?Math.max(0,Math.min(1,(at-previous)/Math.max(1,target-previous))):0};
+    if(at<target) return {index:i-1,mix:mode==='blend' && modes[i-1]!=='entry'?Math.max(0,Math.min(1,(at-previous)/Math.max(1,target-previous))):0};
     previous=target;
   }
   return {index:centers.length-2,mix:1};

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { z } from 'zod';
-import { ArrowRight, Circle, CircleCheck, FileText, BriefcaseBusiness, ShoppingCart, Settings2, MessageCircle, LockKeyhole } from 'lucide-react';
+import { ArrowRight, ChevronDown, Info, Circle, CircleCheck, FileText, BriefcaseBusiness, ShoppingCart, Settings2, MessageCircle, LockKeyhole } from 'lucide-react';
 import { Input } from '@/components/creative-home/ui/input';
 import { Textarea } from '@/components/creative-home/ui/textarea';
 import type { EnquirySelection } from './enquiry-selection';
@@ -14,6 +14,9 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
   const title=selection?.kind==='package'?selection.name:'Custom';
   const total=selection?.kind==='package'?selection.total:quote?.total;
   const lines=selection?.kind==='package'?selection.features:quote?[`${quote.pageCount} หน้า`,...quote.items.map(item=>`${item.label}: ฿${item.amount.toLocaleString('th-TH')}`)]:[];
+  const [adviceHelpOpen,setAdviceHelpOpen]=useState(false);
+  const adviceHelpRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{if(!adviceHelpOpen)return;const close=(event:PointerEvent)=>{if(event.target instanceof Node&&!adviceHelpRef.current?.contains(event.target))setAdviceHelpOpen(false);};document.addEventListener("pointerdown",close);return()=>document.removeEventListener("pointerdown",close);},[adviceHelpOpen]);
   const [adviceSelected,setAdviceSelected]=useState(false);
   const [pending, setPending] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; emailSent?: boolean; text: string } | null>(null);
@@ -34,7 +37,7 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
     else if (!z.email().safeParse(String(values.email).trim()).success) nextErrors.email = 'อีเมลนี้ดูเหมือนไม่ถูกต้อง';
     if (String(values.details || '').trim().length < 10) nextErrors.details = 'เล่าเพิ่มเติมอย่างน้อย 10 ตัวอักษร';
     for (const [key,label] of [['contact','โทรศัพท์หรือ LINE'],['business','ชื่อธุรกิจหรือแบรนด์'],['budget','งบประมาณ หรือระบุว่าขอคำแนะนำ'],['timeline','ช่วงเวลา หรือระบุว่ายังไม่แน่ใจ']]) { if (!String(values[key] || '').trim()) nextErrors[key] = `กรุณาระบุ${label}`; }
-    if (Object.keys(nextErrors).length) { setErrors(nextErrors); setPending(false); const first = Array.from(form.elements).find(element => element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement ? !!nextErrors[element.name] : false); if (first instanceof HTMLElement) { first.focus({preventScroll:true}); first.scrollIntoView({block:"center"}); } return; }
+    if (Object.keys(nextErrors).length) { setErrors(nextErrors); setPending(false); const first = Array.from(form.elements).find(element => element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement ? !!nextErrors[element.name] : false); if (first instanceof HTMLElement) { first.focus({preventScroll:true}); first.scrollIntoView({block:"center"}); } return; }
     setErrors({});
     const payload: Record<string, unknown> = values;
     payload.email = String(payload.email || '').trim();
@@ -53,6 +56,9 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
   function field(name:string,label:string,placeholder:string,maxLength:number,autoComplete?:string,type='text') {
     return <label htmlFor={`enquiry-${name}`}>{label} <span>*</span><Input ref={name==='name'?nameRef:undefined} id={`enquiry-${name}`} name={name} type={type} autoComplete={autoComplete} required maxLength={maxLength} placeholder={placeholder} aria-invalid={!!errors[name]} aria-describedby={errors[name]?`enquiry-${name}-error`:undefined}/>{errors[name]&&<small id={`enquiry-${name}-error`} className="ww-enquiry-error">{errors[name]}</small>}</label>;
   }
+  function dropdown(name:string,label:string,placeholder:string,options:string[]) {
+    return <label htmlFor={`enquiry-${name}`}>{label} <span>*</span><div className="ww-enquiry-select-wrap"><select id={`enquiry-${name}`} name={name} required defaultValue="" aria-invalid={!!errors[name]} aria-describedby={errors[name]?`enquiry-${name}-error`:undefined}><option value="" disabled>{placeholder}</option>{options.map(option=><option key={option} value={option}>{option}</option>)}</select><ChevronDown size={18} aria-hidden="true"/></div>{errors[name]&&<small id={`enquiry-${name}-error`} className="ww-enquiry-error">{errors[name]}</small>}</label>;
+  }
   return <div className="ww-enquiry">
     <aside className="ww-enquiry-package-rail" aria-label="เลือกแพ็กเกจ">
       <span className="ww-enquiry-step">01 / เลือกแพ็กเกจ</span>
@@ -60,20 +66,24 @@ export default function ContactForm({selection,onSelect,onRemove,onEdit,onCustom
       <div className="ww-enquiry-plan-list">
         {packageOptions.map((option,index)=>{const selected=selection?.kind==='package'&&selection.name===option.name;const Icon=icons[index]||FileText;return <button key={option.name} type="button" disabled={pending} className={`ww-enquiry-plan ${selected?'is-selected':''}`} aria-pressed={selected} onClick={()=>{setAdviceSelected(false);onSelect({kind:'package',name:option.name,total:Number(option.price.replaceAll(',','')),features:option.features});}}>{selected?<CircleCheck size={20}/>:<Circle size={20}/>}<Icon size={24}/><span className="ww-enquiry-plan-copy"><strong>{option.name}</strong><small>{option.desc}</small></span><b>฿{option.price}</b></button>;})}
         <button type="button" disabled={pending} className={`ww-enquiry-plan ${selection?.kind==='custom'?'is-selected':''}`} aria-pressed={selection?.kind==='custom'} onClick={event=>selection?.kind==='custom'?onEdit():onCustomize(event.currentTarget)}>{selection?.kind==='custom'?<CircleCheck size={20}/>:<Circle size={20}/>}<Settings2 size={24}/><span className="ww-enquiry-plan-copy"><strong>Custom</strong><small>เลือกจำนวนหน้าและฟีเจอร์เอง</small></span><b>ปรับเอง</b></button>
-        <button type="button" disabled={pending} className={`ww-enquiry-plan ${!selection&&adviceSelected?'is-selected':''}`} aria-pressed={!selection&&adviceSelected} onClick={()=>{setAdviceSelected(true);onRemove();}}>{!selection&&adviceSelected?<CircleCheck size={20}/>:<Circle size={20}/>}<MessageCircle size={24}/><span className="ww-enquiry-plan-copy"><strong>ขอคำแนะนำ</strong><small>ยังไม่แน่ใจ ให้เราช่วยเลือก</small></span><b>ปรึกษาฟรี</b></button>
+        <div ref={adviceHelpRef} className="ww-enquiry-advice-wrap" onMouseEnter={()=>setAdviceHelpOpen(true)} onMouseLeave={()=>setAdviceHelpOpen(false)} onKeyDown={event=>{if(event.key==='Escape'){setAdviceHelpOpen(false);event.stopPropagation();}}}>
+        <button type="button" disabled={pending} className={`ww-enquiry-plan ${!selection&&adviceSelected?'is-selected':''}`} aria-pressed={!selection&&adviceSelected} aria-describedby={adviceHelpOpen?"enquiry-advice-help":undefined} onClick={()=>{setAdviceSelected(true);onRemove();}}>{!selection&&adviceSelected?<CircleCheck size={20}/>:<Circle size={20}/>}<MessageCircle size={24}/><span className="ww-enquiry-plan-copy"><strong>ขอคำแนะนำ</strong><small>ยังไม่แน่ใจ ให้เราช่วยเลือก</small></span><b>ปรึกษาฟรี</b></button>
+          <button type="button" className="ww-enquiry-advice-help" aria-expanded={adviceHelpOpen} aria-controls="enquiry-advice-help" onClick={()=>setAdviceHelpOpen(true)} onFocus={event=>{if(event.currentTarget.matches(':focus-visible'))setAdviceHelpOpen(true);}} onBlur={event=>{if(!event.currentTarget.parentElement?.contains(event.relatedTarget))setAdviceHelpOpen(false);}}><Info size={16} aria-hidden="true"/>ขอคำแนะนำแล้วต้องทำอย่างไร?</button>
+          {adviceHelpOpen&&<div id="enquiry-advice-help" role="tooltip" className="ww-enquiry-advice-tooltip"><p>1. เลือก “ขอคำแนะนำ” แล้วกรอกข้อมูลและไอเดียเว็บไซต์</p><p>2. กด “ส่งข้อความ” เราจะติดต่อกลับเพื่อคุยความต้องการ</p><p>3. เราช่วยแนะนำแพ็กเกจและประเมินราคาให้ก่อนตัดสินใจ โดยไม่มีค่าใช้จ่ายในการปรึกษา</p></div>}
+        </div>
       </div>
       <div className="ww-enquiry-estimate" aria-live="polite"><span>{selection?`ประมาณราคา · ${title}`:'ยังไม่ต้องตัดสินใจตอนนี้'}</span><b>{selection?`฿${total?.toLocaleString('th-TH')}`:'คุยกันก่อนได้'}</b><small>{selection?'ราคาเบื้องต้น ไม่รวม Hosting และ Domain':'เราช่วยประเมินขอบเขตและแนะนำแพ็กเกจให้ได้'}</small>{selection&&<details><summary>รายละเอียดที่เลือก</summary><ul>{lines.map((line,index)=><li key={index}>{line}</li>)}</ul></details>}</div>
-      <button className="ww-enquiry-customize" type="button" disabled={pending} onClick={event=>selection?.kind==='custom'?onEdit():onCustomize(event.currentTarget)}><Settings2 size={20}/><span>{selection?.kind==='custom'?'แก้ไขแพ็กเกจ Custom':'ออกแบบแพ็กเกจเอง'}</span><ArrowRight size={18}/></button>
+
     </aside>
     <div className="ww-enquiry-main">
       <span className="ww-enquiry-step">02 / เล่ารายละเอียด</span><h2 id="enquiry-heading" tabIndex={-1}>ส่งรายละเอียดโปรเจกต์</h2><p>บอกเราเกี่ยวกับเว็บไซต์ที่อยากทำ แล้วเราจะติดต่อกลับเพื่อคุยรายละเอียด</p>
-      {feedback?.ok?<div ref={successRef} className="ww-enquiry-success" role="status" tabIndex={-1}><CircleCheck size={32}/><h3>ส่งข้อมูลเรียบร้อยแล้ว</h3><p>{feedback.text}</p><button type="button" onClick={()=>{setFeedback(null);requestAnimationFrame(()=>nameRef.current?.focus());}}>เขียนข้อความใหม่</button></div>:<form className="ww-enquiry-form" aria-busy={pending} noValidate onSubmit={prepare} onChange={event=>{const target=event.target;if(target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement){const name=target.name;setErrors(previous=>{if(!previous[name])return previous;const next={...previous};delete next[name];return next;});}}}>
+      {feedback?.ok?<div ref={successRef} className="ww-enquiry-success" role="status" tabIndex={-1}><CircleCheck size={32}/><h3>ส่งข้อมูลเรียบร้อยแล้ว</h3><p>{feedback.text}</p><button type="button" onClick={()=>{setFeedback(null);requestAnimationFrame(()=>nameRef.current?.focus());}}>เขียนข้อความใหม่</button></div>:<form className="ww-enquiry-form" aria-busy={pending} noValidate onSubmit={prepare} onChange={event=>{const target=event.target;if(target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||target instanceof HTMLSelectElement){const name=target.name;setErrors(previous=>{if(!previous[name])return previous;const next={...previous};delete next[name];return next;});}}}>
         <fieldset disabled={pending}><legend className="ww-enquiry-group-title">ข้อมูลติดต่อ</legend><div className="ww-enquiry-fields">
           {field('name','ชื่อผู้ติดต่อ','ชื่อของคุณ',100,'name')}{field('email','อีเมลติดต่อกลับ','you@company.com',180,'email','email')}
           {field('contact','โทรศัพท์ / LINE','เบอร์โทรหรือ LINE ID',100)}{field('business','ธุรกิจ / แบรนด์','ชื่อธุรกิจของคุณ',120,'organization')}
         </div></fieldset>
         <fieldset disabled={pending}><legend className="ww-enquiry-group-title">เว็บไซต์ที่ต้องการ</legend><div className="ww-enquiry-fields">
-          {field('budget','งบประมาณของคุณ','เช่น 25,000 บาท หรือขอคำแนะนำ',100)}{field('timeline','อยากเริ่มเมื่อไร','เช่น ภายใน 2 เดือน หรือยังไม่แน่ใจ',100)}
+          {dropdown('budget','งบประมาณของคุณ','เลือกช่วงงบประมาณ',['ต่ำกว่า 15,000 บาท','15,000–25,000 บาท','25,001–40,000 บาท','40,001–60,000 บาท','มากกว่า 60,000 บาท','ยังไม่แน่ใจ / ขอคำแนะนำ'])}{dropdown('timeline','อยากเริ่มเมื่อไร','เลือกช่วงเวลา',['เร็วที่สุด','ภายใน 1 เดือน','ภายใน 2–3 เดือน','ภายใน 4–6 เดือน','มากกว่า 6 เดือน','ยังไม่แน่ใจ / ขอคำแนะนำ'])}
           <label className="ww-enquiry-required-details" htmlFor="enquiry-details">รายละเอียดเว็บไซต์ <span>*</span><Textarea id="enquiry-details" name="details" required minLength={10} maxLength={2000} rows={4} placeholder="ประเภทเว็บไซต์ ฟีเจอร์ที่ต้องการ หรือเว็บตัวอย่างที่ชอบ" aria-invalid={!!errors.details} aria-describedby={errors.details?'enquiry-details-error':'enquiry-details-hint'}/>{errors.details&&<small id="enquiry-details-error" className="ww-enquiry-error">{errors.details}</small>}<small id="enquiry-details-hint" className="ww-enquiry-hint">เล่าสั้น ๆ ได้ เราช่วยถามรายละเอียดต่อ</small></label>
         </div></fieldset>
         <button className="ww-enquiry-submit" type="submit" disabled={pending}>{pending?'กำลังส่งข้อมูล…':'ส่งข้อความ'}<ArrowRight size={20}/></button>

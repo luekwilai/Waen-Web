@@ -95,8 +95,7 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
         const count=Math.round(lerp('count')),speed=lerp('speed'),motion=lerp('motion'),smooth=lerp('smoothness');
         const targetA=shape(a.shape),targetB=shape(b.shape);
         phase+=dt*speed;
-        const snap=(mix===0&&a.transition!=='blend')||(mix===1&&b.transition!=='blend');
-        const alpha=first||reduced.matches||snap||smooth===0?1:1-Math.exp(-dt/Math.max(.016,smooth*.65));
+        const alpha=first||reduced.matches||smooth===0?1:1-Math.exp(-dt/Math.max(.016,smooth*.65));
         let error=0;
         for(let j=0;j<count;j++){
           // Sample across the entire target at every density, preserving the complete glyph.
@@ -178,7 +177,7 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
         <label htmlFor="particle-color-mode">สีของจุดแสง</label><select id="particle-color-mode" value={settings.colorMode} disabled={!selected} onChange={e=>update({colorMode:e.target.value as 'palette'|'single'})}><option value="palette">ชุดสีเดิมของเว็บ</option><option value="single">กำหนดสีเอง</option></select>
         {settings.colorMode==='single'&&<div className="particle-color-row"><label htmlFor="particle-color">เลือกสี</label><input id="particle-color" type="color" value={settings.color} disabled={!selected} onChange={e=>update({color:e.target.value})}/><output>{settings.color.toUpperCase()}</output></div>}
         <label htmlFor="particle-transition">จังหวะเปลี่ยนเข้าสู่ส่วนนี้</label><select id="particle-transition" disabled={!selected} value={settings.transition} onChange={e=>update({transition:e.target.value as ParticleSettings['transition']})}><option value="blend">ค่อย ๆ แปลงตามการเลื่อน</option><option value="entry">ทันทีที่ส่วนนี้เริ่มเข้าจอ</option><option value="center">เมื่อกลางส่วนนี้ถึงกลางจอ</option></select>
-        <p className="particle-editor-note">แบบทันทีจะเปลี่ยนรูปที่จุดกำหนดโดยไม่รอความนุ่มนวล ใช้ได้ทั้งเลื่อนลงและย้อนขึ้น</p>
+        <p className="particle-editor-note">เลือกให้เริ่มเปลี่ยนรูปเมื่อส่วนนี้เข้าจอหรือถึงกลางจอ จุดแสงจะเคลื่อนตัวตามค่าความนุ่มนวล ใช้ได้ทั้งเลื่อนลงและย้อนขึ้น</p>
       </div>
       <fieldset disabled={!selected}><legend>เลือกรูปทรง · None คือจุดกระจายทั่วหน้า</legend><div className="particle-shape-grid">{SHAPES.map(name=>{const Icon=ICONS[name];return <button type="button" key={name} aria-pressed={settings.shape===name} onClick={()=>update({shape:name})}>{Icon?<Icon size={23}/>:<b aria-hidden="true">W</b>}<span>{NAMES[name]}</span></button>;})}</div></fieldset>
       <div className="particle-ranges">{CONTROLS.map(c=><div className="particle-control" key={c.key}><div><label id={'particle-label-'+c.key}>{c.label}</label><output>{c.key==='count'?settings[c.key].toLocaleString('th-TH'):settings[c.key].toFixed(2)}</output></div><Slider disabled={!selected} aria-labelledby={'particle-label-'+c.key} value={[settings[c.key]]} min={c.min} max={c.max} step={c.step} onValueChange={value=>update({[c.key]:Array.isArray(value)?value[0]:value})}/></div>)}</div>

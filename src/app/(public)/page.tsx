@@ -1,5 +1,6 @@
 import CreativeHome from "@/components/creative-home/page"
 import type { Metadata } from "next"
+import { auth } from "@/lib/auth"
 
 export const metadata: Metadata = {
   title: { absolute: "WAENWEB — ออกแบบเว็บไซต์ให้ธุรกิจเติบโต" },
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "WAENWEB — ออกแบบเว็บไซต์ให้ธุรกิจเติบโต", images: ["https://waenweb.com/creative-home/images/pricing/custom-package.webp"] },
 }
 
-export default function HomePage() {
-  return <CreativeHome />
+export default async function HomePage() {
+  const session = await auth()
+  const canCustomizeBackground = (session?.user as { role?: string } | undefined)?.role === "ADMIN"
+
+  return <CreativeHome canCustomizeBackground={canCustomizeBackground} />
 }

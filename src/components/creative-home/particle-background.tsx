@@ -17,7 +17,7 @@ const CONTROLS = [
 ] as const;
 function browserStorage():Storage|null {try{return window.localStorage;}catch{return null;}}
 
-export default function ParticleBackground() {
+export default function ParticleBackground({ canCustomizeBackground = false }: { canCustomizeBackground?: boolean }) {
   const host=useRef<HTMLDivElement>(null);
   const toggle=useRef<HTMLButtonElement>(null);
   const closeButton=useRef<HTMLButtonElement>(null);
@@ -36,7 +36,7 @@ export default function ParticleBackground() {
   useEffect(()=>{
     const media=window.matchMedia('(max-width:700px)');
     mobileRef.current=media.matches;setMobile(media.matches);
-    configRef.current=loadParticleConfig(browserStorage(),media.matches);
+    configRef.current=canCustomizeBackground ? loadParticleConfig(browserStorage(),media.matches) : {};
     const discover=()=>{
       const next=discoverParticleSections();
       if(next.length===sectionsRef.current.length&&next.every((s,i)=>s.id===sectionsRef.current[i].id&&s.label===sectionsRef.current[i].label&&s.element===sectionsRef.current[i].element))return;
@@ -51,7 +51,7 @@ export default function ParticleBackground() {
     const resize=()=>{mobileRef.current=media.matches;setMobile(media.matches);requestDraw.current();};
     media.addEventListener('change',resize);
     return()=>{observer.disconnect();media.removeEventListener('change',resize);};
-  },[]);
+  },[canCustomizeBackground]);
 
   useEffect(()=>{
     let disposed=false;
@@ -142,14 +142,23 @@ export default function ParticleBackground() {
     const key=(event:KeyboardEvent)=>{if(event.key==='Escape'){setOpen(false);focusEditorEntry();}};
     window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
   },[open]);
-  useEffect(()=>{ const openFromMenu=()=>setOpen(true); window.addEventListener('waenweb:open-particle-editor',openFromMenu); return()=>window.removeEventListener('waenweb:open-particle-editor',openFromMenu); },[]);
+  useEffect(()=>{ if(!canCustomizeBackground)return; const openFromMenu=()=>setOpen(true); window.addEventListener('waenweb:open-particle-editor',openFromMenu); return()=>window.removeEventListener('waenweb:open-particle-editor',openFromMenu); },[canCustomizeBackground]);
   const settings=sectionSettings(configRef.current,selected,mobile);
   const update=(patch:Partial<ParticleSettings>)=>{
-    if(!selected)return;
+    if(!canCustomizeBackground||!selected)return;
     configRef.current={...configRef.current,[selected]:normalizeSettings({...settings,...patch},mobile)};
     setRevision(v=>v+1);setStatus('ปรับแล้ว • กดบันทึกเพื่อเก็บไว้');
   };
+  const save=()=>{
+    if(!canCustomizeBackground)return;
+    setStatus(saveParticleConfig(browserStorage(),configRef.current)?'บันทึกแล้วในเบราว์เซอร์นี้':'บันทึกไม่ได้ เบราว์เซอร์ไม่อนุญาตให้เก็บข้อมูล');
+  };
+  const reset=()=>{
+    if(!canCustomizeBackground)return;
+    const cleared=clearParticleConfig(browserStorage());configRef.current={};setRevision(v=>v+1);setStatus(cleared?'คืนค่าเริ่มต้นทุกส่วนแล้ว':'คืนค่าบนหน้านี้แล้ว แต่ล้างค่าที่บันทึกไว้ไม่ได้');
+  };
   const close=()=>{setOpen(false);const entry=document.querySelector<HTMLButtonElement>('.wh-site-header__menu-trigger');if(entry)entry.focus();else toggle.current?.focus();};
+  if(!canCustomizeBackground)return <div ref={host} className="particle-background" aria-hidden="true"/>;
   return <>
     <div ref={host} className="particle-background" aria-hidden="true"/>
     <button ref={toggle} type="button" className="particle-editor-toggle" aria-expanded={open} aria-controls="particle-editor" onClick={()=>setOpen(v=>!v)}><Settings2 size={18}/> ปรับพื้นหลัง</button>
@@ -170,7 +179,7 @@ export default function ParticleBackground() {
       <div className="particle-ranges">{CONTROLS.map(c=><div className="particle-control" key={c.key}><div><label id={'particle-label-'+c.key}>{c.label}</label><output>{c.key==='count'?settings[c.key].toLocaleString('th-TH'):settings[c.key].toFixed(2)}</output></div><Slider disabled={!selected} aria-labelledby={'particle-label-'+c.key} value={[settings[c.key]]} min={c.min} max={c.max} step={c.step} onValueChange={value=>update({[c.key]:Array.isArray(value)?value[0]:value})}/></div>)}</div>
       <p className="particle-editor-note">เลือกค่า 0 เพื่อหยุดการเคลื่อนไหวหรือตอบสนองต่อการเลื่อนทันที ระบบจะลดการเคลื่อนไหวตามการตั้งค่าอุปกรณ์</p>
       <p className="particle-editor-status" role="status">{status}</p>
-      <div className="particle-editor-actions"><button type="button" onClick={()=>setStatus(saveParticleConfig(browserStorage(),configRef.current)?'บันทึกแล้วในเบราว์เซอร์นี้':'บันทึกไม่ได้ เบราว์เซอร์ไม่อนุญาตให้เก็บข้อมูล')}><Save size={16}/> บันทึกทั้งหมด</button><button type="button" onClick={()=>{const cleared=clearParticleConfig(browserStorage());configRef.current={};setRevision(v=>v+1);setStatus(cleared?'คืนค่าเริ่มต้นทุกส่วนแล้ว':'คืนค่าบนหน้านี้แล้ว แต่ล้างค่าที่บันทึกไว้ไม่ได้');}}><RotateCcw size={16}/> คืนค่าเริ่มต้น</button></div>
+      <div className="particle-editor-actions"><button type="button" onClick={save}><Save size={16}/> บันทึกทั้งหมด</button><button type="button" onClick={reset}><RotateCcw size={16}/> คืนค่าเริ่มต้น</button></div>
       <p className="particle-editor-note">ส่วนใหม่ของเว็บจะปรากฏในรายการโดยอัตโนมัติ</p>
     </aside>}
   </>;

@@ -31,7 +31,7 @@ const blogNavigation = [
   ['คำถามที่พบบ่อย', '/#faq'],
 ] as const;
 
-export default function SiteHeader({ blogMode = false }: { blogMode?: boolean }) {
+export default function SiteHeader({ blogMode = false, canCustomizeBackground = false }: { blogMode?: boolean; canCustomizeBackground?: boolean }) {
   const navigation = blogMode ? blogNavigation : whNavigation;
   const [whMenuOpen, setWhMenuOpen] = useState(false);
   const [active, setActive] = useState('');
@@ -116,7 +116,7 @@ export default function SiteHeader({ blogMode = false }: { blogMode?: boolean })
           <ArrowUpRight size={16} aria-hidden="true" />
         </a>
 
-        <Sheet open={whMenuOpen} onOpenChange={setWhMenuOpen} onOpenChangeComplete={(isOpen) => { if (!isOpen && openEditorAfterMenuClose.current) { openEditorAfterMenuClose.current = false; window.dispatchEvent(new Event('waenweb:open-particle-editor')); } }}>
+        <Sheet open={whMenuOpen} onOpenChange={setWhMenuOpen} onOpenChangeComplete={(isOpen) => { if (!isOpen && canCustomizeBackground && openEditorAfterMenuClose.current) { openEditorAfterMenuClose.current = false; window.dispatchEvent(new Event('waenweb:open-particle-editor')); } }}>
           <SheetTrigger
             render={
               <button
@@ -132,7 +132,7 @@ export default function SiteHeader({ blogMode = false }: { blogMode?: boolean })
           <SheetContent
             side="right"
             className="wh-site-header__sheet"
-            finalFocus={() => openEditorAfterMenuClose.current ? false : undefined}
+            finalFocus={() => canCustomizeBackground && openEditorAfterMenuClose.current ? false : undefined}
             aria-describedby="wh-site-header-sheet-description"
           >
             <SheetHeader className="wh-site-header__sheet-header">
@@ -150,7 +150,7 @@ export default function SiteHeader({ blogMode = false }: { blogMode?: boolean })
                   <ArrowUpRight size={17} aria-hidden="true" />
                 </SheetClose>
               ))}
-              {!blogMode && <SheetClose render={<button type="button" className="wh-site-header__mobile-editor" onClick={() => { openEditorAfterMenuClose.current = true; closeWhMenu(); }} />}>ปรับพื้นหลัง</SheetClose>}
+              {!blogMode && canCustomizeBackground && <SheetClose render={<button type="button" className="wh-site-header__mobile-editor" onClick={() => { openEditorAfterMenuClose.current = true; closeWhMenu(); }} />}>ปรับพื้นหลัง</SheetClose>}
               <SheetClose nativeButton={false}
                 render={
                   <a className="wh-site-header__mobile-cta" href={blogMode ? '/#contact' : '#contact'} onClick={closeWhMenu} />

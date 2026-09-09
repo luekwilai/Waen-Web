@@ -12,16 +12,29 @@ export default function ContactForm({selection,onRemove,onChangePackage,onEdit,o
   const title=selection?.kind==='package'?selection.name:'Custom';
   const total=selection?.kind==='package'?selection.total:quote?.total;
   const lines=selection?.kind==='package'?selection.features:quote?[`${quote.pageCount} หน้า`,...quote.items.map(item=>`${item.label}: ฿${item.amount.toLocaleString('th-TH')}`)]:[];
-  const [previewed, setPreviewed] = useState(false);
-  useEffect(()=>setPreviewed(false),[selection]);
-  function prepare(event: FormEvent<HTMLFormElement>) {
+  const [pending, setPending] = useState(false);
+  const [feedback, setFeedback] = useState<{ ok: boolean; emailSent?: boolean; text: string } | null>(null);
+  useEffect(()=>setFeedback(null),[selection]);
+  async function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setPreviewed(true);
+    if (pending) return;
+    setPending(true); setFeedback(null);
+    const form = event.currentTarget;
+    const payload: Record<string, unknown> = Object.fromEntries(new FormData(form).entries());
+    payload.message = payload.details;
+    if (selection) payload.selection = selection;
+    try {
+      const response = await fetch('/api/inquiries', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : 'ส่งข้อมูลไม่สำเร็จ');
+      form.reset();
+      setFeedback({ ok: true, emailSent: result.emailSent === true, text: result.emailSent === true ? 'ได้รับข้อมูลแล้ว เราจะติดต่อกลับทางอีเมล' : 'ได้รับข้อมูลแล้ว แต่การแจ้งเตือนทางอีเมลยังไม่สำเร็จ เราจะตรวจสอบให้เร็วที่สุด' });
+    } catch (error) { setFeedback({ ok: false, text: error instanceof Error ? error.message : 'ส่งข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง' }); }
+    finally { setPending(false); }
   }
 return <div className="ww-enquiry">
     <div className="ww-enquiry-intro"><span className="eyebrow">START A CONVERSATION</span><h2 id="enquiry-heading" tabIndex={-1}>เล่าโปรเจกต์<br /><span>ที่คุณอยากทำ.</span></h2><p>บอกเราเกี่ยวกับธุรกิจและเว็บไซต์ที่ต้องการ เพื่อช่วยวางขอบเขตงานและประเมินราคาเบื้องต้น</p><div className="ww-enquiry-contact-links"><a href="mailto:thawatsak28@gmail.com"><Mail size={18} /> thawatsak28@gmail.com</a><a href="https://line.me/ti/p/~thawatsak" target="_blank" rel="noreferrer"><span className="ww-enquiry-line-mark" aria-hidden="true">LINE</span> thawatsak <ArrowUpRight size={16} /></a></div></div>
-    <form className="ww-enquiry-form" onSubmit={prepare} onChange={() => setPreviewed(false)}>
-      <p className="ww-enquiry-demo"><span>MOCKUP</span> แบบฟอร์มตัวอย่าง · ยังไม่ส่งอีเมลจริง</p>{selection && <aside className="ww-enquiry-selection" aria-label="แพ็กเกจที่เลือก"><div><strong>{title}</strong><b>฿{total?.toLocaleString('th-TH')}</b></div><ul>{lines.map((line,index)=><li key={index}>{line}</li>)}</ul><p>ราคาเบื้องต้น ไม่รวม Hosting และ Domain</p><div className="ww-enquiry-selection-actions"><button type="button" onClick={onChangePackage}>เปลี่ยนแพ็กเกจ</button>{selection.kind==='custom'&&<button type="button" onClick={onEdit}>แก้ไขรายละเอียด</button>}<button type="button" onClick={onRemove}>นำออก</button></div></aside>}
+    <form className="ww-enquiry-form" onSubmit={prepare}><fieldset disabled={pending} style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>{selection && <aside className="ww-enquiry-selection" aria-label="แพ็กเกจที่เลือก"><div><strong>{title}</strong><b>฿{total?.toLocaleString('th-TH')}</b></div><ul>{lines.map((line,index)=><li key={index}>{line}</li>)}</ul><p>ราคาเบื้องต้น ไม่รวม Hosting และ Domain</p><div className="ww-enquiry-selection-actions"><button type="button" onClick={onChangePackage}>เปลี่ยนแพ็กเกจ</button>{selection.kind==='custom'&&<button type="button" onClick={onEdit}>แก้ไขรายละเอียด</button>}<button type="button" onClick={onRemove}>นำออก</button></div></aside>}
 <div className="ww-enquiry-fields">
         <label htmlFor="enquiry-name">ชื่อผู้ติดต่อ <span>*</span><Input id="enquiry-name" name="name" autoComplete="name" required maxLength={100} placeholder="ชื่อของคุณ" /></label>
         <label htmlFor="enquiry-email">อีเมลติดต่อกลับ <span>*</span><Input id="enquiry-email" name="email" type="email" autoComplete="email" required maxLength={180} placeholder="you@company.com" /></label>
@@ -32,9 +45,9 @@ return <div className="ww-enquiry">
       </div>
       <label htmlFor="enquiry-details">เล่าเว็บไซต์ที่คุณต้องการ <span>*</span><Textarea id="enquiry-details" name="details" required minLength={10} maxLength={2000} rows={4} placeholder="อยากทำเว็บไซต์ประเภทไหน มีฟีเจอร์อะไรบ้าง หรือมีเว็บตัวอย่างที่ชอบไหม" /></label>
       <button className="ww-enquiry-customize" type="button" onClick={(event) => onCustomize(event.currentTarget)}>ออกแบบแพ็กเกจด้วยตัวเอง <ArrowUpRight size={19} aria-hidden="true" /></button>
-      <p className="ww-enquiry-note">ลองกรอกเพื่อดูตัวอย่างการใช้งาน ข้อมูลจะไม่ถูกส่งหรือบันทึก หากต้องการติดต่อจริง ใช้อีเมลหรือ LINE ด้านล่าง</p>
-            <button className="ww-enquiry-submit" type="submit">ทดลองส่งแบบฟอร์ม <ArrowUpRight size={20} /></button>
-      {previewed && <p className="ww-enquiry-feedback" role="status">ตัวอย่าง: กรอกข้อมูลครบแล้ว {selection ? `${title} · ฿${total?.toLocaleString('th-TH')} — ${lines.join(' / ')}` : 'ยังไม่เลือกแพ็กเกจ'} · ยังไม่มีการส่งอีเมลหรือบันทึกข้อมูล</p>}
-</form>
+      <p className="ww-enquiry-note">ข้อมูลของคุณจะถูกใช้เพื่อประเมินขอบเขตงานและติดต่อกลับเท่านั้น อ่านเพิ่มเติมได้ที่ <a href="/privacy-policy">นโยบายความเป็นส่วนตัว</a></p>
+            <button className="ww-enquiry-submit" type="submit" disabled={pending}>{pending ? 'กำลังส่งข้อมูล…' : 'ส่งข้อมูลให้เรา'} <ArrowUpRight size={20} /></button>
+      {feedback && <p className="ww-enquiry-feedback" role="status">{feedback.text}</p>}
+</fieldset></form>
   </div>;
 }

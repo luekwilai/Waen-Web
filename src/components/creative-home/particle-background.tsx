@@ -63,16 +63,16 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
       try{renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});}catch{setUnavailable(true);return;}
       renderer.setClearColor(0,0);el.appendChild(renderer.domElement);
       renderer.domElement.setAttribute('aria-hidden','true');
-      const max=4000,positions=new Float32Array(max*3),current=new Float32Array(max*3),sizes=new Float32Array(max),colors=new Float32Array(max*3);
+      const max=4000,positions=new Float32Array(max*3),current=new Float32Array(max*3),sizes=new Float32Array(max),colors=new Float32Array(max*3),formed=new Float32Array(max);
       const palette=[[.74,1,.54],[.34,1,.86],[.27,.72,1],[1,.69,.4]];
-      for(let i=0;i<max;i++){sizes[i]=1.2+(i*0.61803398875%1)*3.5;colors.set(palette[i%4],i*3);}
+      for(let i=0;i<max;i++){sizes[i]=1.2+(i*0.61803398875%1)*3.5;formed[i]=i>=max*.18?1:0;colors.set(palette[i%4],i*3);}
       const geometry=new THREE.BufferGeometry();
       const attribute=new THREE.BufferAttribute(positions,3);attribute.setUsage(THREE.DynamicDrawUsage);
-      geometry.setAttribute('position',attribute);geometry.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));geometry.setAttribute('aColor',new THREE.BufferAttribute(colors,3));
+      geometry.setAttribute('position',attribute);geometry.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));geometry.setAttribute('aColor',new THREE.BufferAttribute(colors,3));geometry.setAttribute('aFormed',new THREE.BufferAttribute(formed,1));
       const material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
         uniforms:{uSize:{value:1},uPixelRatio:{value:1},uTintA:{value:new THREE.Vector3(1,1,1)},uTintB:{value:new THREE.Vector3(1,1,1)},uSingleA:{value:0},uSingleB:{value:0},uMix:{value:0}},
-        vertexShader:'attribute float aSize;attribute vec3 aColor;varying vec3 vColor;uniform float uSize;uniform float uPixelRatio;uniform vec3 uTintA;uniform vec3 uTintB;uniform float uSingleA;uniform float uSingleB;uniform float uMix;void main(){vColor=mix(mix(aColor,uTintA,uSingleA),mix(aColor,uTintB,uSingleB),uMix);gl_PointSize=aSize*uSize*uPixelRatio;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-        fragmentShader:'varying vec3 vColor;void main(){float d=length(gl_PointCoord-.5);float glow=1.-smoothstep(.08,.5,d);if(glow<=0.)discard;gl_FragColor=vec4(vColor,glow*glow*.72);}'
+        vertexShader:'attribute float aSize;attribute vec3 aColor;attribute float aFormed;varying vec3 vColor;varying float vDepth;uniform float uSize;uniform float uPixelRatio;uniform vec3 uTintA;uniform vec3 uTintB;uniform float uSingleA;uniform float uSingleB;uniform float uMix;void main(){vColor=mix(mix(aColor,uTintA,uSingleA),mix(aColor,uTintB,uSingleB),uMix);vDepth=clamp(position.z*.1,-.35,.35)*aFormed;vec3 projected=position;projected.xy*=1.0+aFormed*clamp(position.z*.035,-.1,.1);gl_PointSize=aSize*uSize*uPixelRatio*(1.0+aFormed*(.35+vDepth*.12));gl_Position=projectionMatrix*modelViewMatrix*vec4(projected,1.0);}',
+        fragmentShader:'varying vec3 vColor;varying float vDepth;void main(){float d=length(gl_PointCoord-.5);float glow=1.-smoothstep(.08,.5,d);if(glow<=0.)discard;gl_FragColor=vec4(vColor,glow*glow*(.72+vDepth*.2));}'
       });
       const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-7,7,4.5,-4.5,.1,100);
       camera.position.z=20;
@@ -98,6 +98,7 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
         const lerp=(key:'count'|'size'|'speed'|'motion'|'smoothness')=>a[key]+(b[key]-a[key])*mix;
         const count=Math.round(lerp('count')),speed=lerp('speed'),motion=lerp('motion'),smooth=lerp('smoothness');
         const targetA=shape(a.shape),targetB=shape(b.shape);
+        let formedChanged=false;
         phase+=dt*speed;
         const entryMorph=activeEntry||now<entryMorphUntil;
         const alpha=first||reduced.matches?1:entryMorph?1-Math.exp(-dt/.12):smooth===0?1:1-Math.exp(-dt/Math.max(.016,smooth*.65));
@@ -105,6 +106,8 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
         for(let j=0;j<count;j++){
           // Sample across the entire target at every density, preserving the complete glyph.
           const source=Math.round(j*(max-1)/Math.max(1,count-1));
+          const formedTarget=source>=max*.18?((a.shape==='none'?0:1)*(1-mix)+(b.shape==='none'?0:1)*mix):0;
+          if(formed[j]!==formedTarget){formed[j]=formedTarget;formedChanged=true;}
           for(let axis=0;axis<3;axis++){
             const i=j*3+axis,k=source*3+axis;
             const drift=reduced.matches||source<max*.18||speed===0?0:motion*.4*(axis===0?Math.sin(phase+source*.013):axis===1?Math.cos(phase+source*.011):0);
@@ -114,7 +117,7 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
             const delta=target-current[i];current[i]+=delta*alpha;positions[i]=current[i];error=Math.max(error,Math.abs(delta));
           }
         }
-        first=false;geometry.setDrawRange(0,count);attribute.needsUpdate=true;material.uniforms.uSize.value=lerp('size');
+        first=false;geometry.setDrawRange(0,count);attribute.needsUpdate=true;if(formedChanged)geometry.getAttribute('aFormed').needsUpdate=true;material.uniforms.uSize.value=lerp('size');
         const tint=(hex:string,target:import('three').Vector3)=>target.set(parseInt(hex.slice(1,3),16)/255,parseInt(hex.slice(3,5),16)/255,parseInt(hex.slice(5,7),16)/255);
         tint(a.color,material.uniforms.uTintA.value);tint(b.color,material.uniforms.uTintB.value);
         material.uniforms.uSingleA.value=a.colorMode==='single'?1:0;material.uniforms.uSingleB.value=b.colorMode==='single'?1:0;material.uniforms.uMix.value=mix;

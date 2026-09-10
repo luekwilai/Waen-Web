@@ -14,7 +14,7 @@ const put = (a: Shape, i: number, x: number, y: number, z: number) => {
 };
 
 export function makeShape(shape: ParticleShape, count: number): Shape {
-  const out = new Float32Array(count * 3); const random = seeded(0x7ae9e8); const activeStart = Math.floor(count * .18); const t = (i: number) => (i - activeStart) / Math.max(1, count - activeStart - 1);
+  const out = new Float32Array(count * 3); const random = seeded(0x7ae9e8); const offsetRandom = seeded(0x31c0ffee); const activeStart = Math.floor(count * .18); const t = (i: number) => (i - activeStart) / Math.max(1, count - activeStart - 1);
   for (let i = 0; i < count; i++) { const n = (random() - .5) * .35; let x = (random() - .5) * 14, y = (random() - .5) * 8, z = (random() - .5) * 2; if (i < activeStart) { put(out, i, x, y, z); continue; } const u = t(i);
     if (shape === 'galaxy') { const r = Math.pow(random(), .48), a = i % 3 * Math.PI * 2 / 3 + r * 8.5; x = Math.cos(a) * r * 5.5; y = Math.sin(a) * r * 3.15; z = (random() - .5) * (1 - r) * 2.4; }
     if (shape === 'code') { const q = i % 3, p = u * 2 - 1; x = q === 0 ? -3.6 + Math.abs(p) * 1.8 : q === 1 ? p * .25 : 3.6 - Math.abs(p) * 1.8; y = q === 1 ? p * 2.7 : p * 2.2; }
@@ -37,7 +37,17 @@ export function makeShape(shape: ParticleShape, count: number): Shape {
     if (shape === 'diamond') { const p = u * 4, s = Math.min(3, Math.floor(p)), m = p - s, v = [[0,3.6], [3.4,0], [0,-3.6], [-3.4,0], [0,3.6]], a = v[s], b = v[s+1]; x = a[0] + (b[0]-a[0]) * m; y = a[1] + (b[1]-a[1]) * m; z = (random() - .5) * .3; }
     if (shape === 'spiral') { const a = u * Math.PI * 6; const r = .25 + 4.65 * u; x = r * Math.cos(a); y = r * .62 * Math.sin(a); z = (u - .5) * 2.4; }
     if(shape==='cube'||shape==='pyramid'){const rx=x*.866+z*.5, rz=-x*.5+z*.866; x=rx; const ry=y*.94-rz*.342; z=y*.342+rz*.94; y=ry;}
-    put(out, i, x + (shape === 'galaxy' ? 0 : n), y + (shape === 'galaxy' ? 0 : n), z);
+    // Give formed glyphs a compact core with a thin outer tube. Keep this RNG
+    // separate so None and the shape construction retain their prior sampling.
+    if (shape !== 'none') {
+      const radius = offsetRandom() < .7 ? .16 : .28 + offsetRandom() * .08;
+      x = x * .92 + (offsetRandom() * 2 - 1) * radius;
+      y = y * .92 + (offsetRandom() * 2 - 1) * radius;
+      z = z * .92 + (offsetRandom() * 2 - 1) * radius * 1.8;
+      put(out, i, x, y, z);
+      continue;
+    }
+    put(out, i, x + n, y + n, z);
   }
   return out;
 }

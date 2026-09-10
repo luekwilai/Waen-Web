@@ -3,3 +3,5 @@
 @media(max-width:950px){.rest{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.rest{grid-template-columns:1fr}.lead{height:370px}.lead .copy{left:20px;right:20px;bottom:20px}.lead .overlay{background:linear-gradient(180deg,transparent,rgba(6,13,16,.96) 70%)}.empty{padding:35px 18px}.rest .card{min-height:330px}}
 @media(prefers-reduced-motion:reduce){.image{transition:none}.card:hover .image,.card:focus-visible .image{transform:none}}
+.card{border-radius:var(--ww-radius-card)}
+.filters button{border-radius:var(--ww-radius-pill)}

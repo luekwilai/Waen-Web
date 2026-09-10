@@ -1,0 +1,21 @@
+/* Public radius scale. Keep header capsules, circular icons, device frames and editorial rows bespoke. */
+:root{--ww-radius-card:16px;--ww-radius-control:12px;--ww-radius-pill:999px}
+body:has(.creative-home) .button,body:has(.creative-home) .nav-cta{border-radius:var(--ww-radius-control)}
+body:has(.creative-home) .service,body:has(.creative-home) .price-card{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .ww-process-card,body:has(.creative-home) .faq-list{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .popular{border-radius:var(--ww-radius-card) var(--ww-radius-card) 0 0}
+body:has(.creative-home) .price-card.featured{border-radius:0 0 var(--ww-radius-card) var(--ww-radius-card)}
+body:has(.creative-home) #contact .ww-enquiry-package-rail,body:has(.creative-home) #contact .ww-enquiry-success,body:has(.creative-home) #contact .ww-enquiry-line-cta{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) #contact .ww-enquiry-plan,body:has(.creative-home) #contact .ww-enquiry-estimate,body:has(.creative-home) #contact .ww-enquiry-customize,body:has(.creative-home) #contact .ww-enquiry-form input,body:has(.creative-home) #contact .ww-enquiry-form select,body:has(.creative-home) #contact .ww-enquiry-form textarea,body:has(.creative-home) #contact .ww-enquiry-submit,body:has(.creative-home) #contact .ww-enquiry-feedback,body:has(.creative-home) #contact .ww-enquiry-line-cta a,body:has(.creative-home) #contact .ww-enquiry-success button,body:has(.creative-home) #contact .ww-enquiry-advice-tooltip{border-radius:var(--ww-radius-control)}
+body:has(.creative-home) .quote-cta-panel,body:has(.creative-home) .quote-controls,body:has(.creative-home) .quote-summary{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .quote-customize-button,body:has(.creative-home) .quote-button,body:has(.creative-home) .quote-drawer-close,body:has(.creative-home) .quote-stepper button,body:has(.creative-home) .quote-stepper input,body:has(.creative-home) .quote-copy-fallback{border-radius:var(--ww-radius-control)}
+body:has(.creative-home) .quote-feature{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .quote-pill{border-radius:var(--ww-radius-pill)}
+body:has(.creative-home) .quote-drawer[data-slot='sheet-content']{border-radius:var(--ww-radius-card) 0 0 var(--ww-radius-card)}
+@media(max-width:560px){body:has(.creative-home) .quote-drawer[data-slot='sheet-content']{border-radius:0}}
+body:has(.creative-home) #services .service{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .editorial-image-link{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .editorial-heading-copy .articles-all-link{border-radius:var(--ww-radius-control)}
+body:has(.creative-home) .portfolio-v2-preview,body:has(.creative-home) .portfolio-v2-stage{border-radius:var(--ww-radius-card)}
+body:has(.creative-home) .portfolio-v2-mode,body:has(.creative-home) .portfolio-v2-carousel-button,body:has(.creative-home) .portfolio-v2-preview-toggle{border-radius:var(--ww-radius-control)}
+body:has(.creative-home) .pc-toggle,body:has(.creative-home) .pc-visit,body:has(.creative-home) .pc-carousel-button{border-radius:var(--ww-radius-control)}

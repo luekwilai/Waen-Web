@@ -6,3 +6,8 @@
 .main{max-width:1400px}
 .cover,.related a,.discuss,.cta{border-radius:var(--ww-radius-card)}
 .cta>a{border-radius:var(--ww-radius-control)}
+.page.page{color:var(--ww-text-primary)}
+.description,.prose,.prose p,.prose li{color:var(--ww-text-secondary)}
+.meta,.breadcrumb{color:var(--ww-text-detail)}
+.prose.prose{max-width:75ch;padding:32px;background:#0b1716;border:1px solid #263b30;border-radius:var(--ww-radius-card);line-height:1.85}
+@media(max-width:800px){.prose.prose{padding:22px 18px;font-size:16px;line-height:1.8}.description{font-size:16px;line-height:1.8}}

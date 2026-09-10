@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "@/components/creative-home/typography-tokens.css";
 import "@/components/creative-home/globals.css";
 import "@/components/creative-home/enhancements.css";
 import "@/components/creative-home/viewport.css";

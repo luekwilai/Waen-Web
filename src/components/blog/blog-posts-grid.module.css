@@ -5,3 +5,13 @@
 @media(prefers-reduced-motion:reduce){.image{transition:none}.card:hover .image,.card:focus-visible .image{transform:none}}
 .card{border-radius:var(--ww-radius-card)}
 .filters button{border-radius:var(--ww-radius-pill)}
+.copy.copy p{color:var(--ww-text-secondary);font-size:16px;line-height:1.75}
+.copy.copy span{color:var(--ww-text-detail)}
+@media(max-width:650px){.copy.copy p{font-size:14px;line-height:1.75}.copy.copy{inset:auto 20px 20px}}
+@media(max-width:650px){.result{font-size:14px}.filters button{font-size:14px}.empty{font-size:16px;line-height:1.75}}
+
+.search input::placeholder,.result,.filters button{color:var(--ww-text-detail)}
+.search input{font-size:16px}.result,.filters button,.copy b{font-size:14px}
+.lead .overlay{background:linear-gradient(90deg,rgba(6,13,16,.96),rgba(6,13,16,.92) 58%,rgba(6,13,16,.4) 85%)}
+.rest .overlay{background:linear-gradient(180deg,rgba(6,13,16,.1),rgba(6,13,16,.95) 32%)}
+@media(max-width:650px){.lead .overlay{background:linear-gradient(180deg,rgba(6,13,16,.1),rgba(6,13,16,.95) 32%)}}

@@ -20,4 +20,25 @@ body:has(.creative-home) .contact-circle{color:#d5ffa4;background:#c2ff8510;bord
 body:has(.creative-home) .contact-circle:hover{background:#c5fa8522}
 body:has(.creative-home) .hero h1{text-shadow:0 3px 30px #030a0c44}
 body:has(.creative-home) .floating-chip{background:rgba(12,30,27,.82)}
+/* Readability backing layers for the public marketing surface. */
+body:has(.creative-home) .section p,
+body:has(.creative-home) .hero-copy p { color: var(--ww-text-secondary); }
+body:has(.creative-home) .text-muted { color: var(--ww-text-detail); }
+body:has(.creative-home) .faq > div:not(.faq-list) {
+  align-self: start;
+  background: rgba(7, 17, 20, .9);
+  border: 1px solid #a9d6c433;
+  border-radius: var(--ww-radius-card);
+  padding: 28px;
+}
+body:has(.creative-home) .contact.section { background: rgba(7, 17, 20, .72); }
 @media(max-width:800px){body:has(.creative-home) .contact.section{padding-block:55px 35px}}
+
+body:has(.creative-home) .faq-list,body:has(.creative-home) .price-card{background:rgba(7,17,20,.92)}
+body:has(.creative-home) .pricing-note,body:has(.creative-home) .contact-bottom{font-size:14px;line-height:1.75;color:var(--ww-text-detail)}
+body:has(.creative-home) .contact-bottom p{font-size:14px;color:var(--ww-text-secondary)}
+body:has(.creative-home) .faq-answer{font-size:16px;line-height:1.8;color:var(--ww-text-secondary)}
+
+body:has(.creative-home) :is(.section-heading,.portfolio-v2-heading,.editorial-heading){background:rgba(7,17,20,.94);border-radius:var(--ww-radius-card);padding:24px}
+body:has(.creative-home) .hero-copy{background:linear-gradient(90deg,rgba(7,17,20,.94),rgba(7,17,20,.9) 75%,rgba(7,17,20,.7));border-radius:var(--ww-radius-card)}
+@media(max-width:600px){body:has(.creative-home) :is(.section-heading,.portfolio-v2-heading,.editorial-heading){padding:18px}}

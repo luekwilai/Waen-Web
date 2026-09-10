@@ -4,3 +4,6 @@ body:has(.creative-home) .site-footer{display:block;width:100%;max-width:none;ma
 @media(prefers-reduced-motion:reduce){body:has(.creative-home) .site-footer-nav a,body:has(.creative-home) .site-footer-bottom a{transition:none}}
 
 body:has(.creative-home) .site-footer{position:relative;isolation:isolate;overflow:hidden;border-top:0;background:#081314}body:has(.creative-home) .site-footer::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(105deg,#061113b3 8%,#06111366 48%,#06111380 100%),url("/creative-home/images/footer/jade-ribbon.webp") center/cover no-repeat}body:has(.creative-home) .site-footer-label{color:#a4b69a}body:has(.creative-home) .site-footer-brand-block p,body:has(.creative-home) .site-footer-bottom{color:#a2b19a}body:has(.creative-home) .site-footer-bottom a{color:#b9c8b2}
+body:has(.creative-home) .site-footer::before{background:linear-gradient(105deg,#061113e0 8%,#061113b8 48%,#061113c9 100%),url("/creative-home/images/footer/jade-ribbon.webp") center/cover no-repeat}
+
+body:has(.creative-home) .site-footer .site-footer-brand-block p,body:has(.creative-home) .site-footer-nav a,body:has(.creative-home) .site-footer-bottom{font-size:14px;line-height:1.75;color:var(--ww-text-secondary)}

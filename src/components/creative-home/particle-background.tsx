@@ -1,13 +1,13 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Waves, Dna, Infinity as InfinityIcon, Box, Pyramid, Donut, Flower2, Bug, Diamond, Shell, ScatterChart, Orbit, Code2, CircleHelp, Circle, ChartNoAxesColumnIncreasing, Globe2, Heart, RotateCcw, Save, Settings2, Star, Workflow, X, ArrowDown } from 'lucide-react';
+import { Terminal, Database, Server, GitBranch, Braces, Cpu, Cloud, Monitor, Brackets, Network, Folder, FileCode2, Layers3, ShieldCheck, ScatterChart, Orbit, Code2, CircleHelp, ChartNoAxesColumnIncreasing, RotateCcw, Save, Settings2, Workflow, X, ArrowDown } from 'lucide-react';
 import { Slider } from '@/components/creative-home/ui/slider';
 import { SHAPES, normalizeSettings, type ParticleShape, type ParticleSettings, type SectionParticleConfig } from './particle-config';
 import { makeShape, type Shape } from './particle-shapes';
 import { discoverParticleSections, transitionAt, sectionSettings, type ParticleSection } from './particle-sections';
 
-const ICONS = {none:ScatterChart,wave:Waves,helix:Dna,infinity:InfinityIcon,cube:Box,pyramid:Pyramid,torus:Donut,flower:Flower2,butterfly:Bug,diamond:Diamond,spiral:Shell,galaxy:Orbit,code:Code2,process:Workflow,bars:ChartNoAxesColumnIncreasing,question:CircleHelp,w:null,heart:Heart,star:Star,globe:Globe2,ring:Circle};
-const NAMES:Record<ParticleShape,string>={none:'None',wave:'คลื่น',helix:'เกลียวคู่',infinity:'อินฟินิตี้',cube:'ลูกบาศก์',pyramid:'พีระมิด',torus:'โดนัท',flower:'ดอกไม้',butterfly:'ผีเสื้อ',diamond:'เพชร',spiral:'เกลียว',galaxy:'กาแล็กซี',code:'โค้ด',process:'ขั้นตอน',bars:'แท่งระดับ',question:'คำถาม',w:'ตัว W',heart:'หัวใจ',star:'ดาว',globe:'ลูกโลก',ring:'วงแหวน'};
+const ICONS = {none:ScatterChart, galaxy:Orbit, code:Code2, process:Workflow, bars:ChartNoAxesColumnIncreasing, question:CircleHelp, w:null, terminal:Terminal, database:Database, server:Server, gitBranch:GitBranch, braces:Braces, chip:Cpu, cloud:Cloud, browser:Monitor, api:Brackets, network:Network, folder:Folder, fileCode:FileCode2, layers:Layers3, shieldCheck:ShieldCheck};
+const NAMES:Record<ParticleShape,string>={none:'None',galaxy:'กาแล็กซี',code:'โค้ด',process:'ขั้นตอน',bars:'แท่งระดับ',question:'คำถาม',w:'ตัว W',terminal:'เทอร์มินัล',database:'ฐานข้อมูล',server:'เซิร์ฟเวอร์',gitBranch:'Git branch',braces:'วงเล็บโค้ด',chip:'ชิป',cloud:'คลาวด์',browser:'เบราว์เซอร์',api:'API',network:'เครือข่าย',folder:'โฟลเดอร์',fileCode:'ไฟล์โค้ด',layers:'เลเยอร์',shieldCheck:'ความปลอดภัย'};
 const CONTROLS = [
   {key:'count',label:'จำนวนจุดแสง',min:300,max:4000,step:50},
   {key:'size',label:'ขนาด / ความหนาของจุด',min:.5,max:3,step:.1},

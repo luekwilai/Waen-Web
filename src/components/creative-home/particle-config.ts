@@ -1,6 +1,6 @@
 export const PARTICLE_STORAGE_KEY = 'waenweb-particle-background-v1';
 export const PARTICLE_SETTING_KEY = 'creative.particleBackground';
-export const SHAPES = ['none', 'galaxy', 'code', 'process', 'bars', 'question', 'w', 'heart', 'star', 'globe', 'ring', 'wave', 'helix', 'infinity', 'cube', 'pyramid', 'torus', 'flower', 'butterfly', 'diamond', 'spiral'] as const;
+export const SHAPES = ['none', 'galaxy', 'code', 'process', 'bars', 'question', 'w', 'terminal', 'database', 'server', 'gitBranch', 'braces', 'chip', 'cloud', 'browser', 'api', 'network', 'folder', 'fileCode', 'layers', 'shieldCheck'] as const;
 export type ParticleShape = (typeof SHAPES)[number];
 export type ParticleTransition = 'blend' | 'entry' | 'center';
 export type ParticleSettings = { count: number; size: number; speed: number; motion: number; smoothness: number; shape: ParticleShape; color: string; colorMode: 'palette' | 'single'; transition: ParticleTransition };
@@ -11,9 +11,13 @@ const RESERVED_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const MAX_SECTIONS = 40;
 const MAX_SECTION_KEY_LENGTH = 80;
 const finite = (value: unknown, fallback: number, min: number, max: number) => typeof value === 'number' && Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const LEGACY_SHAPE_MAP: Record<string, ParticleShape> = { heart: 'terminal', star: 'database', globe: 'server', ring: 'gitBranch', wave: 'braces', helix: 'chip', infinity: 'cloud', cube: 'browser', pyramid: 'api', torus: 'network', flower: 'folder', butterfly: 'fileCode', diamond: 'layers', spiral: 'shieldCheck' };
+export function normalizeParticleShape(value: unknown): ParticleShape {
+  return typeof value === 'string' && (SHAPES as readonly string[]).includes(value) ? value as ParticleShape : typeof value === 'string' && Object.hasOwn(LEGACY_SHAPE_MAP, value) ? LEGACY_SHAPE_MAP[value] : DEFAULT_SETTINGS.shape;
+}
 export function normalizeSettings(value: unknown, mobile = false): ParticleSettings {
   const input = value && typeof value === 'object' ? value as Record<string, unknown> : {};
-  return { count: Math.round(finite(input.count, mobile ? 600 : DEFAULT_SETTINGS.count, ...LIMITS.count)), size: finite(input.size, DEFAULT_SETTINGS.size, ...LIMITS.size), speed: finite(input.speed, DEFAULT_SETTINGS.speed, ...LIMITS.speed), motion: finite(input.motion, DEFAULT_SETTINGS.motion, ...LIMITS.motion), smoothness: finite(input.smoothness, DEFAULT_SETTINGS.smoothness, ...LIMITS.smoothness), shape: typeof input.shape === 'string' && (SHAPES as readonly string[]).includes(input.shape) ? input.shape as ParticleShape : DEFAULT_SETTINGS.shape, color: typeof input.color === 'string' && /^#[0-9a-f]{6}$/i.test(input.color) ? input.color.toLowerCase() : DEFAULT_SETTINGS.color, colorMode: input.colorMode === 'single' ? 'single' : 'palette', transition: input.transition === 'entry' || input.transition === 'center' ? input.transition : 'blend' };
+  return { count: Math.round(finite(input.count, mobile ? 600 : DEFAULT_SETTINGS.count, ...LIMITS.count)), size: finite(input.size, DEFAULT_SETTINGS.size, ...LIMITS.size), speed: finite(input.speed, DEFAULT_SETTINGS.speed, ...LIMITS.speed), motion: finite(input.motion, DEFAULT_SETTINGS.motion, ...LIMITS.motion), smoothness: finite(input.smoothness, DEFAULT_SETTINGS.smoothness, ...LIMITS.smoothness), shape: normalizeParticleShape(input.shape), color: typeof input.color === 'string' && /^#[0-9a-f]{6}$/i.test(input.color) ? input.color.toLowerCase() : DEFAULT_SETTINGS.color, colorMode: input.colorMode === 'single' ? 'single' : 'palette', transition: input.transition === 'entry' || input.transition === 'center' ? input.transition : 'blend' };
 }
 export function loadParticleConfig(storage: Storage | null, mobile = false): SectionParticleConfig {
   if (!storage) return {};
@@ -31,7 +35,7 @@ export function validateParticleConfig(value: unknown): { config: SectionParticl
     if (Object.keys(input).some(name => RESERVED_KEYS.has(name))) return { error: 'Invalid particle setting key' };
     const bounded = (name: keyof typeof LIMITS) => typeof input[name] === 'number' && Number.isFinite(input[name]) && input[name] >= LIMITS[name][0] && input[name] <= LIMITS[name][1];
     if (!bounded('count') || !bounded('size') || !bounded('speed') || !bounded('motion') || !bounded('smoothness')) return { error: 'Particle numeric value out of range' };
-    if (typeof input.shape !== 'string' || !(SHAPES as readonly string[]).includes(input.shape)) return { error: 'Invalid particle shape' };
+    if (typeof input.shape !== 'string' || (!(SHAPES as readonly string[]).includes(input.shape) && !Object.hasOwn(LEGACY_SHAPE_MAP, input.shape))) return { error: 'Invalid particle shape' };
     if (typeof input.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(input.color)) return { error: 'Invalid particle color' };
     if (input.colorMode !== 'palette' && input.colorMode !== 'single') return { error: 'Invalid particle color mode' };
     if (input.transition !== 'blend' && input.transition !== 'entry' && input.transition !== 'center') return { error: 'Invalid particle transition' };

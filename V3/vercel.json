@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/V3", "destination": "/index.html" },
+    { "source": "/V3/:path*", "destination": "/:path*" }
+  ]
+}
+

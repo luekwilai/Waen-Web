@@ -10,7 +10,7 @@ const LOCAL_COVERS: Record<string, string> = {
   "wordpress-vs-website-samret-rup-aukhrai-dee": "cover-wordpress-vs-builder",
   "seo-khue-arai-thammai-website-thurakit-tong-tham": "cover-seo",
   "tham-web-ranchakha-ounlain-tong-priam-arai": "cover-ecommerce-prep",
-  "website-roongrub-mue-thue-samkhan-khae-nai": "cover-mobile-friendly",
+  "website-roongrub-mue-thue-samkhan-khae-nai": "cover-mobile-friendly-v2",
   "jang-tham-web-tong-ru-arai-kon-jai-ngern": "cover-hiring-checklist",
   "google-my-business-kue-arai-thammai-thurakit-tong-sai": "cover-google-business",
   "landing-page-vs-website-tang-kan-yang-rai": "cover-landing-vs-website",

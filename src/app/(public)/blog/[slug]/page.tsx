@@ -6,9 +6,12 @@ import Link from "next/link"
 import { ArrowLeft, ArrowUpRight, Clock, Calendar } from "lucide-react"
 import Image from "next/image"
 import { getAllBlogPosts, getBlogPost } from "@/lib/blog"
+import { getBlogCover } from "@/lib/blog-covers"
 import { renderMarkdown } from "@/lib/markdown"
 
 type Props = { params: Promise<{ slug: string }> }
+
+const absoluteUrl = (path: string) => (path.startsWith("http") ? path : `https://waenweb.com${path}`)
 
 export async function generateStaticParams() {
   return getAllBlogPosts().map((p) => ({ slug: p.slug }))
@@ -18,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const post = getBlogPost(slug)
   if (!post) return {}
+  const image = absoluteUrl(getBlogCover(post))
   return {
     title: post.title,
     description: post.description,
@@ -29,7 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://waenweb.com/blog/${slug}`,
       type: "article",
       publishedTime: post.date,
-      images: [{ url: post.image, alt: post.title }],
+      modifiedTime: post.updated ?? post.date,
+      images: [{ url: image, alt: post.title }],
     },
   }
 }
@@ -46,15 +51,16 @@ export default async function BlogPostPage({ params }: Props) {
   const next = allPosts[currentIndex - 1] ?? null
 
   const htmlContent = renderMarkdown(post.content)
+  const image = getBlogCover(post)
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: post.image,
+    image: absoluteUrl(image),
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updated ?? post.date,
     inLanguage: "th-TH",
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://waenweb.com/blog/${slug}` },
     author: { "@type": "Organization", name: "WAENWEB" },
@@ -67,12 +73,6 @@ export default async function BlogPostPage({ params }: Props) {
     url: `https://waenweb.com/blog/${slug}`,
   }
 
-  const covers: Record<string, string> = {
-    "website-2026-trend-thurai-thai-tong-ru": "context-trends",
-    "content-marketing-samnab-website-thurakit-thai": "context-content",
-    "an-analytics-website-yang-rai-hai-pen-prayot-tor-thurakit": "context-analytics",
-  }
-  const image = covers[slug] ? `/creative-home/images/articles/${covers[slug]}.webp` : post.image
   const headings: { id: string; title: string }[] = []
   const content = htmlContent.replace(/<h2>(.*?)<\/h2>/g, (_, title: string) => {
     const id = `section-${headings.length + 1}`
@@ -94,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
         <aside className={styles.sidebar}><nav aria-label="สารบัญบทความ"><p className={styles.eyebrow}>ในบทความนี้</p>{headings.map(h=><a href={`#${h.id}`} key={h.id}>{h.title}</a>)}</nav><Link className={styles.discuss} href="/#contact">มีโปรเจกต์ในใจ?<br /><strong>คุยกับเรา <ArrowUpRight size={16} aria-hidden="true" /></strong></Link></aside>
         <article className={styles.prose} dangerouslySetInnerHTML={{ __html: content }} />
       </div>
-      <nav className={styles.related} aria-label="อ่านบทความต่อ">{[prev, next].filter(p=>p !== null).map(p=><Link href={`/blog/${p.slug}`} key={p.slug}><span>อ่านต่อ / {p.category}</span><h2>{p.title}</h2><ArrowUpRight size={22} aria-hidden="true" /></Link>)}</nav>
+      <nav className={styles.related} aria-label="อ่านบทความต่อ">{[prev, next].filter(p=>p !== null).map(p=><Link href={`/blog/${p.slug}`} key={p.slug}><span>อ่านต่อ / {p.category}</span><strong className={styles.relatedTitle}>{p.title}</strong><ArrowUpRight size={22} aria-hidden="true" /></Link>)}</nav>
       <section className={styles.cta}><div><p className={styles.eyebrow}>FROM IDEAS TO YOUR WEBSITE</p><h2>เปลี่ยนไอเดีย<br />ให้เป็นเว็บไซต์ของคุณ.</h2><p>คุยเรื่องเป้าหมายและวางแผนเว็บไซต์ไปด้วยกัน</p></div><Link href="/#contact">เริ่มโปรเจกต์กัน <ArrowUpRight size={20} aria-hidden="true" /></Link></section>
     </main><BlogFooter />
   </div>

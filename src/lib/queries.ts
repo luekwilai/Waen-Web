@@ -120,24 +120,3 @@ export const getParticleBackgroundConfig = unstable_cache(
   ["particle-background-setting-v1"],
   { revalidate: 300, tags: ["site-settings", "particle-background"] }
 )
-
-// Public package data for the isolated V2 experience.
-export const getPublicPackages = unstable_cache(
-  async () =>
-    prisma.package.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-      select: {
-        id: true,
-        name: true,
-        nameEn: true,
-        price: true,
-        description: true,
-        features: true,
-        duration: true,
-        isPopular: true,
-      },
-    }),
-  ["public-packages"],
-  { revalidate: 60, tags: ["packages"] }
-)

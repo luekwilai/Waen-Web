@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { LegalPageShell } from "@/components/home/legal-page-shell"
+
+export const metadata: Metadata = {
+  title: { absolute: "นโยบายความเป็นส่วนตัว | WAENWEB" },
+  description: "นโยบายความเป็นส่วนตัวของ WAENWEB อธิบายการเก็บ ใช้ และคุ้มครองข้อมูลส่วนบุคคล การใช้คุกกี้ และสิทธิของเจ้าของข้อมูลตาม PDPA",
+  alternates: { canonical: "https://waenweb.com/privacy-policy" },
+  openGraph: { title: "นโยบายความเป็นส่วนตัว | WAENWEB", url: "https://waenweb.com/privacy-policy" },
+}
 
 export default function PrivacyPolicyPage() {
   return (

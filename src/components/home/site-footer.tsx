@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { BrandLogo } from "@/components/brand-logo"
-import { Mail, MessageSquare, Facebook, Instagram, Youtube, ArrowRight } from "lucide-react"
+import { Mail, MessageSquare, Facebook, Instagram, Youtube } from "lucide-react"
 
 const quickLinks = [
   { href: "/#services", label: "บริการ" },
@@ -177,13 +177,6 @@ export function SiteFooter({
             <Link href="/terms-of-use" className="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors relative group">
               เงื่อนไขการใช้งาน
               <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-lime-400 transition-all duration-300 group-hover:w-full" />
-            </Link>
-            <Link 
-              href="/admin/login" 
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-lime-400 text-sm font-bold transition-all group px-4 py-2 rounded-full border border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-lime-500/50 hover:bg-slate-50 dark:hover:bg-lime-400/10"
-            >
-              Admin Portal
-              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>

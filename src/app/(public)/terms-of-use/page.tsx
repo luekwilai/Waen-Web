@@ -1,5 +1,13 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { LegalPageShell } from "@/components/home/legal-page-shell"
+
+export const metadata: Metadata = {
+  title: { absolute: "เงื่อนไขการใช้งาน | WAENWEB" },
+  description: "เงื่อนไขการใช้งานเว็บไซต์และบริการของ WAENWEB รวมถึงขอบเขตบริการ การใช้งานที่เหมาะสม ทรัพย์สินทางปัญญา และข้อจำกัดความรับผิดชอบ",
+  alternates: { canonical: "https://waenweb.com/terms-of-use" },
+  openGraph: { title: "เงื่อนไขการใช้งาน | WAENWEB", url: "https://waenweb.com/terms-of-use" },
+}
 
 export default function TermsOfUsePage() {
   return (

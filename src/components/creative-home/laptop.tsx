@@ -1,5 +1,6 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
+import {runWhenIdle} from './utils';
 
 export default function Laptop(){
  const host=useRef<HTMLDivElement>(null);
@@ -100,8 +101,8 @@ rect(799,55,2,905,'#536646');texture.needsUpdate=true;
    const animate=(time:number)=>{frame=requestAnimationFrame(animate);if(!visible||document.hidden)return;const idle=reduced.matches?0:Math.sin(time*.00055)*.028;laptop.rotation.y+=(targetY+idle-laptop.rotation.y)*.075;laptop.rotation.x+=(targetX-laptop.rotation.x)*.075;laptop.position.y=-.15+(reduced.matches?0:Math.sin(time*.001)*.04);const blink=reduced.matches?0:Math.floor(time/650)%2;if(blink!==lastBlink){drawScreen(!!blink);lastBlink=blink;}renderer.render(scene,camera);};frame=requestAnimationFrame(animate);setStatus('ready');
    dispose=()=>{cancelAnimationFrame(frame);ro.disconnect();observer.disconnect();el.removeEventListener('pointerdown',down);el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);el.removeEventListener('keydown',key);renderer.domElement.removeEventListener('webglcontextlost',lost);extra.group.removeFromParent();extra.dispose();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());}});texture.dispose();renderer.dispose();renderer.domElement.remove();};
   }
-  init().catch(()=>{if(!cancelled)setStatus('error');});
-  return()=>{cancelled=true;dispose();};
+  const cancelIdle=runWhenIdle(()=>{init().catch(()=>{if(!cancelled)setStatus('error');});});
+  return()=>{cancelled=true;cancelIdle();dispose();};
  },[]);
  return <div ref={host} className="laptop-canvas" tabIndex={0} role="group" aria-label="โน้ตบุ๊ก แท็บเล็ต และมือถือ 3 มิติ หน้าจอโน้ตบุ๊กซ้ายแสดงโค้ด ขวาแสดงเว็บไซต์ ลากหรือใช้ปุ่มลูกศรเพื่อหมุน กด Home เพื่อคืนมุมเริ่มต้น">{status!=='ready'&&<div className="laptop-fallback" role="status"><p>{status==='loading'?'กำลังเตรียมโมเดล 3 มิติ…':'อุปกรณ์นี้ไม่สามารถแสดงโมเดล 3 มิติได้ กรุณาลองเบราว์เซอร์ที่รองรับ WebGL'}</p></div>}</div>;
 }

@@ -4,6 +4,7 @@ import { Terminal, Database, Server, GitBranch, Braces, Cpu, Cloud, Monitor, Bra
 import { Slider } from '@/components/creative-home/ui/slider';
 import { SHAPES, normalizeSettings, type ParticleShape, type ParticleSettings, type SectionParticleConfig } from './particle-config';
 import { makeShape, type Shape } from './particle-shapes';
+import { runWhenIdle } from './utils';
 import { discoverParticleSections, transitionAt, sectionSettings, type ParticleSection } from './particle-sections';
 
 const ICONS = {none:ScatterChart, galaxy:Orbit, code:Code2, process:Workflow, bars:ChartNoAxesColumnIncreasing, question:CircleHelp, w:null, terminal:Terminal, database:Database, server:Server, gitBranch:GitBranch, braces:Braces, chip:Cpu, cloud:Cloud, browser:Monitor, api:Brackets, network:Network, folder:Folder, fileCode:FileCode2, layers:Layers3, shieldCheck:ShieldCheck};
@@ -137,8 +138,8 @@ export default function ParticleBackground({ canCustomizeBackground = false, ini
       resize();
       cleanup=()=>{requestDraw.current=()=>{};cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('scroll',request);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',request);renderer.domElement.removeEventListener('webglcontextlost',lost);renderer.domElement.removeEventListener('webglcontextrestored',restored);geometry.dispose();material.dispose();renderer.dispose();renderer.domElement.remove();cache.clear();};
     };
-    init().catch(()=>{if(!disposed)setUnavailable(true);});
-    return()=>{disposed=true;cleanup();};
+    const cancelIdle=runWhenIdle(()=>{init().catch(()=>{if(!disposed)setUnavailable(true);});});
+    return()=>{disposed=true;cancelIdle();cleanup();};
   },[]);
   useEffect(()=>{requestDraw.current();},[revision]);
   useEffect(()=>{

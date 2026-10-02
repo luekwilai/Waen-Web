@@ -15,6 +15,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Permanent (308) www -> apex redirect, used if the Vercel domain itself is not set to redirect.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.waenweb.com" }],
+        destination: "https://waenweb.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   // Clean URL for the standalone preview page (direct link only — not linked anywhere on the main site)
   async rewrites() {
     return [

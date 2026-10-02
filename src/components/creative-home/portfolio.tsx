@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Hand, List, Rows3 } from 'lucide-react'
 import portfolioProjects from './portfolio-data.json'
+import { CASE_STUDY_SLUGS } from '@/lib/case-study-slugs'
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/creative-home/ui/carousel'
 
 type PortfolioProject = { id: string; title: string; category: string; description: string; desktopImage: string; mobileImage: string; websiteUrl: string; sourceDesktopImage?: string; sourceMobileImage?: string }
@@ -35,11 +36,11 @@ function CarouselProject({ project, index, failedImages, markImageFailed }: { pr
   return <article className="pc-slide">
     <header className="pc-slide-heading"><h3><span>{String(index + 1).padStart(2, '0')}</span> {project.title}</h3><p>{project.category}</p></header>
     <div className="pc-previews" tabIndex={0} aria-label={`${project.title} website previews. Hover or focus to see the full page.`}>
-      <div className="pc-browser"><div className="pc-browser-top" aria-hidden="true"><i /><i /><i /></div>{image(desktop, `${project.id}-carousel-desktop`, `${project.title} desktop preview`)}</div>
-      <div className="pc-phone"><div className="pc-phone-screen">{image(mobile, `${project.id}-carousel-mobile`, `${project.title} mobile preview`)}</div></div>
+      <div className="pc-browser"><div className="pc-browser-top" aria-hidden="true"><i /><i /><i /></div>{image(desktop, `${project.id}-carousel-desktop`, `หน้าเว็บไซต์ ${project.title} บนคอมพิวเตอร์`)}</div>
+      <div className="pc-phone"><div className="pc-phone-screen">{image(mobile, `${project.id}-carousel-mobile`, `หน้าเว็บไซต์ ${project.title} บนมือถือ`)}</div></div>
     </div>
     <p className="pc-slide-description">{project.description}</p>
-    <div className="pc-slide-actions"><button type="button" className="pc-toggle" aria-pressed={scrolled} onClick={() => setScrolled(value => !value)}><ArrowDown aria-hidden="true" className={scrolled ? 'is-reversed' : ''} /><span>{scrolled ? 'ดูด้านบน' : 'เลื่อนชมผลงาน'}</span></button><SafeLink project={project} className="pc-visit">เปิดเว็บไซต์ <ArrowUpRight aria-hidden="true" /></SafeLink></div>
+    <div className="pc-slide-actions"><button type="button" className="pc-toggle" aria-pressed={scrolled} onClick={() => setScrolled(value => !value)}><ArrowDown aria-hidden="true" className={scrolled ? 'is-reversed' : ''} /><span>{scrolled ? 'ดูด้านบน' : 'เลื่อนชมผลงาน'}</span></button>{CASE_STUDY_SLUGS[project.title] && <a className="pc-visit" href={`/work/${CASE_STUDY_SLUGS[project.title]}`}>อ่านเคสนี้ <ArrowUpRight aria-hidden="true" /></a>}<SafeLink project={project} className="pc-visit">เปิดเว็บไซต์ <ArrowUpRight aria-hidden="true" /></SafeLink></div>
   </article>
 }
 

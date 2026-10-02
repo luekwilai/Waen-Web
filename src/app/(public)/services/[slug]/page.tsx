@@ -6,7 +6,7 @@ import { BlogHeader, BlogFooter } from "@/components/blog/blog-shell"
 import { packages } from "@/components/creative-home/home-content"
 import portfolioProjects from "@/components/creative-home/portfolio-data.json"
 import { SERVICES, getService } from "@/lib/services"
-import styles from "./service.module.css"
+import styles from "@/components/marketing/landing.module.css"
 
 type Props = { params: Promise<{ slug: string }> }
 

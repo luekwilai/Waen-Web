@@ -12,7 +12,7 @@ export default function SiteFooter() {
         <p>ออกแบบและพัฒนาเว็บไซต์ที่ตั้งใจทำเพื่อธุรกิจของคุณ</p>
       </div>
       <nav className="site-footer-nav" aria-label="ลิงก์เว็บไซต์">
-        <div><span className="site-footer-label">EXPLORE</span><a href="/#services">บริการ</a><a href="/#process">ขั้นตอนการทำงาน</a><a href="/#portfolio">ผลงาน</a><a href="/#pricing">แพ็กเกจ</a></div>
+        <div><span className="site-footer-label">EXPLORE</span><a href="/#services">บริการ</a><a href="/#process">ขั้นตอนการทำงาน</a><a href="/work">ผลงาน</a><a href="/#pricing">แพ็กเกจ</a></div>
         <div><span className="site-footer-label">READ & KNOW</span><a href="/#articles">บทความ</a><a href="/#faq">คำถามที่พบบ่อย</a><a href="https://waenweb.com/blog" target="_blank" rel="noreferrer">อ่านบทความทั้งหมด <ArrowUpRight size={13} aria-hidden="true" /></a><a href="/#contact">ติดต่อเรา</a></div>
         <div><span className="site-footer-label">SERVICES</span>{SERVICES.map((service) => <a href={`/services/${service.slug}`} key={service.slug}>{service.keyword}</a>)}</div>
         <div><span className="site-footer-label">LEGAL</span><a href="/privacy-policy">นโยบายความเป็นส่วนตัว</a><a href="/terms-of-use">เงื่อนไขการใช้งาน</a></div>

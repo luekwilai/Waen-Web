@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { getAllBlogPosts } from "@/lib/blog"
 import { SERVICES } from "@/lib/services"
+import { CASE_STUDIES } from "@/lib/case-studies"
 
 // lastModified should reflect real content changes, not build time, so search engines keep trusting it.
 const LEGAL_UPDATED = new Date("2026-03-13")
@@ -25,9 +26,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }))
 
+  const caseStudyEntries: MetadataRoute.Sitemap = CASE_STUDIES.map((study) => ({
+    url: `${base}/work/${study.slug}`,
+    lastModified: new Date(study.updated),
+    changeFrequency: "yearly",
+    priority: 0.6,
+  }))
+
   return [
     { url: base, changeFrequency: "weekly", priority: 1 },
     ...serviceEntries,
+    { url: `${base}/work`, lastModified: new Date(Math.max(...CASE_STUDIES.map((s) => new Date(s.updated).getTime()))), changeFrequency: "monthly", priority: 0.8 },
+    ...caseStudyEntries,
     { url: `${base}/blog`, lastModified: latestPost, changeFrequency: "weekly", priority: 0.8 },
     ...blogEntries,
     { url: `${base}/privacy-policy`, lastModified: LEGAL_UPDATED, changeFrequency: "yearly", priority: 0.3 },

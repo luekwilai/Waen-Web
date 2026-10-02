@@ -15,3 +15,14 @@
 .lead .overlay{background:linear-gradient(90deg,rgba(6,13,16,.96),rgba(6,13,16,.92) 58%,rgba(6,13,16,.4) 85%)}
 .rest .overlay{background:linear-gradient(180deg,rgba(6,13,16,.1),rgba(6,13,16,.95) 32%)}
 @media(max-width:650px){.lead .overlay{background:linear-gradient(180deg,rgba(6,13,16,.1),rgba(6,13,16,.95) 32%)}}
+
+/* Cover photos stay visible: small cards stack photo above text; the lead card fades only behind its copy. */
+.media{position:absolute;inset:0;overflow:hidden}
+.image,.card:hover .image{filter:none}
+.lead .overlay{background:linear-gradient(90deg,rgba(6,13,16,.92) 0%,rgba(6,13,16,.7) 38%,rgba(6,13,16,.15) 68%,transparent 85%)}
+.rest .card{display:flex;flex-direction:column;min-height:0;background:#0b1716}
+.rest .media{position:relative;inset:auto;flex:none;aspect-ratio:16/10;border-bottom:1px solid #263b30}
+.rest .overlay{display:none}
+.rest .copy,.rest .copy.copy{position:static;inset:auto;padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.rest .copy b{margin-top:auto}
+@media(max-width:650px){.lead .overlay{background:linear-gradient(180deg,transparent 30%,rgba(6,13,16,.75) 58%,rgba(6,13,16,.96) 80%)}.rest .copy,.rest .copy.copy{padding:18px 20px 20px}}

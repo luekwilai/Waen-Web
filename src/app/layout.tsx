@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Geist_Mono } from "next/font/google";
+import { Noto_Sans_Thai, Geist_Mono, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import "@/components/creative-home/typography-tokens.css";
 import "@/components/creative-home/globals.css";
@@ -38,6 +38,21 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+// Display and label fonts of the public site; CSS uses them via var(--font-inter) / var(--font-plex-mono).
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings()
   const logoUrl = "/waenweb-mark.svg"
@@ -69,7 +84,7 @@ export default function RootLayout({
     <html lang="th" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${notoSansThai.variable} ${geistMono.variable} antialiased font-sans text-slate-900 dark:text-slate-300 transition-colors duration-500`}
+        className={`${notoSansThai.variable} ${geistMono.variable} ${inter.variable} ${plexMono.variable} antialiased font-sans text-slate-900 dark:text-slate-300 transition-colors duration-500`}
       >
         <ThemeProvider
           attribute="class"

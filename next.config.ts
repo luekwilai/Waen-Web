@@ -1,5 +1,22 @@
 import type { NextConfig } from "next";
 
+// Content Security Policy for public pages. Inline scripts/styles stay allowed because the pages are
+// statically rendered (nonces would force dynamic rendering). /admin and /api are excluded.
+const publicCsp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://va.vercel-scripts.com https://vercel.live",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://waenweb.com https://*.public.blob.vercel-storage.com https://images.unsplash.com https://www.gstatic.com https://vercel.live https://vercel.com",
+  "font-src 'self' data: https://vercel.live",
+  "connect-src 'self' https://www.google.com https://vitals.vercel-insights.com https://vercel.live wss://ws-us3.pusher.com",
+  "frame-src https://www.google.com https://recaptcha.google.com https://www.recaptcha.net https://vercel.live",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   poweredByHeader: false,
@@ -45,6 +62,10 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
+      },
+      {
+        source: "/((?!admin|api|wp-admin).*)",
+        headers: [{ key: "Content-Security-Policy", value: publicCsp }],
       },
       {
         source: "/home-2",

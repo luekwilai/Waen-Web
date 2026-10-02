@@ -4,9 +4,9 @@ body:has(.creative-home) .ww-process-intro h2{font-size:clamp(40px,4.7vw,72px);l
 body:has(.creative-home) .ww-process-lime{color:#ccfa80}
 body:has(.creative-home) .ww-process-intro>p{font-size:16px;margin:26px 0 40px}
 body:has(.creative-home) .ww-process-status{display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:340px}
-body:has(.creative-home) .ww-process-counter{font:500 64px/1 'Inter',sans-serif;letter-spacing:-4px;color:#ccfa80;font-variant-numeric:tabular-nums}
+body:has(.creative-home) .ww-process-counter{font:500 64px/1 var(--font-inter),sans-serif;letter-spacing:-4px;color:#ccfa80;font-variant-numeric:tabular-nums}
 body:has(.creative-home) .ww-process-counter small{font-size:18px;letter-spacing:0;color:#91a29b}
-body:has(.creative-home) .ww-process-current{display:flex;align-items:center;gap:14px;font:12px 'IBM Plex Mono',monospace;letter-spacing:1px;color:#b7cbbf}
+body:has(.creative-home) .ww-process-current{display:flex;align-items:center;gap:14px;font:12px var(--font-plex-mono),monospace;letter-spacing:1px;color:#b7cbbf}
 body:has(.creative-home) .ww-process-progress{height:2px;background:#caff801c;margin:24px 0 32px;max-width:340px;overflow:hidden}
 body:has(.creative-home) .ww-process-progress>span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ccfa80,#81ddd0);transform-origin:left;transition:transform .65s cubic-bezier(.22,1,.36,1)}
 body:has(.creative-home) .ww-process-link{display:inline-flex;align-items:center;gap:20px;color:#e0f2d5;font-size:15px;padding:10px 0;border-bottom:1px solid #ccfa8040}
@@ -23,11 +23,11 @@ body:has(.creative-home) .is-current>.ww-process-card{border-color:#ccfa8070;box
 body:has(.creative-home) .is-current>.ww-process-card:before,body:has(.creative-home) .ww-process-card:hover:before{opacity:1}
 body:has(.creative-home) .ww-process-card:hover{border-color:#ccfa8070}
 body:has(.creative-home) .ww-process-card-top{display:flex;align-items:center;justify-content:space-between;color:#c5f18f;position:relative}
-body:has(.creative-home) .ww-process-label{font:12px 'IBM Plex Mono',monospace;letter-spacing:2px}
+body:has(.creative-home) .ww-process-label{font:12px var(--font-plex-mono),monospace;letter-spacing:2px}
 body:has(.creative-home) .ww-process-card-top>svg{box-sizing:content-box;padding:12px;border:1px solid #ccfa8030;border-radius:14px;background:#ccfa8009;transition:transform .5s}
 body:has(.creative-home) .is-current .ww-process-card-top>svg{transform:rotate(-8deg);background:#ccfa8015}
 body:has(.creative-home) .ww-process-card-body{display:grid;grid-template-columns:88px 1fr;align-items:start;gap:24px;margin:24px 0}
-body:has(.creative-home) .ww-process-number{font:500 72px/1.1 'Inter',sans-serif;letter-spacing:-5px;color:transparent;-webkit-text-stroke:1px #77956c;transition:color .5s}
+body:has(.creative-home) .ww-process-number{font:500 72px/1.1 var(--font-inter),sans-serif;letter-spacing:-5px;color:transparent;-webkit-text-stroke:1px #77956c;transition:color .5s}
 body:has(.creative-home) .is-current .ww-process-number{color:#ccfa80;-webkit-text-stroke:0}
 body:has(.creative-home) .ww-process-card h3{font-size:clamp(22px,2vw,30px);line-height:1.5;margin:0 0 10px;font-weight:500;letter-spacing:-.5px}
 body:has(.creative-home) .ww-process-card p{margin:0;font-size:16px;line-height:1.85}

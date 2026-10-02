@@ -147,7 +147,7 @@
 
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__sheet-kicker {
   color: #9aaa89;
-  font: 10px/1.2 'IBM Plex Mono', monospace;
+  font: 10px/1.2 var(--font-plex-mono), monospace;
   letter-spacing: 1.4px;
 }
 
@@ -277,7 +277,7 @@
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__sheet-header h2{font-size:34px;letter-spacing:-1.5px}
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav{gap:8px}
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav a{min-height:66px;border-bottom-color:#ccfa8025;font-size:20px;animation:wh-menu-enter .5s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--wh-order,0)*45ms)}
-:is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav a small{font:12px 'IBM Plex Mono',monospace;color:#a4c585}
+:is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav a small{font:12px var(--font-plex-mono),monospace;color:#a4c585}
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav a>span{flex:1}
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav a[aria-current=location]{color:#ccfa80}
 :is(body:has(.creative-home), body:has(.blog-header-scope)) .wh-site-header__mobile-nav .wh-site-header__mobile-cta{border-radius:100px;padding:8px 20px}
